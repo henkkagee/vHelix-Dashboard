@@ -4,7 +4,7 @@ Developed by Henrik Granö, [Natural computation](https://research.cs.aalto.fi/n
 
 ## Installation
 
-a) Download the prebuilt binaries from https://www.vhelix.net (not yet available)
+a) Download the prebuilt binaries from http://www.vhelix.net (not yet available)
 
 b) To build the program on your system, you need the following dependencies:
 
@@ -19,7 +19,7 @@ Included modules and source code:
 - [Boost C++ libraries](https://www.boost.org/)
 - [bscor by Abdulmelik Mohammed (Aalto University)](https://github.com/mohamma1/bscor)
 - [tacoxDNA](https://github.com/lorenzo-rovigatti/tacoxDNA),  (A. Suma, E. Poppleton, M. Matthies, P. Šulc, F. Romano, A. A. Louis, J. P. K. Doye, C. Micheletti and L. Rovigatti, ["TacoxDNA: A userfriendly web server for simulations of complex DNA structures, from single strands to origami"](https://doi.org/10.1002/jcc.26029), J. Comput. Chem. 40, 2586 (2019))
-- [vHelix](https://www.vhelix.net)
+- [vHelix](http://www.vhelix.net)
 - [objToPly by Nabeel Hussain](https://github.com/nabeel3133/file-converter-.obj-to-.ply)
 - [oxDNAviewer](https://github.com/sulcgroup/oxdna-viewer)
 
