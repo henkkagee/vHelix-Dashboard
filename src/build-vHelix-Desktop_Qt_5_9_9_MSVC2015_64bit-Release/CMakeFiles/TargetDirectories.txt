@@ -1,0 +1,7 @@
+C:/Users/Henkka/Projects/ncgit/code/vhelix/src/build-vHelix-Desktop_Qt_5_9_9_MSVC2015_64bit-Release/CMakeFiles/vHelix.dir
+C:/Users/Henkka/Projects/ncgit/code/vhelix/src/build-vHelix-Desktop_Qt_5_9_9_MSVC2015_64bit-Release/CMakeFiles/edit_cache.dir
+C:/Users/Henkka/Projects/ncgit/code/vhelix/src/build-vHelix-Desktop_Qt_5_9_9_MSVC2015_64bit-Release/CMakeFiles/rebuild_cache.dir
+C:/Users/Henkka/Projects/ncgit/code/vhelix/src/build-vHelix-Desktop_Qt_5_9_9_MSVC2015_64bit-Release/CMakeFiles/vHelix_autogen.dir
+C:/Users/Henkka/Projects/ncgit/code/vhelix/src/build-vHelix-Desktop_Qt_5_9_9_MSVC2015_64bit-Release/scaffold_routing_rectification/CMakeFiles/PXPHYSICS.dir
+C:/Users/Henkka/Projects/ncgit/code/vhelix/src/build-vHelix-Desktop_Qt_5_9_9_MSVC2015_64bit-Release/scaffold_routing_rectification/CMakeFiles/edit_cache.dir
+C:/Users/Henkka/Projects/ncgit/code/vhelix/src/build-vHelix-Desktop_Qt_5_9_9_MSVC2015_64bit-Release/scaffold_routing_rectification/CMakeFiles/rebuild_cache.dir

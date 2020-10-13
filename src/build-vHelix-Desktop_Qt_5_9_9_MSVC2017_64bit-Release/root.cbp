@@ -1,0 +1,558 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CodeBlocks_project_file>
+	<FileVersion major="1" minor="6"/>
+	<Project>
+		<Option title="root"/>
+		<Option makefile_is_custom="1"/>
+		<Option compiler="msvc8"/>
+		<Option virtualFolders="CMake Files\;CMake Files\..\;CMake Files\..\..\;CMake Files\..\..\..\;CMake Files\..\..\..\..\;CMake Files\..\..\..\..\..\;CMake Files\..\..\..\..\..\..\;CMake Files\..\..\..\..\..\..\..\;CMake Files\..\..\..\..\..\..\..\..\;CMake Files\..\..\..\..\..\..\..\..\Qt\;CMake Files\..\..\..\..\..\..\..\..\Qt\5.9.9\;CMake Files\..\..\..\..\..\..\..\..\Qt\5.9.9\msvc2017_64\;CMake Files\..\..\..\..\..\..\..\..\Qt\5.9.9\msvc2017_64\lib\;CMake Files\..\..\..\..\..\..\..\..\Qt\5.9.9\msvc2017_64\lib\cmake\;CMake Files\..\..\..\..\..\..\..\..\Qt\5.9.9\msvc2017_64\lib\cmake\Qt5\;CMake Files\..\..\..\..\..\..\..\..\Qt\5.9.9\msvc2017_64\lib\cmake\Qt5Core\;CMake Files\..\..\..\..\..\..\..\..\Qt\5.9.9\msvc2017_64\lib\cmake\Qt5Gui\;CMake Files\..\..\..\..\..\..\..\..\Qt\5.9.9\msvc2017_64\lib\cmake\Qt5Widgets\;CMake Files\..\..\..\..\..\..\..\..\Qt\5.9.9\msvc2017_64\lib\cmake\Qt53DCore\;CMake Files\..\..\..\..\..\..\..\..\Qt\5.9.9\msvc2017_64\lib\cmake\Qt5Network\;CMake Files\..\..\..\..\..\..\..\..\Qt\5.9.9\msvc2017_64\lib\cmake\Qt53DExtras\;CMake Files\..\..\..\..\..\..\..\..\Qt\5.9.9\msvc2017_64\lib\cmake\Qt53DRender\;CMake Files\..\..\..\..\..\..\..\..\Qt\5.9.9\msvc2017_64\lib\cmake\Qt53DInput\;CMake Files\..\..\..\..\..\..\..\..\Qt\5.9.9\msvc2017_64\lib\cmake\Qt5Gamepad\;CMake Files\..\..\..\..\..\..\..\..\Qt\5.9.9\msvc2017_64\lib\cmake\Qt53DLogic\;CMake Files\scaffold_routing_rectification\;"/>
+		<Build>
+			<Target title="all">
+				<Option working_dir="C:/Users/granoh1/projects/ncgit/code/vhelix/src/build-vHelix-Desktop_Qt_5_9_9_MSVC2017_64bit-Release"/>
+				<Option type="4"/>
+				<MakeCommands>
+					<Build command="C:/PROGRA~2/MICROS~2/2019/ENTERP~1/Common7/IDE/COMMON~1/MICROS~1/CMake/Ninja/ninja.exe -v all"/>
+					<CompileFile command="C:/PROGRA~2/MICROS~2/2019/ENTERP~1/Common7/IDE/COMMON~1/MICROS~1/CMake/Ninja/ninja.exe -v &quot;$file&quot;"/>
+					<Clean command="C:/PROGRA~2/MICROS~2/2019/ENTERP~1/Common7/IDE/COMMON~1/MICROS~1/CMake/Ninja/ninja.exe -v clean"/>
+					<DistClean command="C:/PROGRA~2/MICROS~2/2019/ENTERP~1/Common7/IDE/COMMON~1/MICROS~1/CMake/Ninja/ninja.exe -v clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="vHelix">
+				<Option output="C:/Users/granoh1/projects/ncgit/code/vhelix/src/build-vHelix-Desktop_Qt_5_9_9_MSVC2017_64bit-Release/vHelix.exe" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="C:/Users/granoh1/projects/ncgit/code/vhelix/src/build-vHelix-Desktop_Qt_5_9_9_MSVC2017_64bit-Release"/>
+				<Option object_output="./"/>
+				<Option type="1"/>
+				<Option compiler="msvc8"/>
+				<Compiler>
+					<Add option="-DQT_WIDGETS_LIB"/>
+					<Add option="-DQT_GUI_LIB"/>
+					<Add option="-DQT_CORE_LIB"/>
+					<Add option="-DQT_NO_DEBUG"/>
+					<Add option="-DQT_3DCORE_LIB"/>
+					<Add option="-DQT_NETWORK_LIB"/>
+					<Add option="-DQT_3DEXTRAS_LIB"/>
+					<Add option="-DQT_3DRENDER_LIB"/>
+					<Add option="-DQT_3DINPUT_LIB"/>
+					<Add option="-DQT_GAMEPAD_LIB"/>
+					<Add option="-DQT_3DLOGIC_LIB"/>
+					<Add directory="C:/Users/granoh1/projects/ncgit/code/vhelix/src/build-vHelix-Desktop_Qt_5_9_9_MSVC2017_64bit-Release"/>
+					<Add directory="C:/Users/granoh1/projects/ncgit/code/vhelix/src/vHelix"/>
+					<Add directory="C:/Users/granoh1/projects/ncgit/code/vhelix/src/build-vHelix-Desktop_Qt_5_9_9_MSVC2017_64bit-Release/vHelix_autogen/include"/>
+					<Add directory="C:/Users/granoh1/projects/ncgit/code/vhelix/src/vHelix/include"/>
+					<Add directory="C:/Users/granoh1/AppData/Local/Programs/Python/Python38/include"/>
+					<Add directory="C:/Qt/5.9.9/msvc2017_64/include"/>
+					<Add directory="C:/Qt/5.9.9/msvc2017_64/include/QtWidgets"/>
+					<Add directory="C:/Qt/5.9.9/msvc2017_64/include/QtGui"/>
+					<Add directory="C:/Qt/5.9.9/msvc2017_64/include/QtANGLE"/>
+					<Add directory="C:/Qt/5.9.9/msvc2017_64/include/QtCore"/>
+					<Add directory="C:/Qt/5.9.9/msvc2017_64/./mkspecs/win32-msvc"/>
+					<Add directory="C:/Qt/5.9.9/msvc2017_64/include/Qt3DCore"/>
+					<Add directory="C:/Qt/5.9.9/msvc2017_64/include/QtNetwork"/>
+					<Add directory="C:/Qt/5.9.9/msvc2017_64/include/Qt3DExtras"/>
+					<Add directory="C:/Qt/5.9.9/msvc2017_64/include/Qt3DRender"/>
+					<Add directory="C:/Qt/5.9.9/msvc2017_64/include/Qt3DInput"/>
+					<Add directory="C:/Qt/5.9.9/msvc2017_64/include/QtGamepad"/>
+					<Add directory="C:/Qt/5.9.9/msvc2017_64/include/Qt3DLogic"/>
+					<Add directory="C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise\VC\Tools\MSVC\14.26.28801\ATLMFC\include"/>
+					<Add directory="C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise\VC\Tools\MSVC\14.26.28801\include"/>
+					<Add directory="C:\Program Files (x86)\Windows Kits\NETFXSDK\4.8\include\um"/>
+					<Add directory="C:\Program Files (x86)\Windows Kits\10\include\10.0.18362.0\ucrt"/>
+					<Add directory="C:\Program Files (x86)\Windows Kits\10\include\10.0.18362.0\shared"/>
+					<Add directory="C:\Program Files (x86)\Windows Kits\10\include\10.0.18362.0\um"/>
+					<Add directory="C:\Program Files (x86)\Windows Kits\10\include\10.0.18362.0\winrt"/>
+					<Add directory="C:\Program Files (x86)\Windows Kits\10\include\10.0.18362.0\cppwinrt"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="C:/PROGRA~2/MICROS~2/2019/ENTERP~1/Common7/IDE/COMMON~1/MICROS~1/CMake/Ninja/ninja.exe -v vHelix"/>
+					<CompileFile command="C:/PROGRA~2/MICROS~2/2019/ENTERP~1/Common7/IDE/COMMON~1/MICROS~1/CMake/Ninja/ninja.exe -v &quot;$file&quot;"/>
+					<Clean command="C:/PROGRA~2/MICROS~2/2019/ENTERP~1/Common7/IDE/COMMON~1/MICROS~1/CMake/Ninja/ninja.exe -v clean"/>
+					<DistClean command="C:/PROGRA~2/MICROS~2/2019/ENTERP~1/Common7/IDE/COMMON~1/MICROS~1/CMake/Ninja/ninja.exe -v clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="vHelix/fast">
+				<Option output="C:/Users/granoh1/projects/ncgit/code/vhelix/src/build-vHelix-Desktop_Qt_5_9_9_MSVC2017_64bit-Release/vHelix.exe" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="C:/Users/granoh1/projects/ncgit/code/vhelix/src/build-vHelix-Desktop_Qt_5_9_9_MSVC2017_64bit-Release"/>
+				<Option object_output="./"/>
+				<Option type="1"/>
+				<Option compiler="msvc8"/>
+				<Compiler>
+					<Add option="-DQT_WIDGETS_LIB"/>
+					<Add option="-DQT_GUI_LIB"/>
+					<Add option="-DQT_CORE_LIB"/>
+					<Add option="-DQT_NO_DEBUG"/>
+					<Add option="-DQT_3DCORE_LIB"/>
+					<Add option="-DQT_NETWORK_LIB"/>
+					<Add option="-DQT_3DEXTRAS_LIB"/>
+					<Add option="-DQT_3DRENDER_LIB"/>
+					<Add option="-DQT_3DINPUT_LIB"/>
+					<Add option="-DQT_GAMEPAD_LIB"/>
+					<Add option="-DQT_3DLOGIC_LIB"/>
+					<Add directory="C:/Users/granoh1/projects/ncgit/code/vhelix/src/build-vHelix-Desktop_Qt_5_9_9_MSVC2017_64bit-Release"/>
+					<Add directory="C:/Users/granoh1/projects/ncgit/code/vhelix/src/vHelix"/>
+					<Add directory="C:/Users/granoh1/projects/ncgit/code/vhelix/src/build-vHelix-Desktop_Qt_5_9_9_MSVC2017_64bit-Release/vHelix_autogen/include"/>
+					<Add directory="C:/Users/granoh1/projects/ncgit/code/vhelix/src/vHelix/include"/>
+					<Add directory="C:/Users/granoh1/AppData/Local/Programs/Python/Python38/include"/>
+					<Add directory="C:/Qt/5.9.9/msvc2017_64/include"/>
+					<Add directory="C:/Qt/5.9.9/msvc2017_64/include/QtWidgets"/>
+					<Add directory="C:/Qt/5.9.9/msvc2017_64/include/QtGui"/>
+					<Add directory="C:/Qt/5.9.9/msvc2017_64/include/QtANGLE"/>
+					<Add directory="C:/Qt/5.9.9/msvc2017_64/include/QtCore"/>
+					<Add directory="C:/Qt/5.9.9/msvc2017_64/./mkspecs/win32-msvc"/>
+					<Add directory="C:/Qt/5.9.9/msvc2017_64/include/Qt3DCore"/>
+					<Add directory="C:/Qt/5.9.9/msvc2017_64/include/QtNetwork"/>
+					<Add directory="C:/Qt/5.9.9/msvc2017_64/include/Qt3DExtras"/>
+					<Add directory="C:/Qt/5.9.9/msvc2017_64/include/Qt3DRender"/>
+					<Add directory="C:/Qt/5.9.9/msvc2017_64/include/Qt3DInput"/>
+					<Add directory="C:/Qt/5.9.9/msvc2017_64/include/QtGamepad"/>
+					<Add directory="C:/Qt/5.9.9/msvc2017_64/include/Qt3DLogic"/>
+					<Add directory="C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise\VC\Tools\MSVC\14.26.28801\ATLMFC\include"/>
+					<Add directory="C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise\VC\Tools\MSVC\14.26.28801\include"/>
+					<Add directory="C:\Program Files (x86)\Windows Kits\NETFXSDK\4.8\include\um"/>
+					<Add directory="C:\Program Files (x86)\Windows Kits\10\include\10.0.18362.0\ucrt"/>
+					<Add directory="C:\Program Files (x86)\Windows Kits\10\include\10.0.18362.0\shared"/>
+					<Add directory="C:\Program Files (x86)\Windows Kits\10\include\10.0.18362.0\um"/>
+					<Add directory="C:\Program Files (x86)\Windows Kits\10\include\10.0.18362.0\winrt"/>
+					<Add directory="C:\Program Files (x86)\Windows Kits\10\include\10.0.18362.0\cppwinrt"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="C:/PROGRA~2/MICROS~2/2019/ENTERP~1/Common7/IDE/COMMON~1/MICROS~1/CMake/Ninja/ninja.exe -v vHelix/fast"/>
+					<CompileFile command="C:/PROGRA~2/MICROS~2/2019/ENTERP~1/Common7/IDE/COMMON~1/MICROS~1/CMake/Ninja/ninja.exe -v &quot;$file&quot;"/>
+					<Clean command="C:/PROGRA~2/MICROS~2/2019/ENTERP~1/Common7/IDE/COMMON~1/MICROS~1/CMake/Ninja/ninja.exe -v clean"/>
+					<DistClean command="C:/PROGRA~2/MICROS~2/2019/ENTERP~1/Common7/IDE/COMMON~1/MICROS~1/CMake/Ninja/ninja.exe -v clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="edit_cache">
+				<Option working_dir="C:/Users/granoh1/projects/ncgit/code/vhelix/src/build-vHelix-Desktop_Qt_5_9_9_MSVC2017_64bit-Release"/>
+				<Option type="4"/>
+				<MakeCommands>
+					<Build command="C:/PROGRA~2/MICROS~2/2019/ENTERP~1/Common7/IDE/COMMON~1/MICROS~1/CMake/Ninja/ninja.exe -v edit_cache"/>
+					<CompileFile command="C:/PROGRA~2/MICROS~2/2019/ENTERP~1/Common7/IDE/COMMON~1/MICROS~1/CMake/Ninja/ninja.exe -v &quot;$file&quot;"/>
+					<Clean command="C:/PROGRA~2/MICROS~2/2019/ENTERP~1/Common7/IDE/COMMON~1/MICROS~1/CMake/Ninja/ninja.exe -v clean"/>
+					<DistClean command="C:/PROGRA~2/MICROS~2/2019/ENTERP~1/Common7/IDE/COMMON~1/MICROS~1/CMake/Ninja/ninja.exe -v clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="rebuild_cache">
+				<Option working_dir="C:/Users/granoh1/projects/ncgit/code/vhelix/src/build-vHelix-Desktop_Qt_5_9_9_MSVC2017_64bit-Release"/>
+				<Option type="4"/>
+				<MakeCommands>
+					<Build command="C:/PROGRA~2/MICROS~2/2019/ENTERP~1/Common7/IDE/COMMON~1/MICROS~1/CMake/Ninja/ninja.exe -v rebuild_cache"/>
+					<CompileFile command="C:/PROGRA~2/MICROS~2/2019/ENTERP~1/Common7/IDE/COMMON~1/MICROS~1/CMake/Ninja/ninja.exe -v &quot;$file&quot;"/>
+					<Clean command="C:/PROGRA~2/MICROS~2/2019/ENTERP~1/Common7/IDE/COMMON~1/MICROS~1/CMake/Ninja/ninja.exe -v clean"/>
+					<DistClean command="C:/PROGRA~2/MICROS~2/2019/ENTERP~1/Common7/IDE/COMMON~1/MICROS~1/CMake/Ninja/ninja.exe -v clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="vHelix_autogen">
+				<Option working_dir="C:/Users/granoh1/projects/ncgit/code/vhelix/src/build-vHelix-Desktop_Qt_5_9_9_MSVC2017_64bit-Release"/>
+				<Option type="4"/>
+				<MakeCommands>
+					<Build command="C:/PROGRA~2/MICROS~2/2019/ENTERP~1/Common7/IDE/COMMON~1/MICROS~1/CMake/Ninja/ninja.exe -v vHelix_autogen"/>
+					<CompileFile command="C:/PROGRA~2/MICROS~2/2019/ENTERP~1/Common7/IDE/COMMON~1/MICROS~1/CMake/Ninja/ninja.exe -v &quot;$file&quot;"/>
+					<Clean command="C:/PROGRA~2/MICROS~2/2019/ENTERP~1/Common7/IDE/COMMON~1/MICROS~1/CMake/Ninja/ninja.exe -v clean"/>
+					<DistClean command="C:/PROGRA~2/MICROS~2/2019/ENTERP~1/Common7/IDE/COMMON~1/MICROS~1/CMake/Ninja/ninja.exe -v clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="PXPHYSICS">
+				<Option output="C:/Users/granoh1/projects/ncgit/code/vhelix/src/build-vHelix-Desktop_Qt_5_9_9_MSVC2017_64bit-Release/scaffold_routing_rectification/PXPHYSICS.lib" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="C:/Users/granoh1/projects/ncgit/code/vhelix/src/build-vHelix-Desktop_Qt_5_9_9_MSVC2017_64bit-Release/scaffold_routing_rectification"/>
+				<Option object_output="./"/>
+				<Option type="2"/>
+				<Option compiler="msvc8"/>
+				<Compiler>
+					<Add directory="C:/Users/granoh1/projects/ncgit/code/vhelix/src/build-vHelix-Desktop_Qt_5_9_9_MSVC2017_64bit-Release/scaffold_routing_rectification"/>
+					<Add directory="C:/Users/granoh1/projects/ncgit/code/vhelix/src/vHelix/scaffold_routing_rectification"/>
+					<Add directory="C:/Users/granoh1/projects/ncgit/code/vhelix/src/vHelix/include"/>
+					<Add directory="C:/Users/granoh1/AppData/Local/Programs/Python/Python38/include"/>
+					<Add directory="C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise\VC\Tools\MSVC\14.26.28801\ATLMFC\include"/>
+					<Add directory="C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise\VC\Tools\MSVC\14.26.28801\include"/>
+					<Add directory="C:\Program Files (x86)\Windows Kits\NETFXSDK\4.8\include\um"/>
+					<Add directory="C:\Program Files (x86)\Windows Kits\10\include\10.0.18362.0\ucrt"/>
+					<Add directory="C:\Program Files (x86)\Windows Kits\10\include\10.0.18362.0\shared"/>
+					<Add directory="C:\Program Files (x86)\Windows Kits\10\include\10.0.18362.0\um"/>
+					<Add directory="C:\Program Files (x86)\Windows Kits\10\include\10.0.18362.0\winrt"/>
+					<Add directory="C:\Program Files (x86)\Windows Kits\10\include\10.0.18362.0\cppwinrt"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="C:/PROGRA~2/MICROS~2/2019/ENTERP~1/Common7/IDE/COMMON~1/MICROS~1/CMake/Ninja/ninja.exe -v PXPHYSICS"/>
+					<CompileFile command="C:/PROGRA~2/MICROS~2/2019/ENTERP~1/Common7/IDE/COMMON~1/MICROS~1/CMake/Ninja/ninja.exe -v &quot;$file&quot;"/>
+					<Clean command="C:/PROGRA~2/MICROS~2/2019/ENTERP~1/Common7/IDE/COMMON~1/MICROS~1/CMake/Ninja/ninja.exe -v clean"/>
+					<DistClean command="C:/PROGRA~2/MICROS~2/2019/ENTERP~1/Common7/IDE/COMMON~1/MICROS~1/CMake/Ninja/ninja.exe -v clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="PXPHYSICS/fast">
+				<Option output="C:/Users/granoh1/projects/ncgit/code/vhelix/src/build-vHelix-Desktop_Qt_5_9_9_MSVC2017_64bit-Release/scaffold_routing_rectification/PXPHYSICS.lib" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="C:/Users/granoh1/projects/ncgit/code/vhelix/src/build-vHelix-Desktop_Qt_5_9_9_MSVC2017_64bit-Release/scaffold_routing_rectification"/>
+				<Option object_output="./"/>
+				<Option type="2"/>
+				<Option compiler="msvc8"/>
+				<Compiler>
+					<Add directory="C:/Users/granoh1/projects/ncgit/code/vhelix/src/build-vHelix-Desktop_Qt_5_9_9_MSVC2017_64bit-Release/scaffold_routing_rectification"/>
+					<Add directory="C:/Users/granoh1/projects/ncgit/code/vhelix/src/vHelix/scaffold_routing_rectification"/>
+					<Add directory="C:/Users/granoh1/projects/ncgit/code/vhelix/src/vHelix/include"/>
+					<Add directory="C:/Users/granoh1/AppData/Local/Programs/Python/Python38/include"/>
+					<Add directory="C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise\VC\Tools\MSVC\14.26.28801\ATLMFC\include"/>
+					<Add directory="C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise\VC\Tools\MSVC\14.26.28801\include"/>
+					<Add directory="C:\Program Files (x86)\Windows Kits\NETFXSDK\4.8\include\um"/>
+					<Add directory="C:\Program Files (x86)\Windows Kits\10\include\10.0.18362.0\ucrt"/>
+					<Add directory="C:\Program Files (x86)\Windows Kits\10\include\10.0.18362.0\shared"/>
+					<Add directory="C:\Program Files (x86)\Windows Kits\10\include\10.0.18362.0\um"/>
+					<Add directory="C:\Program Files (x86)\Windows Kits\10\include\10.0.18362.0\winrt"/>
+					<Add directory="C:\Program Files (x86)\Windows Kits\10\include\10.0.18362.0\cppwinrt"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="C:/PROGRA~2/MICROS~2/2019/ENTERP~1/Common7/IDE/COMMON~1/MICROS~1/CMake/Ninja/ninja.exe -v PXPHYSICS/fast"/>
+					<CompileFile command="C:/PROGRA~2/MICROS~2/2019/ENTERP~1/Common7/IDE/COMMON~1/MICROS~1/CMake/Ninja/ninja.exe -v &quot;$file&quot;"/>
+					<Clean command="C:/PROGRA~2/MICROS~2/2019/ENTERP~1/Common7/IDE/COMMON~1/MICROS~1/CMake/Ninja/ninja.exe -v clean"/>
+					<DistClean command="C:/PROGRA~2/MICROS~2/2019/ENTERP~1/Common7/IDE/COMMON~1/MICROS~1/CMake/Ninja/ninja.exe -v clean"/>
+				</MakeCommands>
+			</Target>
+		</Build>
+		<Unit filename="C:/Users/granoh1/projects/ncgit/code/vhelix/src/build-vHelix-Desktop_Qt_5_9_9_MSVC2017_64bit-Release/vHelix_autogen/mocs_compilation.cpp">
+			<Option target="vHelix"/>
+		</Unit>
+		<Unit filename="C:/Users/granoh1/projects/ncgit/code/vhelix/src/vHelix/atrail_search/Atrail.cpp">
+			<Option target="vHelix"/>
+		</Unit>
+		<Unit filename="C:/Users/granoh1/projects/ncgit/code/vhelix/src/vHelix/atrail_search/Atrail.hpp">
+			<Option target="vHelix"/>
+		</Unit>
+		<Unit filename="C:/Users/granoh1/projects/ncgit/code/vhelix/src/vHelix/atrail_search/Atrail_search.cpp">
+			<Option target="vHelix"/>
+		</Unit>
+		<Unit filename="C:/Users/granoh1/projects/ncgit/code/vhelix/src/vHelix/atrail_search/Atrail_search.hpp">
+			<Option target="vHelix"/>
+		</Unit>
+		<Unit filename="C:/Users/granoh1/projects/ncgit/code/vhelix/src/vHelix/atrail_verify/Atrail_verify.cpp">
+			<Option target="vHelix"/>
+		</Unit>
+		<Unit filename="C:/Users/granoh1/projects/ncgit/code/vhelix/src/vHelix/atrail_verify/Atrail_verify.hpp">
+			<Option target="vHelix"/>
+		</Unit>
+		<Unit filename="C:/Users/granoh1/projects/ncgit/code/vhelix/src/vHelix/console.cpp">
+			<Option target="vHelix"/>
+		</Unit>
+		<Unit filename="C:/Users/granoh1/projects/ncgit/code/vhelix/src/vHelix/console.h">
+			<Option target="vHelix"/>
+		</Unit>
+		<Unit filename="C:/Users/granoh1/projects/ncgit/code/vhelix/src/vHelix/dialog.ui">
+			<Option target="vHelix"/>
+		</Unit>
+		<Unit filename="C:/Users/granoh1/projects/ncgit/code/vhelix/src/vHelix/dirview.cpp">
+			<Option target="vHelix"/>
+		</Unit>
+		<Unit filename="C:/Users/granoh1/projects/ncgit/code/vhelix/src/vHelix/dirview.h">
+			<Option target="vHelix"/>
+		</Unit>
+		<Unit filename="C:/Users/granoh1/projects/ncgit/code/vhelix/src/vHelix/dna.cpp">
+			<Option target="vHelix"/>
+		</Unit>
+		<Unit filename="C:/Users/granoh1/projects/ncgit/code/vhelix/src/vHelix/dna.h">
+			<Option target="vHelix"/>
+		</Unit>
+		<Unit filename="C:/Users/granoh1/projects/ncgit/code/vhelix/src/vHelix/graphicsview.cpp">
+			<Option target="vHelix"/>
+		</Unit>
+		<Unit filename="C:/Users/granoh1/projects/ncgit/code/vhelix/src/vHelix/graphicsview.h">
+			<Option target="vHelix"/>
+		</Unit>
+		<Unit filename="C:/Users/granoh1/projects/ncgit/code/vhelix/src/vHelix/include/mayahelix/Definition.h">
+			<Option target="vHelix"/>
+		</Unit>
+		<Unit filename="C:/Users/granoh1/projects/ncgit/code/vhelix/src/vHelix/main.cpp">
+			<Option target="vHelix"/>
+		</Unit>
+		<Unit filename="C:/Users/granoh1/projects/ncgit/code/vhelix/src/vHelix/mainwindow.cpp">
+			<Option target="vHelix"/>
+		</Unit>
+		<Unit filename="C:/Users/granoh1/projects/ncgit/code/vhelix/src/vHelix/mainwindow.h">
+			<Option target="vHelix"/>
+		</Unit>
+		<Unit filename="C:/Users/granoh1/projects/ncgit/code/vhelix/src/vHelix/mainwindow.ui">
+			<Option target="vHelix"/>
+		</Unit>
+		<Unit filename="C:/Users/granoh1/projects/ncgit/code/vhelix/src/vHelix/make_embedding_eulerian/make_embedding_eulerian.cpp">
+			<Option target="vHelix"/>
+		</Unit>
+		<Unit filename="C:/Users/granoh1/projects/ncgit/code/vhelix/src/vHelix/make_embedding_eulerian/make_embedding_eulerian.hpp">
+			<Option target="vHelix"/>
+		</Unit>
+		<Unit filename="C:/Users/granoh1/projects/ncgit/code/vhelix/src/vHelix/model.cpp">
+			<Option target="vHelix"/>
+		</Unit>
+		<Unit filename="C:/Users/granoh1/projects/ncgit/code/vhelix/src/vHelix/model.h">
+			<Option target="vHelix"/>
+		</Unit>
+		<Unit filename="C:/Users/granoh1/projects/ncgit/code/vhelix/src/vHelix/ply_to_dimacs/boost_graph_helper.cpp">
+			<Option target="vHelix"/>
+		</Unit>
+		<Unit filename="C:/Users/granoh1/projects/ncgit/code/vhelix/src/vHelix/ply_to_dimacs/boost_graph_helper.hpp">
+			<Option target="vHelix"/>
+		</Unit>
+		<Unit filename="C:/Users/granoh1/projects/ncgit/code/vhelix/src/vHelix/ply_to_dimacs/ply_to_dimacs.cpp">
+			<Option target="vHelix"/>
+		</Unit>
+		<Unit filename="C:/Users/granoh1/projects/ncgit/code/vhelix/src/vHelix/ply_to_dimacs/ply_to_dimacs.hpp">
+			<Option target="vHelix"/>
+		</Unit>
+		<Unit filename="C:/Users/granoh1/projects/ncgit/code/vhelix/src/vHelix/ply_to_embedding/ply_to_embedding.cpp">
+			<Option target="vHelix"/>
+		</Unit>
+		<Unit filename="C:/Users/granoh1/projects/ncgit/code/vhelix/src/vHelix/ply_to_embedding/ply_to_embedding.hpp">
+			<Option target="vHelix"/>
+		</Unit>
+		<Unit filename="C:/Users/granoh1/projects/ncgit/code/vhelix/src/vHelix/postman_tour/postman_tour.cpp">
+			<Option target="vHelix"/>
+		</Unit>
+		<Unit filename="C:/Users/granoh1/projects/ncgit/code/vhelix/src/vHelix/postman_tour/postman_tour.hpp">
+			<Option target="vHelix"/>
+		</Unit>
+		<Unit filename="C:/Users/granoh1/projects/ncgit/code/vhelix/src/vHelix/processio.cpp">
+			<Option target="vHelix"/>
+		</Unit>
+		<Unit filename="C:/Users/granoh1/projects/ncgit/code/vhelix/src/vHelix/processio.h">
+			<Option target="vHelix"/>
+		</Unit>
+		<Unit filename="C:/Users/granoh1/projects/ncgit/code/vhelix/src/vHelix/rpolydialog.ui">
+			<Option target="vHelix"/>
+		</Unit>
+		<Unit filename="C:/Users/granoh1/projects/ncgit/code/vhelix/src/vHelix/rpolyparser.cpp">
+			<Option target="vHelix"/>
+		</Unit>
+		<Unit filename="C:/Users/granoh1/projects/ncgit/code/vhelix/src/vHelix/rpolyparser.h">
+			<Option target="vHelix"/>
+		</Unit>
+		<Unit filename="C:/Users/granoh1/projects/ncgit/code/vhelix/src/vHelix/scaffold_routing_rectification/DNA.h">
+			<Option target="vHelix"/>
+		</Unit>
+		<Unit filename="C:/Users/granoh1/projects/ncgit/code/vhelix/src/vHelix/scaffold_routing_rectification/Definition.cpp">
+			<Option target="vHelix"/>
+		</Unit>
+		<Unit filename="C:/Users/granoh1/projects/ncgit/code/vhelix/src/vHelix/scaffold_routing_rectification/Definition.h">
+			<Option target="vHelix"/>
+		</Unit>
+		<Unit filename="C:/Users/granoh1/projects/ncgit/code/vhelix/src/vHelix/scaffold_routing_rectification/Helix.cpp">
+			<Option target="vHelix"/>
+		</Unit>
+		<Unit filename="C:/Users/granoh1/projects/ncgit/code/vhelix/src/vHelix/scaffold_routing_rectification/Helix.h">
+			<Option target="vHelix"/>
+		</Unit>
+		<Unit filename="C:/Users/granoh1/projects/ncgit/code/vhelix/src/vHelix/scaffold_routing_rectification/ParseSettings.h">
+			<Option target="vHelix"/>
+		</Unit>
+		<Unit filename="C:/Users/granoh1/projects/ncgit/code/vhelix/src/vHelix/scaffold_routing_rectification/PhysX3CharacterKinematic_x64.dll">
+			<Option target="PXPHYSICS"/>
+		</Unit>
+		<Unit filename="C:/Users/granoh1/projects/ncgit/code/vhelix/src/vHelix/scaffold_routing_rectification/PhysX3Common_x64.dll">
+			<Option target="PXPHYSICS"/>
+		</Unit>
+		<Unit filename="C:/Users/granoh1/projects/ncgit/code/vhelix/src/vHelix/scaffold_routing_rectification/PhysX3Cooking_x64.dll">
+			<Option target="PXPHYSICS"/>
+		</Unit>
+		<Unit filename="C:/Users/granoh1/projects/ncgit/code/vhelix/src/vHelix/scaffold_routing_rectification/PhysX3_x64.dll">
+			<Option target="PXPHYSICS"/>
+		</Unit>
+		<Unit filename="C:/Users/granoh1/projects/ncgit/code/vhelix/src/vHelix/scaffold_routing_rectification/Physics.cpp">
+			<Option target="vHelix"/>
+		</Unit>
+		<Unit filename="C:/Users/granoh1/projects/ncgit/code/vhelix/src/vHelix/scaffold_routing_rectification/Physics.h">
+			<Option target="vHelix"/>
+		</Unit>
+		<Unit filename="C:/Users/granoh1/projects/ncgit/code/vhelix/src/vHelix/scaffold_routing_rectification/PxFoundation_x64.dll">
+			<Option target="PXPHYSICS"/>
+		</Unit>
+		<Unit filename="C:/Users/granoh1/projects/ncgit/code/vhelix/src/vHelix/scaffold_routing_rectification/PxPvdSDK_x64.dll">
+			<Option target="PXPHYSICS"/>
+		</Unit>
+		<Unit filename="C:/Users/granoh1/projects/ncgit/code/vhelix/src/vHelix/scaffold_routing_rectification/Relaxmain.cpp">
+			<Option target="vHelix"/>
+		</Unit>
+		<Unit filename="C:/Users/granoh1/projects/ncgit/code/vhelix/src/vHelix/scaffold_routing_rectification/Relaxmain.h">
+			<Option target="vHelix"/>
+		</Unit>
+		<Unit filename="C:/Users/granoh1/projects/ncgit/code/vhelix/src/vHelix/scaffold_routing_rectification/Scene.cpp">
+			<Option target="vHelix"/>
+		</Unit>
+		<Unit filename="C:/Users/granoh1/projects/ncgit/code/vhelix/src/vHelix/scaffold_routing_rectification/Scene.h">
+			<Option target="vHelix"/>
+		</Unit>
+		<Unit filename="C:/Users/granoh1/projects/ncgit/code/vhelix/src/vHelix/scaffold_routing_rectification/SimulatedAnnealing.h">
+			<Option target="vHelix"/>
+		</Unit>
+		<Unit filename="C:/Users/granoh1/projects/ncgit/code/vhelix/src/vHelix/scaffold_routing_rectification/Utility.cpp">
+			<Option target="vHelix"/>
+		</Unit>
+		<Unit filename="C:/Users/granoh1/projects/ncgit/code/vhelix/src/vHelix/scaffold_routing_rectification/Utility.h">
+			<Option target="vHelix"/>
+		</Unit>
+		<Unit filename="C:/Users/granoh1/projects/ncgit/code/vhelix/src/vHelix/scaffold_routing_rectification/glut32.dll">
+			<Option target="PXPHYSICS"/>
+		</Unit>
+		<Unit filename="C:/Users/granoh1/projects/ncgit/code/vhelix/src/vHelix/scaffold_routing_rectification/nvToolsExt64_1.dll">
+			<Option target="PXPHYSICS"/>
+		</Unit>
+		<Unit filename="C:/Users/granoh1/projects/ncgit/code/vhelix/src/vHelix/sequencedialog.ui">
+			<Option target="vHelix"/>
+		</Unit>
+		<Unit filename="C:/Users/granoh1/projects/ncgit/code/vhelix/src/vHelix/vhelix.cpp">
+			<Option target="vHelix"/>
+		</Unit>
+		<Unit filename="C:/Users/granoh1/projects/ncgit/code/vhelix/src/vHelix/vhelix.h">
+			<Option target="vHelix"/>
+		</Unit>
+		<Unit filename="C:/Users/granoh1/projects/ncgit/code/vhelix/src/vHelix/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\"/>
+		</Unit>
+		<Unit filename="C:/Users/granoh1/projects/ncgit/code/vhelix/src/vHelix/../../../../../../../../Qt/5.9.9/msvc2017_64/lib/cmake/Qt5/Qt5Config.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\..\..\..\Qt\5.9.9\msvc2017_64\lib\cmake\Qt5\"/>
+		</Unit>
+		<Unit filename="C:/Users/granoh1/projects/ncgit/code/vhelix/src/vHelix/../../../../../../../../Qt/5.9.9/msvc2017_64/lib/cmake/Qt5/Qt5ConfigVersion.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\..\..\..\Qt\5.9.9\msvc2017_64\lib\cmake\Qt5\"/>
+		</Unit>
+		<Unit filename="C:/Users/granoh1/projects/ncgit/code/vhelix/src/vHelix/../../../../../../../../Qt/5.9.9/msvc2017_64/lib/cmake/Qt5/Qt5ModuleLocation.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\..\..\..\Qt\5.9.9\msvc2017_64\lib\cmake\Qt5\"/>
+		</Unit>
+		<Unit filename="C:/Users/granoh1/projects/ncgit/code/vhelix/src/vHelix/../../../../../../../../Qt/5.9.9/msvc2017_64/lib/cmake/Qt5Core/Qt5CoreConfig.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\..\..\..\Qt\5.9.9\msvc2017_64\lib\cmake\Qt5Core\"/>
+		</Unit>
+		<Unit filename="C:/Users/granoh1/projects/ncgit/code/vhelix/src/vHelix/../../../../../../../../Qt/5.9.9/msvc2017_64/lib/cmake/Qt5Core/Qt5CoreConfigExtras.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\..\..\..\Qt\5.9.9\msvc2017_64\lib\cmake\Qt5Core\"/>
+		</Unit>
+		<Unit filename="C:/Users/granoh1/projects/ncgit/code/vhelix/src/vHelix/../../../../../../../../Qt/5.9.9/msvc2017_64/lib/cmake/Qt5Core/Qt5CoreConfigExtrasMkspecDir.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\..\..\..\Qt\5.9.9\msvc2017_64\lib\cmake\Qt5Core\"/>
+		</Unit>
+		<Unit filename="C:/Users/granoh1/projects/ncgit/code/vhelix/src/vHelix/../../../../../../../../Qt/5.9.9/msvc2017_64/lib/cmake/Qt5Core/Qt5CoreConfigVersion.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\..\..\..\Qt\5.9.9\msvc2017_64\lib\cmake\Qt5Core\"/>
+		</Unit>
+		<Unit filename="C:/Users/granoh1/projects/ncgit/code/vhelix/src/vHelix/../../../../../../../../Qt/5.9.9/msvc2017_64/lib/cmake/Qt5Core/Qt5CoreMacros.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\..\..\..\Qt\5.9.9\msvc2017_64\lib\cmake\Qt5Core\"/>
+		</Unit>
+		<Unit filename="C:/Users/granoh1/projects/ncgit/code/vhelix/src/vHelix/../../../../../../../../Qt/5.9.9/msvc2017_64/lib/cmake/Qt5Gui/Qt5GuiConfig.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\..\..\..\Qt\5.9.9\msvc2017_64\lib\cmake\Qt5Gui\"/>
+		</Unit>
+		<Unit filename="C:/Users/granoh1/projects/ncgit/code/vhelix/src/vHelix/../../../../../../../../Qt/5.9.9/msvc2017_64/lib/cmake/Qt5Gui/Qt5GuiConfigExtras.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\..\..\..\Qt\5.9.9\msvc2017_64\lib\cmake\Qt5Gui\"/>
+		</Unit>
+		<Unit filename="C:/Users/granoh1/projects/ncgit/code/vhelix/src/vHelix/../../../../../../../../Qt/5.9.9/msvc2017_64/lib/cmake/Qt5Gui/Qt5GuiConfigVersion.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\..\..\..\Qt\5.9.9\msvc2017_64\lib\cmake\Qt5Gui\"/>
+		</Unit>
+		<Unit filename="C:/Users/granoh1/projects/ncgit/code/vhelix/src/vHelix/../../../../../../../../Qt/5.9.9/msvc2017_64/lib/cmake/Qt5Gui/Qt5Gui_QGifPlugin.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\..\..\..\Qt\5.9.9\msvc2017_64\lib\cmake\Qt5Gui\"/>
+		</Unit>
+		<Unit filename="C:/Users/granoh1/projects/ncgit/code/vhelix/src/vHelix/../../../../../../../../Qt/5.9.9/msvc2017_64/lib/cmake/Qt5Gui/Qt5Gui_QICNSPlugin.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\..\..\..\Qt\5.9.9\msvc2017_64\lib\cmake\Qt5Gui\"/>
+		</Unit>
+		<Unit filename="C:/Users/granoh1/projects/ncgit/code/vhelix/src/vHelix/../../../../../../../../Qt/5.9.9/msvc2017_64/lib/cmake/Qt5Gui/Qt5Gui_QICOPlugin.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\..\..\..\Qt\5.9.9\msvc2017_64\lib\cmake\Qt5Gui\"/>
+		</Unit>
+		<Unit filename="C:/Users/granoh1/projects/ncgit/code/vhelix/src/vHelix/../../../../../../../../Qt/5.9.9/msvc2017_64/lib/cmake/Qt5Gui/Qt5Gui_QJpegPlugin.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\..\..\..\Qt\5.9.9\msvc2017_64\lib\cmake\Qt5Gui\"/>
+		</Unit>
+		<Unit filename="C:/Users/granoh1/projects/ncgit/code/vhelix/src/vHelix/../../../../../../../../Qt/5.9.9/msvc2017_64/lib/cmake/Qt5Gui/Qt5Gui_QMinimalIntegrationPlugin.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\..\..\..\Qt\5.9.9\msvc2017_64\lib\cmake\Qt5Gui\"/>
+		</Unit>
+		<Unit filename="C:/Users/granoh1/projects/ncgit/code/vhelix/src/vHelix/../../../../../../../../Qt/5.9.9/msvc2017_64/lib/cmake/Qt5Gui/Qt5Gui_QOffscreenIntegrationPlugin.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\..\..\..\Qt\5.9.9\msvc2017_64\lib\cmake\Qt5Gui\"/>
+		</Unit>
+		<Unit filename="C:/Users/granoh1/projects/ncgit/code/vhelix/src/vHelix/../../../../../../../../Qt/5.9.9/msvc2017_64/lib/cmake/Qt5Gui/Qt5Gui_QTgaPlugin.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\..\..\..\Qt\5.9.9\msvc2017_64\lib\cmake\Qt5Gui\"/>
+		</Unit>
+		<Unit filename="C:/Users/granoh1/projects/ncgit/code/vhelix/src/vHelix/../../../../../../../../Qt/5.9.9/msvc2017_64/lib/cmake/Qt5Gui/Qt5Gui_QTiffPlugin.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\..\..\..\Qt\5.9.9\msvc2017_64\lib\cmake\Qt5Gui\"/>
+		</Unit>
+		<Unit filename="C:/Users/granoh1/projects/ncgit/code/vhelix/src/vHelix/../../../../../../../../Qt/5.9.9/msvc2017_64/lib/cmake/Qt5Gui/Qt5Gui_QTuioTouchPlugin.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\..\..\..\Qt\5.9.9\msvc2017_64\lib\cmake\Qt5Gui\"/>
+		</Unit>
+		<Unit filename="C:/Users/granoh1/projects/ncgit/code/vhelix/src/vHelix/../../../../../../../../Qt/5.9.9/msvc2017_64/lib/cmake/Qt5Gui/Qt5Gui_QWbmpPlugin.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\..\..\..\Qt\5.9.9\msvc2017_64\lib\cmake\Qt5Gui\"/>
+		</Unit>
+		<Unit filename="C:/Users/granoh1/projects/ncgit/code/vhelix/src/vHelix/../../../../../../../../Qt/5.9.9/msvc2017_64/lib/cmake/Qt5Gui/Qt5Gui_QWebpPlugin.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\..\..\..\Qt\5.9.9\msvc2017_64\lib\cmake\Qt5Gui\"/>
+		</Unit>
+		<Unit filename="C:/Users/granoh1/projects/ncgit/code/vhelix/src/vHelix/../../../../../../../../Qt/5.9.9/msvc2017_64/lib/cmake/Qt5Gui/Qt5Gui_QWindowsDirect2DIntegrationPlugin.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\..\..\..\Qt\5.9.9\msvc2017_64\lib\cmake\Qt5Gui\"/>
+		</Unit>
+		<Unit filename="C:/Users/granoh1/projects/ncgit/code/vhelix/src/vHelix/../../../../../../../../Qt/5.9.9/msvc2017_64/lib/cmake/Qt5Gui/Qt5Gui_QWindowsIntegrationPlugin.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\..\..\..\Qt\5.9.9\msvc2017_64\lib\cmake\Qt5Gui\"/>
+		</Unit>
+		<Unit filename="C:/Users/granoh1/projects/ncgit/code/vhelix/src/vHelix/../../../../../../../../Qt/5.9.9/msvc2017_64/lib/cmake/Qt5Widgets/Qt5WidgetsConfig.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\..\..\..\Qt\5.9.9\msvc2017_64\lib\cmake\Qt5Widgets\"/>
+		</Unit>
+		<Unit filename="C:/Users/granoh1/projects/ncgit/code/vhelix/src/vHelix/../../../../../../../../Qt/5.9.9/msvc2017_64/lib/cmake/Qt5Widgets/Qt5WidgetsConfigExtras.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\..\..\..\Qt\5.9.9\msvc2017_64\lib\cmake\Qt5Widgets\"/>
+		</Unit>
+		<Unit filename="C:/Users/granoh1/projects/ncgit/code/vhelix/src/vHelix/../../../../../../../../Qt/5.9.9/msvc2017_64/lib/cmake/Qt5Widgets/Qt5WidgetsConfigVersion.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\..\..\..\Qt\5.9.9\msvc2017_64\lib\cmake\Qt5Widgets\"/>
+		</Unit>
+		<Unit filename="C:/Users/granoh1/projects/ncgit/code/vhelix/src/vHelix/../../../../../../../../Qt/5.9.9/msvc2017_64/lib/cmake/Qt5Widgets/Qt5WidgetsMacros.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\..\..\..\Qt\5.9.9\msvc2017_64\lib\cmake\Qt5Widgets\"/>
+		</Unit>
+		<Unit filename="C:/Users/granoh1/projects/ncgit/code/vhelix/src/vHelix/../../../../../../../../Qt/5.9.9/msvc2017_64/lib/cmake/Qt53DCore/Qt53DCoreConfig.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\..\..\..\Qt\5.9.9\msvc2017_64\lib\cmake\Qt53DCore\"/>
+		</Unit>
+		<Unit filename="C:/Users/granoh1/projects/ncgit/code/vhelix/src/vHelix/../../../../../../../../Qt/5.9.9/msvc2017_64/lib/cmake/Qt53DCore/Qt53DCoreConfigVersion.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\..\..\..\Qt\5.9.9\msvc2017_64\lib\cmake\Qt53DCore\"/>
+		</Unit>
+		<Unit filename="C:/Users/granoh1/projects/ncgit/code/vhelix/src/vHelix/../../../../../../../../Qt/5.9.9/msvc2017_64/lib/cmake/Qt5Network/Qt5NetworkConfig.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\..\..\..\Qt\5.9.9\msvc2017_64\lib\cmake\Qt5Network\"/>
+		</Unit>
+		<Unit filename="C:/Users/granoh1/projects/ncgit/code/vhelix/src/vHelix/../../../../../../../../Qt/5.9.9/msvc2017_64/lib/cmake/Qt5Network/Qt5NetworkConfigVersion.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\..\..\..\Qt\5.9.9\msvc2017_64\lib\cmake\Qt5Network\"/>
+		</Unit>
+		<Unit filename="C:/Users/granoh1/projects/ncgit/code/vhelix/src/vHelix/../../../../../../../../Qt/5.9.9/msvc2017_64/lib/cmake/Qt5Network/Qt5Network_QGenericEnginePlugin.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\..\..\..\Qt\5.9.9\msvc2017_64\lib\cmake\Qt5Network\"/>
+		</Unit>
+		<Unit filename="C:/Users/granoh1/projects/ncgit/code/vhelix/src/vHelix/../../../../../../../../Qt/5.9.9/msvc2017_64/lib/cmake/Qt53DExtras/Qt53DExtrasConfig.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\..\..\..\Qt\5.9.9\msvc2017_64\lib\cmake\Qt53DExtras\"/>
+		</Unit>
+		<Unit filename="C:/Users/granoh1/projects/ncgit/code/vhelix/src/vHelix/../../../../../../../../Qt/5.9.9/msvc2017_64/lib/cmake/Qt53DExtras/Qt53DExtrasConfigVersion.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\..\..\..\Qt\5.9.9\msvc2017_64\lib\cmake\Qt53DExtras\"/>
+		</Unit>
+		<Unit filename="C:/Users/granoh1/projects/ncgit/code/vhelix/src/vHelix/../../../../../../../../Qt/5.9.9/msvc2017_64/lib/cmake/Qt53DRender/Qt53DRenderConfig.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\..\..\..\Qt\5.9.9\msvc2017_64\lib\cmake\Qt53DRender\"/>
+		</Unit>
+		<Unit filename="C:/Users/granoh1/projects/ncgit/code/vhelix/src/vHelix/../../../../../../../../Qt/5.9.9/msvc2017_64/lib/cmake/Qt53DRender/Qt53DRenderConfigVersion.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\..\..\..\Qt\5.9.9\msvc2017_64\lib\cmake\Qt53DRender\"/>
+		</Unit>
+		<Unit filename="C:/Users/granoh1/projects/ncgit/code/vhelix/src/vHelix/../../../../../../../../Qt/5.9.9/msvc2017_64/lib/cmake/Qt53DRender/Qt53DRender_AssimpSceneImportPlugin.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\..\..\..\Qt\5.9.9\msvc2017_64\lib\cmake\Qt53DRender\"/>
+		</Unit>
+		<Unit filename="C:/Users/granoh1/projects/ncgit/code/vhelix/src/vHelix/../../../../../../../../Qt/5.9.9/msvc2017_64/lib/cmake/Qt53DRender/Qt53DRender_DefaultGeometryLoaderPlugin.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\..\..\..\Qt\5.9.9\msvc2017_64\lib\cmake\Qt53DRender\"/>
+		</Unit>
+		<Unit filename="C:/Users/granoh1/projects/ncgit/code/vhelix/src/vHelix/../../../../../../../../Qt/5.9.9/msvc2017_64/lib/cmake/Qt53DRender/Qt53DRender_GLTFGeometryLoaderPlugin.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\..\..\..\Qt\5.9.9\msvc2017_64\lib\cmake\Qt53DRender\"/>
+		</Unit>
+		<Unit filename="C:/Users/granoh1/projects/ncgit/code/vhelix/src/vHelix/../../../../../../../../Qt/5.9.9/msvc2017_64/lib/cmake/Qt53DRender/Qt53DRender_GLTFSceneExportPlugin.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\..\..\..\Qt\5.9.9\msvc2017_64\lib\cmake\Qt53DRender\"/>
+		</Unit>
+		<Unit filename="C:/Users/granoh1/projects/ncgit/code/vhelix/src/vHelix/../../../../../../../../Qt/5.9.9/msvc2017_64/lib/cmake/Qt53DRender/Qt53DRender_GLTFSceneImportPlugin.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\..\..\..\Qt\5.9.9\msvc2017_64\lib\cmake\Qt53DRender\"/>
+		</Unit>
+		<Unit filename="C:/Users/granoh1/projects/ncgit/code/vhelix/src/vHelix/../../../../../../../../Qt/5.9.9/msvc2017_64/lib/cmake/Qt53DRender/Qt53DRender_Scene2DPlugin.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\..\..\..\Qt\5.9.9\msvc2017_64\lib\cmake\Qt53DRender\"/>
+		</Unit>
+		<Unit filename="C:/Users/granoh1/projects/ncgit/code/vhelix/src/vHelix/../../../../../../../../Qt/5.9.9/msvc2017_64/lib/cmake/Qt53DInput/Qt53DInputConfig.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\..\..\..\Qt\5.9.9\msvc2017_64\lib\cmake\Qt53DInput\"/>
+		</Unit>
+		<Unit filename="C:/Users/granoh1/projects/ncgit/code/vhelix/src/vHelix/../../../../../../../../Qt/5.9.9/msvc2017_64/lib/cmake/Qt53DInput/Qt53DInputConfigVersion.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\..\..\..\Qt\5.9.9\msvc2017_64\lib\cmake\Qt53DInput\"/>
+		</Unit>
+		<Unit filename="C:/Users/granoh1/projects/ncgit/code/vhelix/src/vHelix/../../../../../../../../Qt/5.9.9/msvc2017_64/lib/cmake/Qt5Gamepad/Qt5GamepadConfig.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\..\..\..\Qt\5.9.9\msvc2017_64\lib\cmake\Qt5Gamepad\"/>
+		</Unit>
+		<Unit filename="C:/Users/granoh1/projects/ncgit/code/vhelix/src/vHelix/../../../../../../../../Qt/5.9.9/msvc2017_64/lib/cmake/Qt5Gamepad/Qt5GamepadConfigVersion.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\..\..\..\Qt\5.9.9\msvc2017_64\lib\cmake\Qt5Gamepad\"/>
+		</Unit>
+		<Unit filename="C:/Users/granoh1/projects/ncgit/code/vhelix/src/vHelix/../../../../../../../../Qt/5.9.9/msvc2017_64/lib/cmake/Qt5Gamepad/Qt5Gamepad_QXInputGamepadBackendPlugin.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\..\..\..\Qt\5.9.9\msvc2017_64\lib\cmake\Qt5Gamepad\"/>
+		</Unit>
+		<Unit filename="C:/Users/granoh1/projects/ncgit/code/vhelix/src/vHelix/../../../../../../../../Qt/5.9.9/msvc2017_64/lib/cmake/Qt53DLogic/Qt53DLogicConfig.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\..\..\..\Qt\5.9.9\msvc2017_64\lib\cmake\Qt53DLogic\"/>
+		</Unit>
+		<Unit filename="C:/Users/granoh1/projects/ncgit/code/vhelix/src/vHelix/../../../../../../../../Qt/5.9.9/msvc2017_64/lib/cmake/Qt53DLogic/Qt53DLogicConfigVersion.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\..\..\..\Qt\5.9.9\msvc2017_64\lib\cmake\Qt53DLogic\"/>
+		</Unit>
+		<Unit filename="C:/Users/granoh1/projects/ncgit/code/vhelix/src/vHelix/scaffold_routing_rectification/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\scaffold_routing_rectification\"/>
+		</Unit>
+	</Project>
+</CodeBlocks_project_file>

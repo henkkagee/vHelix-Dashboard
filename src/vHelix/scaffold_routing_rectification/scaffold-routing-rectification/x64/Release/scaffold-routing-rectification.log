@@ -1,0 +1,34 @@
+﻿Build started 27.10.2015 12:18:32.
+     1>Project "C:\Users\mohamma1\Desktop\BScOR\source\development\scaffold-routing-rectification-master\scaffold-routing-rectification\scaffold-routing-rectification.vcxproj" on node 2 (Build target(s)).
+     1>ClCompile:
+         C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin\x86_amd64\CL.exe /c /I"C:\Users\mohamma1\PhysX-3.3.0_PC_SDK_Core\Include" /I../include /Zi /nologo /W3 /WX- /O2 /Oi /GL /D WIN32 /D NDEBUG /D _CONSOLE /D _LIB /D _WINDOWS /D _UNICODE /D UNICODE /Gm- /EHsc /MD /GS /Gy /fp:precise /Zc:wchar_t /Zc:forScope /Fo"x64\Release\\" /Fd"x64\Release\vc120.pdb" /Gd /TP /errorReport:prompt ..\src\main.cpp
+         main.cpp
+     1>C:\Users\mohamma1\Desktop\BScOR\source\development\scaffold-routing-rectification-master\include\ParseSettings.h(19): warning C4996: 'stricmp': The POSIX name for this item is deprecated. Instead, use the ISO C++ conformant name: _stricmp. See online help for details.
+                 C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\string.h(253) : see declaration of 'stricmp'
+       Link:
+         C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin\x86_amd64\link.exe /ERRORREPORT:PROMPT /OUT:"C:\Users\mohamma1\Desktop\BScOR\source\development\scaffold-routing-rectification-master\x64\Release\scaffold-routing-rectification.exe" /INCREMENTAL:NO /NOLOGO /LIBPATH:"C:\Users\mohamma1\PhysX-3.3.0_PC_SDK_Core\Lib\win64" PhysX3_x64.lib PhysXProfileSDK.lib PhysX3Common_x64.lib PhysX3Extensions.lib PhysXVisualDebuggerSDK.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /MANIFEST /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /manifest:embed /DEBUG /PDB:"C:\Users\mohamma1\Desktop\BScOR\source\development\scaffold-routing-rectification-master\x64\Release\scaffold-routing-rectification.pdb" /SUBSYSTEM:CONSOLE /OPT:REF /OPT:ICF /LTCG /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"C:\Users\mohamma1\Desktop\BScOR\source\development\scaffold-routing-rectification-master\x64\Release\scaffold-routing-rectification.lib" /MACHINE:X64 x64\Release\Definition.obj
+         x64\Release\Helix.obj
+         x64\Release\main.obj
+         x64\Release\Physics.obj
+         x64\Release\Scene.obj
+         x64\Release\Utility.obj
+     1>LINK : warning LNK4098: defaultlib 'LIBCMT' conflicts with use of other libs; use /NODEFAULTLIB:library
+         Generating code
+         Finished generating code
+     1>PhysXProfileSDK.lib(PxProfileEventImpl.obj) : warning LNK4099: PDB 'physxprofilesdk.pdb' was not found with 'PhysXProfileSDK.lib(PxProfileEventImpl.obj)' or at 'C:\Users\mohamma1\Desktop\BScOR\source\development\scaffold-routing-rectification-master\x64\Release\physxprofilesdk.pdb'; linking object as if no debug info
+     1>PhysX3Extensions.lib(ExtCpuWorkerThread.obj) : warning LNK4099: PDB 'physx3extensions.pdb' was not found with 'PhysX3Extensions.lib(ExtCpuWorkerThread.obj)' or at 'C:\Users\mohamma1\Desktop\BScOR\source\development\scaffold-routing-rectification-master\x64\Release\physx3extensions.pdb'; linking object as if no debug info
+     1>PhysX3Extensions.lib(ExtDefaultCpuDispatcher.obj) : warning LNK4099: PDB 'physx3extensions.pdb' was not found with 'PhysX3Extensions.lib(ExtDefaultCpuDispatcher.obj)' or at 'C:\Users\mohamma1\Desktop\BScOR\source\development\scaffold-routing-rectification-master\x64\Release\physx3extensions.pdb'; linking object as if no debug info
+     1>PhysX3Extensions.lib(ExtDefaultErrorCallback.obj) : warning LNK4099: PDB 'physx3extensions.pdb' was not found with 'PhysX3Extensions.lib(ExtDefaultErrorCallback.obj)' or at 'C:\Users\mohamma1\Desktop\BScOR\source\development\scaffold-routing-rectification-master\x64\Release\physx3extensions.pdb'; linking object as if no debug info
+     1>PhysX3Extensions.lib(ExtDefaultSimulationFilterShader.obj) : warning LNK4099: PDB 'physx3extensions.pdb' was not found with 'PhysX3Extensions.lib(ExtDefaultSimulationFilterShader.obj)' or at 'C:\Users\mohamma1\Desktop\BScOR\source\development\scaffold-routing-rectification-master\x64\Release\physx3extensions.pdb'; linking object as if no debug info
+     1>PhysX3Extensions.lib(ExtDistanceJoint.obj) : warning LNK4099: PDB 'physx3extensions.pdb' was not found with 'PhysX3Extensions.lib(ExtDistanceJoint.obj)' or at 'C:\Users\mohamma1\Desktop\BScOR\source\development\scaffold-routing-rectification-master\x64\Release\physx3extensions.pdb'; linking object as if no debug info
+     1>PhysX3Extensions.lib(ExtDistanceJointSolverPrep.obj) : warning LNK4099: PDB 'physx3extensions.pdb' was not found with 'PhysX3Extensions.lib(ExtDistanceJointSolverPrep.obj)' or at 'C:\Users\mohamma1\Desktop\BScOR\source\development\scaffold-routing-rectification-master\x64\Release\physx3extensions.pdb'; linking object as if no debug info
+     1>PhysX3Extensions.lib(ExtJoint.obj) : warning LNK4099: PDB 'physx3extensions.pdb' was not found with 'PhysX3Extensions.lib(ExtJoint.obj)' or at 'C:\Users\mohamma1\Desktop\BScOR\source\development\scaffold-routing-rectification-master\x64\Release\physx3extensions.pdb'; linking object as if no debug info
+     1>PhysX3Extensions.lib(ExtPvdClientImpl.obj) : warning LNK4099: PDB 'physx3extensions.pdb' was not found with 'PhysX3Extensions.lib(ExtPvdClientImpl.obj)' or at 'C:\Users\mohamma1\Desktop\BScOR\source\development\scaffold-routing-rectification-master\x64\Release\physx3extensions.pdb'; linking object as if no debug info
+     1>PhysX3Extensions.lib(ExtRigidBodyExt.obj) : warning LNK4099: PDB 'physx3extensions.pdb' was not found with 'PhysX3Extensions.lib(ExtRigidBodyExt.obj)' or at 'C:\Users\mohamma1\Desktop\BScOR\source\development\scaffold-routing-rectification-master\x64\Release\physx3extensions.pdb'; linking object as if no debug info
+     1>PhysX3Extensions.lib(ExtSimpleFactory.obj) : warning LNK4099: PDB 'physx3extensions.pdb' was not found with 'PhysX3Extensions.lib(ExtSimpleFactory.obj)' or at 'C:\Users\mohamma1\Desktop\BScOR\source\development\scaffold-routing-rectification-master\x64\Release\physx3extensions.pdb'; linking object as if no debug info
+         scaffold-routing-rectification.vcxproj -> C:\Users\mohamma1\Desktop\BScOR\source\development\scaffold-routing-rectification-master\x64\Release\scaffold-routing-rectification.exe
+     1>Done Building Project "C:\Users\mohamma1\Desktop\BScOR\source\development\scaffold-routing-rectification-master\scaffold-routing-rectification\scaffold-routing-rectification.vcxproj" (Build target(s)).
+
+Build succeeded.
+
+Time Elapsed 00:00:04.29

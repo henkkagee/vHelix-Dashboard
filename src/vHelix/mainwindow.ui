@@ -1,0 +1,243 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>MainWindow</class>
+ <widget class="QMainWindow" name="MainWindow">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>1500</width>
+    <height>900</height>
+   </rect>
+  </property>
+  <property name="sizePolicy">
+   <sizepolicy hsizetype="MinimumExpanding" vsizetype="MinimumExpanding">
+    <horstretch>0</horstretch>
+    <verstretch>0</verstretch>
+   </sizepolicy>
+  </property>
+  <property name="windowTitle">
+   <string>MainWindow</string>
+  </property>
+  <widget class="QWidget" name="centralwidget">
+   <property name="sizePolicy">
+    <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+     <horstretch>0</horstretch>
+     <verstretch>0</verstretch>
+    </sizepolicy>
+   </property>
+   <layout class="QGridLayout" name="gridLayout">
+    <item row="0" column="0">
+     <layout class="QHBoxLayout" name="horizontalLayout" stretch="1,2">
+      <property name="sizeConstraint">
+       <enum>QLayout::SetNoConstraint</enum>
+      </property>
+      <item>
+       <layout class="QVBoxLayout" name="verticalLayout_3">
+        <property name="sizeConstraint">
+         <enum>QLayout::SetNoConstraint</enum>
+        </property>
+        <item>
+         <widget class="Console" name="plainTextEdit">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Minimum" vsizetype="Expanding">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="DirView" name="treeView">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </item>
+      <item>
+       <widget class="GraphicsView" name="widget" native="true">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </item>
+    <item row="1" column="0">
+     <widget class="QLabel" name="label">
+      <property name="text">
+       <string/>
+      </property>
+     </widget>
+    </item>
+   </layout>
+  </widget>
+  <widget class="QMenuBar" name="menubar">
+   <property name="geometry">
+    <rect>
+     <x>0</x>
+     <y>0</y>
+     <width>1500</width>
+     <height>21</height>
+    </rect>
+   </property>
+   <widget class="QMenu" name="menuvHelix">
+    <property name="title">
+     <string>File</string>
+    </property>
+    <addaction name="actionOpen"/>
+    <addaction name="actionSave_current_model"/>
+    <addaction name="actionExit"/>
+   </widget>
+   <widget class="QMenu" name="menuRoute">
+    <property name="title">
+     <string>Route</string>
+    </property>
+    <addaction name="actionAtrail"/>
+   </widget>
+   <widget class="QMenu" name="menuRelaxation">
+    <property name="title">
+     <string>Relaxation</string>
+    </property>
+    <addaction name="actionPhysX"/>
+   </widget>
+   <widget class="QMenu" name="menuEdit">
+    <property name="title">
+     <string>Edit</string>
+    </property>
+    <addaction name="actionAutofill_strands"/>
+    <addaction name="actionAdd_sequence"/>
+   </widget>
+   <widget class="QMenu" name="menuExport">
+    <property name="title">
+     <string>Export</string>
+    </property>
+    <addaction name="actionExport_selection"/>
+    <addaction name="actionExport_strand_sequences"/>
+   </widget>
+   <widget class="QMenu" name="menuHelp">
+    <property name="title">
+     <string>Help</string>
+    </property>
+    <addaction name="actionInstructions"/>
+   </widget>
+   <widget class="QMenu" name="menuoxDNA">
+    <property name="title">
+     <string>oxDNA</string>
+    </property>
+    <addaction name="actionOpen_selection_in_viewer"/>
+   </widget>
+   <addaction name="menuvHelix"/>
+   <addaction name="menuRoute"/>
+   <addaction name="menuRelaxation"/>
+   <addaction name="menuEdit"/>
+   <addaction name="menuExport"/>
+   <addaction name="menuoxDNA"/>
+   <addaction name="menuHelp"/>
+  </widget>
+  <widget class="QStatusBar" name="statusbar"/>
+  <action name="actionOpen">
+   <property name="text">
+    <string>Import</string>
+   </property>
+  </action>
+  <action name="actionExit">
+   <property name="text">
+    <string>Exit</string>
+   </property>
+  </action>
+  <action name="actionbscor">
+   <property name="text">
+    <string>Bscor</string>
+   </property>
+  </action>
+  <action name="actionsptree">
+   <property name="text">
+    <string>Sptree</string>
+   </property>
+  </action>
+  <action name="actionAutofill_strands">
+   <property name="text">
+    <string>Autofill staple strand gaps</string>
+   </property>
+  </action>
+  <action name="actionAdd_sequence">
+   <property name="text">
+    <string>Add sequence</string>
+   </property>
+  </action>
+  <action name="actionPhysX">
+   <property name="text">
+    <string>PhysX</string>
+   </property>
+  </action>
+  <action name="actionConvert">
+   <property name="text">
+    <string>Convert...</string>
+   </property>
+  </action>
+  <action name="actionAtrail">
+   <property name="text">
+    <string>Atrail</string>
+   </property>
+  </action>
+  <action name="actionExport_selection">
+   <property name="text">
+    <string>Export selection to oxDNA</string>
+   </property>
+  </action>
+  <action name="actionInstructions">
+   <property name="text">
+    <string>Instructions</string>
+   </property>
+  </action>
+  <action name="actionEstimate_nucleotide_use">
+   <property name="text">
+    <string>Estimate nucleotide use</string>
+   </property>
+  </action>
+  <action name="actionOpen_selection_in_viewer">
+   <property name="text">
+    <string>Open OxDNA viewer</string>
+   </property>
+  </action>
+  <action name="actionExport_strand_sequences">
+   <property name="text">
+    <string>Export strand sequences</string>
+   </property>
+  </action>
+  <action name="actionSave_current_model">
+   <property name="text">
+    <string>Save current model</string>
+   </property>
+  </action>
+ </widget>
+ <customwidgets>
+  <customwidget>
+   <class>Console</class>
+   <extends>QPlainTextEdit</extends>
+   <header>console.h</header>
+  </customwidget>
+  <customwidget>
+   <class>DirView</class>
+   <extends>QTreeView</extends>
+   <header location="global">dirview.h</header>
+  </customwidget>
+  <customwidget>
+   <class>GraphicsView</class>
+   <extends>QWidget</extends>
+   <header>graphicsview.h</header>
+   <container>1</container>
+  </customwidget>
+ </customwidgets>
+ <resources/>
+ <connections/>
+</ui>
