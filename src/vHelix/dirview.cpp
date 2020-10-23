@@ -10,9 +10,9 @@ DirView::DirView(QWidget *parent)
     : QTreeView(parent)
 {
     model = new QFileSystemModel;
-    model->setRootPath(QDir::currentPath() + "/../../workspace");
+    model->setRootPath(QDir::currentPath() + "/../workspace");
     setModel(model);
-    const QModelIndex rootIndex = model->index(QDir::currentPath() + "/../../workspace");
+    const QModelIndex rootIndex = model->index(QDir::currentPath() + "/../workspace");
     setRootIndex(rootIndex);
     setSelectionMode(QAbstractItemView::ExtendedSelection);
 

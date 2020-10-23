@@ -1,6 +1,10 @@
 /*
  *  Copyright (c) 2020 Henrik Granö
  *  See the license in the root directory for the full notice
+ *
+ *  Qt3D view for 3D graphics.
+ *
+ *  Currently old entities are apparently not completely unloaded when loading a new model, resulting in even poorer performance.
 */
 
 #include "graphicsview.h"
@@ -18,7 +22,7 @@ GraphicsView::GraphicsView(QWidget *parent)
 
     rootEntity_ = new Qt3DCore::QEntity();
 
-    // enable depth testing for all renderstates. This is at least a temporary fix for Qt3D 5.9.9.
+    // enable depth testing for all renderstates. This is at least a temporary fix for Qt3D 5.9.9 where depth testing is missing.
     Qt3DRender::QMaterial *  rootMaterial   = new Qt3DRender::QMaterial(rootEntity_);
             Qt3DRender::QEffect *effect = rootMaterial->effect();
             if (effect)
@@ -141,7 +145,7 @@ void GraphicsView::addCylinder(const QVector3D &translation, const QQuaternion &
     material->setDiffuse(color);
     material->setAmbient(color);
 
-    // enable depth testing for all renderstates. This is at least a temporary fix for Qt3D 5.9.9.
+    // enable depth testing for all renderstates. This is at least a temporary fix for Qt3D 5.9.9 where depth testing is missing.
     Qt3DRender::QEffect *effect = material->effect();
     if (effect)
     {
@@ -227,34 +231,34 @@ void GraphicsView::drawHelices(std::vector<Model::Helix> helices)
 void GraphicsView::drawStrands(std::vector<Model::Strand> strands)
 {
     // Clear previous entities
-    entities.clear();
+
     for (unsigned long long i = 0; i < entities.size(); i++) {
         entities[i]->setParent((Qt3DCore::QEntity*) nullptr);
         entities[i]->setEnabled(false);
-        delete (entities[i]);
+        entities[i]->~QEntity();
     }
-    std::vector<QColor> colours {QRgb(0x385B83), QRgb(0xff9933), QRgb(0x009973)};
-    QColor scaffold_colour = QRgb(0x3366cc);
+    entities.clear();
+    std::vector<QColor> colours {QRgb(0xC19068), QRgb(0xff9933)};
+    QColor scaffold_colour = QRgb(0x385B83);
     QColor colour;
     unsigned long long int num = 0;
     unsigned int col = 0;
     for (auto &s : strands) {
-        if (col >= colours.size()) {
-            col = 0;
-        }
         if (s.scaffold_) {
             colour = scaffold_colour;
         }
         else {
             colour = colours[col];
-            col++;
         }
         for (unsigned long long int i = 0; i < s.bases_.size(); i++) {
-            addSphere(s.bases_[i]->position, QQuaternion(), colours[col]);
+            addSphere(s.bases_[i]->position, QQuaternion(), colour);
             drawLine(s.bases_[i]->position, s.bases_[i]->opposite->position, QRgb(0x000000), rootEntity_);
         }
         num++;
         col++;
+        if (col > colours.size()-1) {
+            col = 0;
+        }
     }
 }
 
@@ -330,6 +334,6 @@ void GraphicsView::clear() {
         if (object->objectName() == "sphere" || object->objectName() == "cylinder" || object->objectName() == "line") {
             object->setParent(nullptr);
         }
-        delete object;
+        //delete object;
     }
 }

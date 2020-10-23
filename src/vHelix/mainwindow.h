@@ -1,6 +1,10 @@
 /*
  *  Copyright (c) 2020 Henrik Granö
  *  See the license in the root directory for the full notice
+ *  This file contains the mainwindow class responsible for the user interface, dialogs and communication to different parts of the program. Most logic functions are implemented
+ *  in vHelix.cpp but sequence setting and export implementations are placed here. See main.cpp for the communication between this class and vhelix.cpp.
+ *
+ *  This class also communicates with the file parser and the custom ui elements for 3D graphics, console and directory tree window.
 */
 
 #ifndef MAINWINDOW_H
@@ -10,6 +14,8 @@
 #include <sstream>
 #include <iostream>
 #include <random>
+#include <cmath>
+#include <numeric>
 
 #include <QMainWindow>
 #include <QFile>

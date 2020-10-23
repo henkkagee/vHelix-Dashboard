@@ -1,6 +1,8 @@
 /*
  *  Copyright (c) 2020 Henrik Granö
  *  See the license in the root directory for the full notice
+ *
+ * Class for routing, relaxation, Python API interfacing and some directory setting.
 */
 
 #include "vhelix.h"
@@ -15,7 +17,7 @@
 #include "scaffold_routing_rectification/Relaxmain.h"
 #include "boost/lexical_cast.hpp"
 
-// Python.h includes "slots" as well resulting in a conflict.
+// Python.h includes "slots" as well, resulting in a conflict. This fixes the issue.
 #pragma push_macro("slots")
 #undef slots
 #define MS_NO_COREDLL
@@ -38,7 +40,8 @@ vHelix::vHelix() : meshdir_(""), mesh_(""), workspace_dir_(""), plydata_(nullptr
     while (std::getline(path, segment, '\\')) {
         seglist.push_back(segment);
     }
-    seglist.pop_back(); seglist.pop_back();
+    seglist.pop_back();
+    // seglist.pop_back();  // not used in public release
     seglist.push_back(std::string("workspace"));
     workspace_dir_ = std::accumulate(std::begin(seglist), std::end(seglist), std::string(),
                              [](std::string &ss, std::string &s)
@@ -90,6 +93,7 @@ void vHelix::setSelection(std::vector<std::string> vec)
     fileSelection_ = vec;
 }
 
+// used in openPLY
 bool vHelixFunc::compareEdges(std::vector<int> i, std::vector<int> j)
 {
     return i[0] < j[0];
@@ -98,7 +102,7 @@ bool vHelixFunc::compareEdges(std::vector<int> i, std::vector<int> j)
 // Open ascii .ply file for file info (used to estimate base use in the physical relaxation menu)
 void vHelix::openPLY() {
     std::stringstream sstr;
-    sstr << vHelixFunc::ExePath() << "/../../workspace/" << mesh_;
+    sstr << vHelixFunc::ExePath() << "/../workspace/" << mesh_;
     std::string input_ply_file = sstr.str();
     std::ifstream inply(input_ply_file);
     int vertexnr, vertices, facenr, faces, content;
@@ -217,7 +221,7 @@ const vHelixFunc::plyData vHelix::getPlyData()
     return *plydata_;
 }
 
-// Send text to UI console
+// Receive commands and data from MainWindow. QVariant is a convenient template data type for this.
 void vHelix::action_(std::string cmd, QVector<QVariant> arg)
 {
     if (cmd.find("Atrail") != std::string::npos) {
@@ -336,7 +340,7 @@ void vHelix::atrail_()
     }
     sendToConsole_("\n\nRunning ply_to_dimacs\n");
     std::stringstream sstr;
-    std::string dir("../../workspace/");
+    std::string dir("../workspace/");
     sstr << dir << mesh_;
     std::string name("ply_to_dimacs");
     std::string temp(sstr.str());
@@ -444,6 +448,7 @@ void vHelix::atrail_()
     atrail_verify::main(3, argv6, *this);
 }
 
+// convert rpoly to oxdna
 void vHelix::export_(const QVector<QVariant> &args)
 {
     // Python scripts run through the C++/Python API
@@ -539,6 +544,7 @@ void vHelix::export_(const QVector<QVariant> &args)
     }
 }
 
+// convert obj to ply
 void vHelix::convert_(const std::string& format)
 {
     // Python scripts run through the C++/Python API
@@ -573,7 +579,7 @@ void vHelix::convert_(const std::string& format)
             std::string plyfile(file);
             plyfile.resize(plyfile.size() - 3);
             plyfile.append("ply");
-            sstr << path << "/../../workspace/" << plyfile;
+            sstr << path << "/../workspace/" << plyfile;
             std::string output_file = sstr.str();
             PyObject *pValue2 = PyUnicode_FromString(output_file.c_str());
             PyTuple_SetItem(pArgs, 1, pValue2);
@@ -635,7 +641,7 @@ void vHelix::physX_relaxation_(const QVector<QVariant> args)
                       std::string &visual_debugger)
     */
     std::stringstream sstr;
-    sstr << vHelixFunc::ExePath() << "/../../workspace/" << mesh_;
+    sstr << vHelixFunc::ExePath() << "/../workspace/" << mesh_;
     std::string input = sstr.str();
     std::string output = input;
     output.resize(output.size() - 3);

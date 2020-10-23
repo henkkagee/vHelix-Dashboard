@@ -1,6 +1,8 @@
 /*
  *  Copyright (c) 2020 Henrik Granö
  *  See the license in the root directory for the full notice
+ *
+ * Base, Helix and Strand data classes.
 */
 
 #include "model.h"

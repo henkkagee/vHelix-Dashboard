@@ -1,6 +1,8 @@
 /*
  *  Copyright (c) 2020 Henrik Granö
  *  See the license in the root directory for the full notice
+ *
+ *  Class for parsing rpoly and oxdna file formats. The class should be renamed to just Parser.
 */
 
 #ifndef RPOLYPARSER_H

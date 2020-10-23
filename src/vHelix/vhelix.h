@@ -1,6 +1,8 @@
 /*
  *  Copyright (c) 2020 Henrik Granö
  *  See the license in the root directory for the full notice
+ *
+ * Class for routing, relaxation, Python API interfacing and some directory setting.
 */
 
 #ifndef VHELIX_H

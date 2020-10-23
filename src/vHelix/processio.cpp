@@ -1,6 +1,8 @@
 /*
  *  Copyright (c) 2020 Henrik Granö
  *  See the license in the root directory for the full notice
+ *
+ *  Currently not used.
 */
 
 #include "processio.h"

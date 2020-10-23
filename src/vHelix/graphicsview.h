@@ -1,6 +1,8 @@
 /*
  *  Copyright (c) 2020 Henrik Granö
  *  See the license in the root directory for the full notice
+ *
+ * Qt3D view for 3D graphics.
 */
 
 #ifndef GRAPHICSVIEW_H
