@@ -1,7 +1,0 @@
-/home/henkka/Desktop/vhelix/vHelix-Dashboard/src/build/CMakeFiles/rebuild_cache.dir
-/home/henkka/Desktop/vhelix/vHelix-Dashboard/src/build/CMakeFiles/edit_cache.dir
-/home/henkka/Desktop/vhelix/vHelix-Dashboard/src/build/CMakeFiles/vHelix.dir
-/home/henkka/Desktop/vhelix/vHelix-Dashboard/src/build/CMakeFiles/vHelix_autogen.dir
-/home/henkka/Desktop/vhelix/vHelix-Dashboard/src/build/scaffold_routing_rectification/CMakeFiles/rebuild_cache.dir
-/home/henkka/Desktop/vhelix/vHelix-Dashboard/src/build/scaffold_routing_rectification/CMakeFiles/edit_cache.dir
-/home/henkka/Desktop/vhelix/vHelix-Dashboard/src/build/scaffold_routing_rectification/CMakeFiles/PXPHYSICS.dir

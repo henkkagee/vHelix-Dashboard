@@ -11,10 +11,11 @@ set(CMAKE_AUTORCC ON)
 set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-set(Qt53DExtras_DIR "/home/Qt599/5.9.9/gcc_64/lib/cmake/Qt53DExtras")
-set(Qt5Core_DIR "/home/Qt599/5.9.9/gcc_64/lib/cmake/Qt5Core")
-set(Qt5_DIR "/home/Qt599/5.9.9/gcc_64/lib/cmake/Qt5")
-set(QT_QMAKE_EXECUTABLE "/home/Qt599/5.9.9/gcc_64/bin/qmake")
+# if you need to configure separate locations for Qt libs you can do it like this:
+#set(Qt53DExtras_DIR "/home/Qt599/5.9.9/gcc_64/lib/cmake/Qt53DExtras")
+#set(Qt5Core_DIR "/home/Qt599/5.9.9/gcc_64/lib/cmake/Qt5Core")
+#set(Qt5_DIR "/home/Qt599/5.9.9/gcc_64/lib/cmake/Qt5")
+#set(QT_QMAKE_EXECUTABLE "/home/Qt599/5.9.9/gcc_64/bin/qmake")
 
 #set(CMAKE_PREFIX_PATH "/usr/lib/x86_64-linux-gnu")
 
@@ -291,6 +292,5 @@ set_property(TARGET vHelix PROPERTY
 target_link_libraries(vHelix PRIVATE Qt5::Widgets
     Qt5::3DInput Qt5::3DRender Qt5::3DExtras python3.8
     PhysX3_x64 PhysX3Common_x64 PhysX3Extensions  PhysXProfileSDK
-    PhysX3CharacterKinematic_x64 PhysX3Cooking_x64
+    PhysX3CharacterKinematic_x64 PhysX3Cooking_x64 lemon
     )
-# lemon   python38
