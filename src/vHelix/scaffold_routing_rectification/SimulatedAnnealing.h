@@ -3,6 +3,7 @@
 
 #include <cmath>
 #include <iostream>
+#include <functional>
 
 // Pseudo code from http://en.wikipedia.org/wiki/Simulated_annealing#Pseudocode
 
@@ -67,7 +68,7 @@ void simulated_annealing(
 template<typename EnergyT, typename TemperatureT>
 struct probability_functor : std::function<float(EnergyT, EnergyT, TemperatureT)> {
 	inline float operator()(const EnergyT & e, const EnergyT & enew, const TemperatureT & T) const {
-		return enew < e ? result_type(1) : exp(result_type(e - enew) / T);
+        return enew < e ? probability_functor::result_type(1) : exp(probability_functor::result_type(e - enew) / T);
 	}
 };
 

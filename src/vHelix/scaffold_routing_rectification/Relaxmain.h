@@ -43,7 +43,7 @@ void gradient_descent(scene & mesh, physics & phys, int minbasecount, StoreBestF
 
 
 
-void handle_exit();
+static void handle_exit();
 
 /*
  * Does a simple rectification of the structure without modification.

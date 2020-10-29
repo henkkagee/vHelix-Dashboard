@@ -51,19 +51,23 @@ void Helix::createRigidBody(physics & phys, int bases, const physics::transform_
 	const physics::real_type offset(physics::real_type(DNA::RADIUS - radius + DNA::SPHERE_RADIUS));
 
 	const physics::sphere_geometry_type sphereGeometry(radius);
+    std::pair<physx::PxSphereGeometry, physx::PxTransform> spherePhys1 = std::make_pair(sphereGeometry, physics::transform_type(physics::vec3_type(0, offset, -length / 2 + radius)));
+    std::pair<physx::PxSphereGeometry, physx::PxTransform> spherePhys2 = std::make_pair(sphereGeometry, physics::transform_type(physics::quaternion_type(physics::real_type(toRadians(-DNA::OPPOSITE_ROTATION)), physics::vec3_type(0, 0, 1)).rotate(physics::vec3_type(0, offset, -length / 2 + radius))));
+    std::pair<physx::PxSphereGeometry, physx::PxTransform> spherePhys3 = std::make_pair(sphereGeometry, physics::transform_type(physics::quaternion_type(physics::real_type(toRadians(DNA::PITCH * bases)), physics::vec3_type(0, 0, 1)).rotate(physics::vec3_type(0, offset, length / 2 - radius))));
+    std::pair<physx::PxSphereGeometry, physx::PxTransform> spherePhys4 = std::make_pair(sphereGeometry, physics::transform_type(physics::quaternion_type(physics::real_type(toRadians(DNA::PITCH * bases - DNA::OPPOSITE_ROTATION)), physics::vec3_type(0, 0, 1)).rotate(physics::vec3_type(0, offset, length / 2 - radius))));
 	if (length > DNA::RADIUS_PLUS_SPHERE_RADIUS * 2) {
 		rigidBody = phys.create_rigid_body(transform, settings.density,
 			std::make_pair(physics::capsule_geometry_type(physics::real_type(DNA::RADIUS_PLUS_SPHERE_RADIUS), length / 2 - physics::real_type(DNA::RADIUS_PLUS_SPHERE_RADIUS)), physics::transform_type(physics::quaternion_type(physics::real_type(M_PI_2), kNegYAxis))),
-			std::make_pair(sphereGeometry, physics::transform_type(physics::vec3_type(0, offset, -length / 2 + radius))),
-			std::make_pair(sphereGeometry, physics::transform_type(physics::quaternion_type(physics::real_type(toRadians(-DNA::OPPOSITE_ROTATION)), physics::vec3_type(0, 0, 1)).rotate(physics::vec3_type(0, offset, -length / 2 + radius)))),
-			std::make_pair(sphereGeometry, physics::transform_type(physics::quaternion_type(physics::real_type(toRadians(DNA::PITCH * bases)), physics::vec3_type(0, 0, 1)).rotate(physics::vec3_type(0, offset, length / 2 - radius)))),
-			std::make_pair(sphereGeometry, physics::transform_type(physics::quaternion_type(physics::real_type(toRadians(DNA::PITCH * bases - DNA::OPPOSITE_ROTATION)), physics::vec3_type(0, 0, 1)).rotate(physics::vec3_type(0, offset, length / 2 - radius)))));
+            spherePhys1,
+            spherePhys2,
+            spherePhys3,
+            spherePhys4);
 	} else {
 		rigidBody = phys.create_rigid_body(transform, settings.density,
-			std::make_pair(sphereGeometry, physics::transform_type(physics::vec3_type(0, offset, -length / 2 + radius))),
-			std::make_pair(sphereGeometry, physics::transform_type(physics::quaternion_type(physics::real_type(toRadians(-DNA::OPPOSITE_ROTATION)), physics::vec3_type(0, 0, 1)).rotate(physics::vec3_type(0, offset, -length / 2 + radius)))),
-			std::make_pair(sphereGeometry, physics::transform_type(physics::quaternion_type(physics::real_type(toRadians(DNA::PITCH * bases)), physics::vec3_type(0, 0, 1)).rotate(physics::vec3_type(0, offset, length / 2 - radius)))),
-			std::make_pair(sphereGeometry, physics::transform_type(physics::quaternion_type(physics::real_type(toRadians(DNA::PITCH * bases - DNA::OPPOSITE_ROTATION)), physics::vec3_type(0, 0, 1)).rotate(physics::vec3_type(0, offset, length / 2 - radius)))));
+                                           spherePhys1,
+                                           spherePhys2,
+                                           spherePhys3,
+                                           spherePhys4);
 	}
 	assert(rigidBody != nullptr);
 

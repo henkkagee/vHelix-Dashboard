@@ -78,6 +78,7 @@ void MainWindow::on_actionOpen_triggered()
     std::string str = filename.toStdString();
     std::ostringstream sstr;
     sstr << "Mesh File '" << str << "' opened" << std::endl << std::endl;
+    std::cout << "path: " << str << std::endl << std::flush;
     if (!str.empty()) {
         sendMesh_(str);
         printToConsole_(sstr.str());
@@ -170,12 +171,11 @@ void MainWindow::on_treeView_clicked(const QModelIndex &index)
         path = ui_->treeView->getModel()->filePath(selectedIndex);
         i++;
         std::string pathStr;
-        if (_WINDOWS) {
-            pathStr = path.toLocal8Bit().constData();
-        }
-        else {
-            pathStr = path.toUtf8().constData();
-        }
+#if defined(__linux__) || defined(__APPLE__)
+        pathStr = path.toUtf8().constData();
+#else
+        pathStr = path.toLocal8Bit().constData();
+#endif
         for (auto j : selection_) {
             if (pathStr == j) {
                 continue;
@@ -196,15 +196,13 @@ void MainWindow::on_treeView_doubleClicked(const QModelIndex &index)
     QString filetype = ui_->treeView->getModel()->type(index);
     std::string pathStr;
     std::string typeStr;
-    if (_WINDOWS) {
-        pathStr = path.toLocal8Bit().constData();
-        typeStr = filetype.toLocal8Bit().constData();
-    }
-    else {
-        pathStr = path.toUtf8().constData();
-        typeStr = filetype.toUtf8().constData();
-    }
-
+#if defined(__linux__) || defined(__APPLE__)
+    pathStr = path.toUtf8().constData();
+    typeStr = filetype.toUtf8().constData();
+#elif defined(_WIN32)
+    pathStr = path.toLocal8Bit().constData();
+    typeStr = filetype.toLocal8Bit().constData();
+#endif
     if (typeStr.find("rpoly") != std::string::npos) {
         if (FORMAT_MODE == 0) {         // .rpoly file format
             RpolyDialog dialog(this);
@@ -410,12 +408,11 @@ void MainWindow::on_actionExport_strand_sequences_triggered()
         }
         std::stringstream message;
         std::string cfilename;
-        if (_WINDOWS) {
-            cfilename = fileName.toLocal8Bit().constData();
-        }
-        else {
-            cfilename = fileName.toUtf8().constData();
-        }
+#if defined(__linux__) || defined(__APPLE__)
+        cfilename = fileName.toUtf8().constData();
+#elif defined(_WIN32)
+        cfilename = fileName.toLocal8Bit().constData();
+#endif
         message << "\nWrote strands to " << cfilename << std::endl;
         std::string msg_temp = message.str();
         console_->write_(msg_temp);
@@ -561,12 +558,11 @@ void MainWindow::on_actionSave_current_model_triggered()
         }
         std::stringstream message;
         std::string cfilename;
-        if (_WINDOWS) {
-            cfilename = fileName.toLocal8Bit().constData();
-        }
-        else {
-            cfilename = fileName.toUtf8().constData();
-        }
+#if defined(__linux__) || defined(__APPLE__)
+        cfilename = fileName.toUtf8().constData();
+#elif defined(_WIN32)
+        cfilename = fileName.toLocal8Bit().constData();
+#endif
         message << "\nWrote current helices, strands, connections and bases to " << cfilename << std::endl;
         std::string msg_temp = message.str();
         console_->write_(msg_temp);
@@ -609,12 +605,11 @@ void RelaxDialog::getOpts(double &scaling, int &iterations, bool &discretize_len
     // -------------------------------------
     // UTF-8 COMPATIBILITY std::string utf8_text = qs.toUtf8().constData(); ?
     // -------------------------------------
-    if (_WINDOWS) {
-        visual_debugger = ret.toLocal8Bit().constData();
-    }
-    else {
-        visual_debugger = ret.toUtf8().constData();
-    }
+#if defined(__linux__) || defined(__APPLE__)
+    visual_debugger = ret.toUtf8().constData();
+#else
+    visual_debugger = ret.toLocal8Bit().constData();
+#endif
 }
 
 void RelaxDialog::on_pushButton_clicked()
@@ -668,12 +663,12 @@ std::string SequenceDialog::getSequence()
 {
     QString txt = ui_.plainTextEdit->toPlainText();
     std::string ret = std::string("");
-    if (_WINDOWS) {
+#if defined(__linux__)  || defined(__APPLE__)
+    ret = txt.toUtf8().constData();
+#elif defined(_WIN32)
         ret = txt.toLocal8Bit().constData();
     }
-    else {
-        ret = txt.toUtf8().constData();
-    }
+#endif
     if (!ret.size()) {
         // m13mp18
         if (ui_.radioButton->isChecked()) {

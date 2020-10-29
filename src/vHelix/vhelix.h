@@ -15,7 +15,7 @@
 #include <QVariant>
 
 #include <iostream>
-#include <processio.h>
+//#include <processio.h>
 
 namespace vHelixFunc {
     std::string ExePath();

@@ -99,13 +99,13 @@ bool scene::setupHelices(physics & phys) {
 
 	for (std::vector<Edge>::const_iterator it(edges.begin()); it != edges.end(); ++it) {
 		for (int i = 0; i < 2; ++i)
-			vertices[it->vertices[i]].neighbor_edges.push_back(Vertex::Edge(unsigned int(std::distance(edges.cbegin(), it))));
+            vertices[it->vertices[i]].neighbor_edges.push_back(Vertex::Edge((unsigned int)(std::distance(edges.cbegin(), it))));
 	}
 
 	// Calculate vertex normal and edge angles.
 	for (std::vector<Vertex>::iterator vertex_it(vertices.begin()); vertex_it != vertices.end(); ++vertex_it) {
 		Vertex & vertex(*vertex_it);
-		const unsigned int vertexIndex(unsigned int(std::distance(vertices.begin(), vertex_it)));
+        const unsigned int vertexIndex((unsigned int)((std::distance(vertices.begin(), vertex_it))));
 
 		vertex.normal = kZeroVec;
 		for (Vertex::NeighborContainer::const_iterator it(vertex.neighbor_edges.begin()); it != vertex.neighbor_edges.end(); ++it) {
@@ -132,7 +132,7 @@ bool scene::setupHelices(physics & phys) {
 	for (std::vector<unsigned int>::const_iterator it(path.begin()); it != path.end(); ++it) {
 		const std::vector<unsigned int>::const_iterator next_it(circular_increment(it, path));
 		const Edge edge(*it, *next_it);
-		const unsigned int it_offset(unsigned int(std::distance(path.cbegin(), it)));
+        const unsigned int it_offset((unsigned int)(std::distance(path.cbegin(), it)));
 		assert(duplicates[edge] >= 1);
 
 		if (duplicates[edge] > 1) {
@@ -291,8 +291,8 @@ bool scene::setupHelices(physics & phys) {
 
 	for (std::vector<Edge>::const_iterator it(edges.begin()); it != edges.end(); ++it) {
 		const Vertex & vertex(vertices[it->vertices[1]]);
-		const unsigned int it_offset(unsigned int(std::distance(edges.cbegin(), it)));
-		const unsigned int next_it_offset(unsigned int(circular_index(it_offset + 1, edges.size())));
+        const unsigned int it_offset((unsigned int)(std::distance(edges.cbegin(), it)));
+        const unsigned int next_it_offset((unsigned int)(circular_index(it_offset + 1, edges.size())));
 		const Vertex::NeighborContainer::const_iterator edge_it(vertex.edges_lookup.at(it_offset));
 		const Vertex::NeighborContainer::const_iterator next_edge_it(vertex.edges_lookup.at(next_it_offset));
 		assert(edge_it != vertex.neighbor_edges.end() && next_edge_it != vertex.neighbor_edges.end());
@@ -308,7 +308,7 @@ bool scene::setupHelices(physics & phys) {
 		const ptrdiff_t edge_it_offset(std::distance(vertex.neighbor_edges.cbegin(), edge_it));
 		const size_t staple_edge(circular_index(edge_it_offset + sgn_nozero(delta) * ((std::abs(delta) > 1) * 2 - 1), vertex.neighbor_edges.size()));
 		
-		assert(unsigned int((edge_it_offset + vertex.neighbor_edges.size() + sgn_nozero(delta) * ((std::abs(delta) > 1) * 2 - 1)) % vertex.neighbor_edges.size()) == staple_edge);
+        assert((unsigned int)((edge_it_offset + vertex.neighbor_edges.size() + sgn_nozero(delta) * ((std::abs(delta) > 1) * 2 - 1)) % vertex.neighbor_edges.size()) == staple_edge);
 
         helices[it_offset].attach(phys, helices[(vertex.neighbor_edges.begin() + staple_edge)->index], Phys::Helix::kBackwardFivePrime, Phys::Helix::kBackwardThreePrime);
 	}

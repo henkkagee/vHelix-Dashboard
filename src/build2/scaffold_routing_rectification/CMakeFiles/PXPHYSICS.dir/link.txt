@@ -1,0 +1,2 @@
+/usr/bin/ar qc libPXPHYSICS.a  
+/usr/bin/ranlib libPXPHYSICS.a

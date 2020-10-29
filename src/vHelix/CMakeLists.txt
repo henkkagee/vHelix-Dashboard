@@ -11,21 +11,28 @@ set(CMAKE_AUTORCC ON)
 set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
+set(Qt53DExtras_DIR "/home/Qt599/5.9.9/gcc_64/lib/cmake/Qt53DExtras")
+set(Qt5Core_DIR "/home/Qt599/5.9.9/gcc_64/lib/cmake/Qt5Core")
+set(Qt5_DIR "/home/Qt599/5.9.9/gcc_64/lib/cmake/Qt5")
+set(QT_QMAKE_EXECUTABLE "/home/Qt599/5.9.9/gcc_64/bin/qmake")
+
+#set(CMAKE_PREFIX_PATH "/usr/lib/x86_64-linux-gnu")
+
 # ----------------- You need to config this for your own setup so the linker can  --------------------
 # ------------------------------ find your Python38 installation ------------------------------------
 project(root)
 include_directories(${root_SOURCE_DIR}/include)
 # Here:
-include_directories(C:/Users/Henkka/AppData/Local/Programs/Python/Python38/include)
+include_directories(/usr/include/python3.8)
 link_directories(${root_SOURCE_DIR}/lib)
 # And here
-link_directories(C:/Users/Henkka/AppData/Local/Programs/Python/Python38/libs)
+link_directories(/usr/lib/python3.8/config-3.8-x86_64-linux-gnu)
 link_directories(${root_SOURCE_DIR}/scaffold_routing_rectification)
 add_subdirectory(scaffold_routing_rectification/)
 #add_executable(lemon ${root_SOURCE_DIR})
 #target_link_libraries(lemon)
 
-find_package(Qt5 COMPONENTS Core Gui Widgets REQUIRED 3DCore 3DExtras 3Drender 3DInput)
+find_package(Qt5 COMPONENTS Core Gui Widgets REQUIRED 3DCore 3DInput 3DRender 3DExtras)
 
 if(ANDROID)
   add_library(vHelix SHARED
@@ -37,8 +44,6 @@ if(ANDROID)
     mainwindow.ui
     vhelix.cpp
     vhelix.h
-    processio.h
-    processio.cpp
   )
 else()
   add_executable(vHelix
@@ -55,8 +60,6 @@ else()
     rpolydialog.ui
     vhelix.cpp
     vhelix.h
-    processio.h
-    processio.cpp
     graphicsview.h
     graphicsview.cpp
     rpolyparser.h
@@ -285,10 +288,9 @@ endforeach()
 set_property(TARGET vHelix PROPERTY
              MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Release>:Release>")
 
-target_link_libraries(vHelix PRIVATE Qt5::Widgets Qt5::3DCore Qt5::3DExtras
-    Qt5::3DRender Qt5::3DInput  python38
-    PhysX3_x64 PhysX3Common_x64 PhysX3Extensions PhysXProfileSDK
-    PhysX3_x64 PhysX3Common_x64
+target_link_libraries(vHelix PRIVATE Qt5::Widgets
+    Qt5::3DInput Qt5::3DRender Qt5::3DExtras python3.8
+    PhysX3_x64 PhysX3Common_x64 PhysX3Extensions  PhysXProfileSDK
     PhysX3CharacterKinematic_x64 PhysX3Cooking_x64
     )
-# lemon
+# lemon   python38

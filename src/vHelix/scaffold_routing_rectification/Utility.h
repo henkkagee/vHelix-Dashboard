@@ -14,6 +14,9 @@
 #include <cassert>
 #include <vector>
 #include <iostream>
+#if defined(__linux__) || defined(__APPLE__)
+#include <signal.h>
+#endif
 
 /*
  * Helper string methods
@@ -165,21 +168,24 @@ inline unsigned int numcpucores() {
 
 #else
 
+#include <unistd.h>
+#include <sys/sysinfo.h>
+
 // Do not use, internal only, use setinterrupthandler below.
-template<typename void(*FuncPtr)()>
+template<typename FuncPtr>
 void __interrupthandlerroutine(int s) {
 	FuncPtr();
 }
 
 // Set the interrupt handler ^C by template argument to function pointer.
-template<typename void(*FuncPtr)()>
+template<typename FuncPtr>
 inline void setinterrupthandler() {
 	struct sigaction sigint_handler;
 	sigint_handler.sa_handler = __interrupthandlerroutine<FuncPtr>;
 	sigemptyset(&sigint_handler.sa_mask);
 	sigint_handler.sa_flags = 0;
 
-	sigaction(SIGINT, &sigint_handler, NULL);
+    sigaction(SIGINT, &sigint_handler, NULL);
 }
 
 // Sleep at least the number of given milliseconds.
@@ -194,7 +200,7 @@ inline void seed() {
 }
 
 inline unsigned int numcpucores() {
-	return unsigned int(sysconf(_SC_NPROCESSORS_ONLN));
+    return (unsigned int)(get_nprocs());
 }
 
 #endif /* N _WINDOWS */

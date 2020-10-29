@@ -16,7 +16,12 @@ class parse_settings {
 private:
 	struct string_to_bool : public std::unary_function<const char *, bool> {
 		inline bool operator()(const char *str) const {
-			return stricmp("true", str) == 0;
+#if defined(__linux__) || defined(__APPLE__)
+           return strcasecmp("true", str) == 0;
+#else
+           return stricmp("true", str) == 0;
+#endif
+
 		}
 	};
 

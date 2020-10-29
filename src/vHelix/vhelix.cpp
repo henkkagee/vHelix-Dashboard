@@ -24,11 +24,33 @@
 #include "Python.h"
 #pragma pop_macro("slots")
 
+// MAX_PATH = 256 is not defined outside Windows systems
+#if defined(__linux__) || defined(__APPLE__)
+#define MAX_PATH 1024
+#endif
+
+#include <locale>
+#include <iostream>
+#include <cctype>
+
 std::string vHelixFunc::ExePath() {
     char buffer[MAX_PATH];
+#if defined(__linux) || defined(__APPLE__)
+    char arg1[100];
+    sprintf(arg1, "/proc/%d/exe", getpid());
+    readlink(arg1, buffer, 1024);
+    std::cout << "buffer: " << buffer << std::endl << std::flush;
+    std::string ret = std::string(buffer);
+    while (ret.back() != '/') {
+        ret.pop_back();
+    }
+    ret.pop_back();
+    return ret;
+#else
     GetModuleFileName( NULL, buffer, MAX_PATH );
     std::string::size_type pos = std::string( buffer ).find_last_of( "\\/" );
     return std::string( buffer ).substr( 0, pos);
+#endif
 }
 
 vHelix::vHelix() : meshdir_(""), mesh_(""), workspace_dir_(""), plydata_(nullptr)
@@ -37,16 +59,16 @@ vHelix::vHelix() : meshdir_(""), mesh_(""), workspace_dir_(""), plydata_(nullptr
     std::stringstream path(vHelixFunc::ExePath());
     std::string segment;
     std::vector<std::string> seglist;
-    while (std::getline(path, segment, '\\')) {
+    while (std::getline(path, segment, '/')) {
         seglist.push_back(segment);
     }
     seglist.pop_back();
-    // seglist.pop_back();  // not used in public release
+    // seglist.pop_back();  // not used in public release, the directory structure is different when developing inside Qt Creator
     seglist.push_back(std::string("workspace"));
     workspace_dir_ = std::accumulate(std::begin(seglist), std::end(seglist), std::string(),
                              [](std::string &ss, std::string &s)
                              {
-                                 return ss.empty() ? s : ss + "\\" + s;
+                                 return ss.empty() ? s : ss + "/" + s;
                              });
 }
 
@@ -63,11 +85,6 @@ vHelix::~vHelix()
 void vHelix::readMesh_(std::string mesh)
 {
     meshdir_ = mesh;
-    for (unsigned int i = 0; i < meshdir_.length(); i++) {
-        if (meshdir_[i] == '/') {
-            meshdir_[i] = '\\';
-        }
-    }
     std::stringstream filename(mesh);
     std::string segment;
     std::vector<std::string> seglist;
@@ -75,16 +92,21 @@ void vHelix::readMesh_(std::string mesh)
         seglist.push_back(segment);
     }
     mesh_ = seglist.back();
+    std::cout << "path2: " << mesh_ << std::endl << std::flush;
     if (mesh_.find(".obj") != std::string::npos) {
         convert_("obj_to_ply");
         return;
     }
     // copy the meshfile to workspace directory
     std::stringstream workspace_file;
-    workspace_file << workspace_dir_ << "\\" << mesh_;
+    workspace_file << workspace_dir_ << "/" << mesh_;
     std::string temp(workspace_file.str());
+    std::cout << "meshdir: " << meshdir_ << ", temp: " << temp << std::endl << std::flush;
     if (QFile::copy(meshdir_.c_str(), temp.c_str())) {
-        // success
+        sendToConsole_("Mesh " + meshdir_ + " copied to " + temp + " successfully.\n");
+    }
+    else {
+        sendToConsole_("Mesh copying failed\n");
     }
 }
 
@@ -240,12 +262,11 @@ void vHelix::action_(std::string cmd, QVector<QVariant> arg)
             QString qs;
             std::string s;
             qs = qstr.toString();
-            if (_WINDOWS) {
-                s = qs.toLocal8Bit().constData();
-            }
-            else {
-                s = qs.toUtf8().constData();
-            }
+#if defined(__linux__) || defined(__APPLE__)
+            s = qs.toUtf8().constData();
+#elif _WIN32
+            s = qs.toLocal8Bit().constData();
+#endif
             if (s.find(".ply") != std::string::npos) {
                 std::stringstream path(s);
                 std::string segment;
@@ -300,7 +321,8 @@ void vHelix::action_(std::string cmd, QVector<QVariant> arg)
                 std::stringstream path;
                 path << "open " << vHelixFunc::ExePath() << "/../vHelix/oxdnaviewer/index.html";
                 std::string browser(path.str());
-                system("open " + browser.c_str());
+                browser.insert(0, "open ");
+                system(browser.c_str());
         #elif _WIN32
         #include <Windows.h>
         #include <shellapi.h>
@@ -463,12 +485,11 @@ void vHelix::export_(const QVector<QVariant> &args)
     }
     QString func = args.at(0).toString();
     std::string funcStr;
-    if (_WINDOWS) {
-        funcStr = func.toLocal8Bit().constData();
-    }
-    else {
-        funcStr = func.toUtf8().constData();
-    }
+#if defined(__linux__) || defined(__APPLE__)
+            funcStr = func.toUtf8().constData();
+#elif _WIN32
+            funcStr = func.toLocal8Bit().constData();
+#endif
     std::string path = vHelixFunc::ExePath();
 
     if (funcStr == "rpoly_oxDNA") {
@@ -489,8 +510,17 @@ void vHelix::export_(const QVector<QVariant> &args)
 
         sendToConsole_("Converting .PLY to .oxDNA...\n");
         Py_Initialize();
-
-        PyObject *pName = PyUnicode_FromString("rpoly_oxDNA");
+#if defined(__linux__) || defined(__APPLE__)
+#include <cstdlib>
+        std::string exepath = vHelixFunc::ExePath();
+        size_t len = mbstowcs(nullptr, &exepath[0], 0);
+        std::wstring wstr(len, 0);
+        mbstowcs(&wstr[0], &exepath[0], wstr.size());
+        const wchar_t* par = wstr.data();
+        std::wcout << par << std::endl << std::flush;
+        PySys_SetPath(par);
+#endif
+        PyObject *pName = PyUnicode_FromString("rpoly_oxDNA.py");
         PyObject *pModule = PyImport_Import(pName);
         if (pModule == NULL) {
             sendToConsole_("--- Something went wrong when importing rpoly_oxDNA.py ---\n");
@@ -515,17 +545,17 @@ void vHelix::export_(const QVector<QVariant> &args)
             Py_DECREF(pFunc);
             // copy files from executable directory to workspace
             std::stringstream workspace_file;
-            workspace_file << workspace_dir_ << "\\" << filename << ".oxdna";
+            workspace_file << workspace_dir_ << "/" << filename << ".oxdna";
             std::string temp(workspace_file.str());
             std::stringstream oxDnadir;
-            oxDnadir << path << "\\" << filename << ".oxdna";
+            oxDnadir << path << "/" << filename << ".oxdna";
             std::string copydir = oxDnadir.str();
             QFile::copy(copydir.c_str(), temp.c_str());
             oxDnadir.str(std::string());
-            oxDnadir << path << "\\" << filename << ".top";
+            oxDnadir << path << "/" << filename << ".top";
             copydir = oxDnadir.str();
             workspace_file.str(std::string());
-            workspace_file << workspace_dir_ << "\\" << filename << ".top";
+            workspace_file << workspace_dir_ << "/" << filename << ".top";
             temp = workspace_file.str();
             QFile::copy(copydir.c_str(), temp.c_str());
             sendToConsole_("Wrote .oxDNA and .top file to workspace\n");
@@ -587,7 +617,7 @@ void vHelix::convert_(const std::string& format)
             PyErr_PrintEx(1);       // Error output to stderr, if any
             // copy files from executable directory to workspace
             std::stringstream workspace_file;
-            workspace_file << workspace_dir_ << "\\" << file;
+            workspace_file << workspace_dir_ << "/" << file;
             std::string temp(workspace_file.str());
             std::stringstream objdir;
             objdir << path << "/" << file;
@@ -597,7 +627,7 @@ void vHelix::convert_(const std::string& format)
             objdir << path << "/" << plyfile;
             copydir = objdir.str();
             workspace_file.str(std::string());
-            workspace_file << workspace_dir_ << "\\" << plyfile;
+            workspace_file << workspace_dir_ << "/" << plyfile;
             temp = workspace_file.str();
             QFile::copy(copydir.c_str(), temp.c_str());
             sendToConsole_("Wrote .obj and .ply files to workspace\n");

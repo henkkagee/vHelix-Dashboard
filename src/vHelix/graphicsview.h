@@ -47,7 +47,7 @@
 #include <QWidget>
 #include <Qt3DCore/QNode>
 
-#include <QMAtrix4x4>
+#include <QMatrix4x4>
 
 #include <vector>
 #include <iostream>

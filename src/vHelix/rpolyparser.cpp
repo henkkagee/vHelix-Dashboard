@@ -14,6 +14,7 @@
 #include <utility>
 #include <functional>
 #include <iostream>
+#include <sstream>
 
 #include <QVector4D>
 #include <QVector3D>
@@ -81,15 +82,15 @@ namespace Controller {
         std::ifstream file(filename);
 
         if (file.fail()) {
-            std::cout << "Failed to open file \"%s\"" << filename;
+            std::cerr << "Failed to open file \"%s\"" << filename;
             std::vector<Model::Helix> ret;
             return ret;
         }
-        std::cout << "Parsing...\n" << std::flush;
+        std::cout << "Parsing... " << filename << "\n" << std::flush;
         std::vector<double> pos(3);
         std::vector<double> ori(4); // x, y, z, w
         unsigned int bases;
-        char nameBuffer[BUFFER_SIZE], helixNameBuffer[BUFFER_SIZE], materialNameBuffer[BUFFER_SIZE], targetNameBuffer[BUFFER_SIZE], targetHelixNameBuffer[BUFFER_SIZE];
+        char nameBuffer[BUFFER_SIZE], helixNameBuffer[BUFFER_SIZE], materialNameBuffer[BUFFER_SIZE], targetNameBuffer[BUFFER_SIZE], targetHelixNameBuffer[BUFFER_SIZE], cmdBuffer[100];
         char label;
         bool autostaple(true);
         std::vector< std::pair<std::string, std::string> > paintStrands;
@@ -99,16 +100,38 @@ namespace Controller {
         // check how many helices were dealing with so we can reserve space in helices[] beforehand
         // to avoid vector reallocation
         long int num_helices = 0;
+        int sscanf_ret;
+        std::stringstream sstr;
         while (file.good()) {
             std::string line;
             std::getline(file, line);
-            if (sscanf(line.c_str(), "h %s %lf %lf %lf %lf %lf %lf %lf", nameBuffer, &pos[0], &pos[1], &pos[2], &ori[0], &ori[1], &ori[2], &ori[3]) == 8) {
-                num_helices++;
+            sstr.str(line);
+            // sscanf(..., "hb %s %u...", ...) does not seem to work in Linux?
+            if (line[0] == 'h' && line [1] == ' ') {
+                sstr >> cmdBuffer >> nameBuffer >> pos[0] >> pos[1] >> pos[2] >> ori[0] >> ori[1] >> ori[2] >> ori[3];
+                if (!sstr.fail()) {
+                    num_helices++;
+                }
+                else {
+                    std::cerr << "Invalid helix h line in file!\n";
+                    std::vector<Model::Helix> ret;
+                    return ret;
+                }
             }
-            else if (sscanf(line.c_str(), "hb %s %u %lf %lf %lf %lf %lf %lf %lf", nameBuffer, &bases, &pos[0], &pos[1], &pos[2], &ori[0], &ori[1], &ori[2], &ori[3]) == 9) {
-                num_helices++;
+            else if (line[0] == 'h' && line [1] == 'b' && line[2] == ' ') {
+                sstr >> cmdBuffer >> nameBuffer >> bases >> pos[0] >> pos[1] >> pos[2] >> ori[0] >> ori[1] >> ori[2] >> ori[3];
+                if (!sstr.fail()) {
+                    num_helices++;
+                }
+                else {
+                    std::cerr << "Invalid helix hb line in file! -" << num_helices << "-\n";
+                    std::vector<Model::Helix> ret;
+                    return ret;
+                }
             }
+            sstr.clear();
         }
+        std::cout << "HELICES: " << num_helices << " ------- " << std::endl << std::flush;
         file.clear();
         file.seekg(0);
         helices.reserve(num_helices + 1);
@@ -116,8 +139,10 @@ namespace Controller {
         while (file.good()) {
             std::string line;
             std::getline(file, line);
+            sstr.str(line);
             QVector3D position;
-            if (sscanf(line.c_str(), "h %s %lf %lf %lf %lf %lf %lf %lf", nameBuffer, &pos[0], &pos[1], &pos[2], &ori[0], &ori[1], &ori[2], &ori[3]) == 8) {
+            if (line[0] == 'h' && line [1] == ' ') {
+                sstr >> cmdBuffer >> nameBuffer >> pos[0] >> pos[1] >> pos[2] >> ori[0] >> ori[1] >> ori[2] >> ori[3];
                 // 0.84 scaling is ad hoc solution to get good looking models
                 position.setX(pos[0]/POSITION_SCALING);  position.setY(pos[1]/POSITION_SCALING); position.setZ(pos[2]/POSITION_SCALING);
                 QQuaternion orientation(ori[3], QVector3D(ori[0], ori[1], ori[2]));
@@ -127,7 +152,8 @@ namespace Controller {
                     helices.back().Bbases[num_bases].parent = &helices.back();
                 }
             }
-            else if (sscanf(line.c_str(), "hb %s %u %lf %lf %lf %lf %lf %lf %lf", nameBuffer, &bases, &pos[0], &pos[1], &pos[2], &ori[0], &ori[1], &ori[2], &ori[3]) == 9) {
+            else if (line[0] == 'h' && line [1] == 'b' && line[2] == ' ') {
+                sstr >> cmdBuffer >> nameBuffer >> bases >> pos[0] >> pos[1] >> pos[2] >> ori[0] >> ori[1] >> ori[2] >> ori[3];
                 // 0.84 scaling is ad hoc solution to get good looking models
                 position.setX(pos[0]/POSITION_SCALING);  position.setY(pos[1]/POSITION_SCALING); position.setZ(pos[2]/POSITION_SCALING);
                 //QQuaternion orientation(ori[3], QVector3D(ori[0], ori[1], ori[2]));
@@ -175,8 +201,14 @@ namespace Controller {
             else if (line == "autostaple" || line == "autonick") {
                 autostaple = true;
             }
+            sstr.clear();
         }
-
+        // if reading failed or .rpoly was empty
+        if (!num_helices || !helices.size()) {
+            std::cerr << "No helices initialized after reading file!\n";
+            std::vector<Model::Helix> ret;
+            return ret;
+        }
         // Now create the helices, bases and make the connections.
         #if defined(WIN32) || defined(WIN64)
                     typedef std::unordered_map<std::string, Model::Helix> string_helix_map_t;

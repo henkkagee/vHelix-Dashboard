@@ -11,6 +11,7 @@
 #include <unordered_map>
 #include <unordered_set>
 #include <vector>
+#include <algorithm>
 
 #include "Helix.h"
 
@@ -28,12 +29,15 @@ public:
 
 	// Distinguish the file type by its file ending and parses either a rmesh or a ply file.
 	inline bool read(physics & phys, const std::string & filename) {
+        std::ifstream ifs = std::ifstream(filename);
+        std::ifstream ifstrail1 = std::ifstream(strip_trailing_string(filename, ".ply") + ".ntrail");
+        std::ifstream ifstrail2 = std::ifstream(strip_trailing_string(filename, ".ntrail") + ".ply");
 		if (ends_with(filename, ".ply"))
-			return read_ply(phys, std::ifstream(filename), std::ifstream(strip_trailing_string(filename, ".ply") + ".ntrail"));
+            return read_ply(phys, ifs, ifstrail1);
 		else if (ends_with(filename, ".ntrail"))
-			return read_ply(phys, std::ifstream(strip_trailing_string(filename, ".ntrail") + ".ply"), std::ifstream(filename));
+            return read_ply(phys, ifstrail2, ifs);
 		else
-			return read_rmesh(phys, std::ifstream(filename));
+            return read_rmesh(phys, ifs);
 	}
 
 	// Reads a mesh in the .rmsh "Routed mesh" text based format from the scaffold-routing Maya exporter project.
