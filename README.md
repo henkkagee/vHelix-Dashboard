@@ -4,12 +4,14 @@ Developed by Henrik Granö, [Natural computation](https://research.cs.aalto.fi/n
 
 ## Installation
 
+For Linux/MacOS instructions and code, use the `linux-version` branch.
+
 a) Download the prebuilt binaries from http://www.vhelix.net (not yet available), or use the existing Win64 beta provided here.
 
 b) To build the program on your system, you need the following dependencies:
 
 - Qt 5.9.9 available from: https://www.qt.io/download
-- Python 3.8 with Python/C API
+- Python 3.8 with Python/C API libraries and headers which are probably automatically installed
 
 Included modules and source code:
 - [PhysXSDK 3.3]((https://github.com/yangzhengxing/PhysX-3.3). PhysXSDK 3.3 is used for physical relaxation DNA structures. It free software as of 2015 and its win64 binaries are included.
@@ -25,13 +27,20 @@ If you use another platform than Win64 you need to recompile PhysXSDK 3.3 and Le
 
 For convenience, it is recommended to use Qt Creator for building: https://www.qt.io/download. If you use other tools, note that the directory structure may be slightly different: Qt Creator places the binary in a separate build folder beside src/.
 
-The software is built using CMake to make cross-platform compilation possible. Configure the CMakeLists.txt file to find the specified Qt modules as well as Python.h and Python38.lib files for the Python/C API.
+The software is built using CMake to make cross-platform compilation possible. Configure the CMakeLists.txt file to find the specified Qt modules as well as Python.h and Python38.lib files for the Python/C API. To build, run the CMakeLists.txt file with CMake or open it in Qt Creator. In runtime, all the Python files (as seen in /src or the win64_beta_release for reference) and PhysX .dlls should be beside the vHelix Dashboard executable.
 
 ## Quick start
 
-## Usage
+Workflow/pipeline for generating a sequence and model from a .ply or .obj model:
 
-## Detailed information
+- Import a .ply or .obj file from File->Import
+- Click on the .ply file you imported in the workspace window (lower left pane) to select it, and route it from Route->Atrail
+- If the routing is successful, the last line that appeard in the console pane should verify that you got a valid A-trail in the meshes
+- With the same .ply still selected, click Relaxation->PhysX. Here, you can estimate scaffold strand base usage based on the scaling value. Once you have scaled the model appropriately, you can run the relaxation. It may take a while, and in some cases with very short edges (small scaling value) it may run forever. The relaxation is ready when the console pane updates and an .rpoly file appears in the workspace.
+- The .rpoly file can be converted to oxDNA file format from Export->Export selection to oxDNA, or double clicked to generate and view the full model in the 3D graphics pane on the right. This can take a while depending on you hardware.
+- if you want to view the model in oxDNA format, there is a shortcut to a local oxDNAviewer from oxDNA->Open oxDNA viewer. You can drag and drop the .conf and .top files directly in the oxDNAviewer window to load them.
+- Once the 3D model appears on the right (performance is still rather poor), you can add a sequence to the scaffold strand from Edit->Add sequence, and after this you can export the strands as a .csv file from Export->Export strand sequences.
+- To export the generated model, click File->Save current model to save it in oxDNA format with a meta file (.conf, .top and .vmeta). Importer not yet implemented...
 
 ## Todo
 
