@@ -50,7 +50,7 @@ Now, either open the CMakeLists.txt file from QtCreator or run it with CMake. If
 
 This is because .ui files for user interfaces are automatically incorrectly generated into header files, this inconvenience will be fixed soon.
 
-Once CMake succeeds in generating the Makefile, run the it with `make` or build the project in Qt Creator.
+Once CMake succeeds in generating the Makefile, run it with `make` or build the project in Qt Creator.
 
 ## Quick start
 
