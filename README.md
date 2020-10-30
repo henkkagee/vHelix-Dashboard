@@ -29,7 +29,7 @@ The software is built using CMake to make cross-platform compilation possible. C
 
 ### Detailed Linux / MacOS installation instructions
 
-- Install CMake and g++.
+- Install CMake, g++ and Python 3.8.
 
 - Build Lemon using their instructions https://lemon.cs.elte.hu/trac/lemon/wiki/InstallLinux . This is rather straightforward and results in a libemon.a library file.
 
@@ -39,7 +39,7 @@ The software is built using CMake to make cross-platform compilation possible. C
 
 - Configure the CMakeLists.txt file in src/vHelix to find your python header files (e.g. usr/include/python3.8) and your python libraries (libpython 3.8.a and libpython3.8.so usually in usr/lib/python3.8).
 
-- For static linking (so you can run the same resulting vHelix Dashboard executable on other systems with the same operating system without extra requirements), you need to build static Qt5 libraries from source: http://download.qt.io/official_releases/qt/5.9/5.9.9/single/ , https://wiki.qt.io/Building_Qt_5_from_Git . In other cases you can download an installer for your system for Qt 5.9.9: http://download.qt.io/official_releases/qt/5.9/5.9.9/ .
+- For static linking (so you can run the same resulting vHelix Dashboard executable on other systems with the same operating system without extra requirements), you need to build static Qt5 libraries from source: http://download.qt.io/official_releases/qt/5.9/5.9.9/single/ , https://wiki.qt.io/Building_Qt_5_from_Git. You may also need to build Python 3.8 yourself with -fPIE compiler flag for the final executable to link correctly. In other cases you can download an installer for your system for Qt 5.9.9: http://download.qt.io/official_releases/qt/5.9/5.9.9/ .
 
 - Note! For some Linux distros with Qt5 packages, Qt3D and/or Qt3DExtras with Qt3DExtrasConfig.cmake is not included which causes trouble when building. Consider downloading from http://download.qt.io/official_releases/qt/5.9/5.9.9/ or building from source if this seems to be a problem.
 
