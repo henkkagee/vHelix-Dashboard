@@ -35,7 +35,7 @@ This is for a build using shared Qt library objects, which is somewhat straightf
 
 - Build Lemon using their instructions https://lemon.cs.elte.hu/trac/lemon/wiki/InstallLinux . This is rather straightforward and results in a libemon.a library file.
 
-- Build PhysX-3.3. There are configuration files (Makefiles, Visual Studio .sln files...) for each operating system in PhysXSDK/Source/compiler. If you get warnings treated as errors during the build process, remove all -Werror flags from all .mk files in source/compiler/<system, e.g. linux64>. The compiling process generates lots of errors which probably are not feasible to fix yourself. You should end up with shared objects in PhysXSDK/Bin and static libraries in PhysXSDK/Lib.
+- Build PhysX-3.3. There are configuration files (Makefiles, Visual Studio .sln files...) for each operating system in PhysXSDK/Source/compiler. If you get warnings treated as errors during the build process, remove all -Werror flags from all .mk files in source/compiler/<system, e.g. linux64>. The compiling process generates lots of warnings which probably are not feasible to fix yourself. You should end up with shared objects in PhysXSDK/Bin and static libraries in PhysXSDK/Lib.
 
 - Clone the vHelix-Dashboard repository, and switch to the linux-version branch. Place the libemon.a and the .a files from PhysXSDK/Lib in src/vHelix/lib.
 
