@@ -82,7 +82,7 @@ public:
     explicit GraphicsView(QWidget *parent = nullptr);
     ~GraphicsView();
 
-    void addSphere(const QVector3D &translation, const QQuaternion &rotation, const QColor &color);
+    void addSphere(const QVector3D &translation, const QQuaternion &rotation, const QColor &color, const float &radius);
     void addCylinder(const QVector3D &translation, const QQuaternion &rotation, const QColor &color);
     void drawLine(const QVector3D& start, const QVector3D& end, const QColor& color, Qt3DCore::QEntity *_rootEntity);
 

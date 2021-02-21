@@ -42,48 +42,52 @@ namespace Model {
     class Base {
     public:
 
-        Base(const QVector3D &pos, Type type, int offset);
-        Base(long long int strandIdD, unsigned char &nb, long long int base3neigh, long long int base5neigh, unsigned long long int baseId);
-
-        void connect_forward(Base & target, bool ignorePreviousConnections = false);
-        void disconnect_forward(bool ignorePerpendicular = false);
-        void disconnect_backward(bool ignorePerpendicular = false);
-        void connect_opposite(Base & target, bool ignorePreviousConnections = false);
-        void disconnect_opposite();
+        Base(const QVector3D &pos, Type type, int v_offset, unsigned long BaseId);
+        Base(unsigned int strandIdD, std::string &nb, long base3neigh, long base5neigh, unsigned long BaseId, long oppneigh);
 
         void setForward(Base *base);
         void setBackward(Base *base);
         void setOpposite(Base *base);
+        void setParent(Helix *helix);
         void setBase(Nucleobase nb);
+        void setType(Type type);
+        void setPos(QVector3D pos);
 
         Base *getForward();
         Base *getBackward();
         Base *getOpposite();
         Helix *getParent();
+        Type &getType();
+        Nucleobase &getBase();
+        QVector3D &getPos();
 
         // member variables
-        QVector3D position;
-        Base *forward;
-        Base *backward;
-        Base *opposite;
-        Helix *parent;
-        Type type;
-        Nucleobase nucleobase;
-        bool in_strand;
+        bool in_strand_;
         int offset_;
-        int checked;
+        bool checked_;
+        std::string strandname_;    // remove
 
-        std::string strandname_;
+        // ID's
+        // existing base ID's are always positive integers, but forward/backward/neighbouring ID's can be negative
+        // to indicate that no such neighbour exists
+        long base3neigh_;
+        long base5neigh_;
+        long oppneigh_;
+        unsigned int strandId_;
+        unsigned long baseId_;
 
-        long long int base3neigh_;
-        long long int base5neigh_;
-        long long int strandId_;
-        unsigned long long int baseId_;
+        // for finding the neighbouring strands in the structure that are not connected
+        Base *strand_forward_;
+        Base *strand_backward_;
 
-        // only for strand traversal, not actual connections
-        Base *strand_forward;
-        Base *strand_backward;
-
+    private:
+        QVector3D position_;
+        Base *forward_;
+        Base *backward_;
+        Base *opposite_;
+        Helix *parent_;
+        Type type_;
+        Nucleobase nucleobase_;
     };
 
     struct Helix {
@@ -92,7 +96,8 @@ namespace Model {
         Base *getForwardFivePrime();
         Base *getForwardThreePrime();
 
-        Helix(const QVector3D & position, const QQuaternion & orientation, const char *name, unsigned int bases = 0);
+        // bIdStart = the first available base id to start assigning to new bases in the constructor
+        Helix(const QVector3D & position, const QQuaternion & orientation, const char *name, unsigned long bIdStart, unsigned int bases = 0);
         Helix() : bases_(0) {}
         bool operator==(const char *name) const { return this->name_ == name; }
 
@@ -103,29 +108,29 @@ namespace Model {
         bool sequence_assigned_;
 
         // strands forward and backward
-        // probably not the most convenient data structure for later editing but it's fine in this context for now
+        // probably not the most convenient data structure for later editing but it's efficient
         // must reserve the space for all bases immediately in order to avoid reallocation and invalidation of element pointers
-        std::vector<Base> Fbases;
-        std::vector<Base> Bbases;
-        Base *backward5Prime;
-        Base *backward3Prime;
-        Base *forward5Prime;
-        Base *forward3Prime;
+        std::vector<Base> Fbases_;
+        std::vector<Base> Bbases_;
+        Base *backward5Prime_;
+        Base *backward3Prime_;
+        Base *forward5Prime_;
+        Base *forward3Prime_;
 
         QColor color;
     };
 
     struct Strand {
         Strand() : sequenced_(false) {}
-        Strand(unsigned long long int length, unsigned long long int id) : length_(length), id_(id), scaffold_(false) {}
+        Strand(unsigned long long int length, unsigned long id) : length_(length), id_(id), scaffold_(false) {}
 
         std::vector<Base*> bases_;
         bool sequenced_;
         int length_;
 
         // use either one
-        std::string name_;
-        long long int id_;
+        std::string name_;  // remove
+        unsigned long id_;
 
         bool scaffold_;
         bool forward_;

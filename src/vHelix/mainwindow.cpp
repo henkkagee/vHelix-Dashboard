@@ -74,7 +74,7 @@ void MainWindow::on_actionExit_triggered()
 
 void MainWindow::on_actionOpen_triggered()
 {
-    QString filename = QFileDialog::getOpenFileName(this, "Open a mesh file:", "..\\workspace", tr("Mesh Files (*.ply *.obj)"));
+    QString filename = QFileDialog::getOpenFileName(this, "Import a model to the workspace:", "..\\workspace", tr("All files (*)"));
     std::string str = filename.toStdString();
     std::ostringstream sstr;
     sstr << "Mesh File '" << str << "' opened" << std::endl << std::endl;
@@ -204,9 +204,7 @@ void MainWindow::on_treeView_doubleClicked(const QModelIndex &index)
         pathStr = path.toUtf8().constData();
         typeStr = filetype.toUtf8().constData();
     }
-
     if (typeStr.find("rpoly") != std::string::npos) {
-        if (FORMAT_MODE == 0) {         // .rpoly file format
             RpolyDialog dialog(this);
             dialog.exec();
             if (dialog.result()) {
@@ -234,39 +232,43 @@ void MainWindow::on_treeView_doubleClicked(const QModelIndex &index)
                 ui_->label->setText(QString(ststxt.c_str()));
 
             }
-        }
-        // visuals from OxDNA: .conf and .top file format, the model itself still from rpoly
-        // this will soon be instead used as an importer from .conf, .top and .vmeta files
-        else {
-            QVector<QVariant> args = {QVariant("rpoly_oxDNA")};
-            action_("export", args);
-            printToConsole_("Opening rpoly through OxDNA file format...\n");
-            std::string conffile = pathStr;
-            conffile.append(".oxdna");
-            std::string topfile = pathStr;
-            topfile.append(".top");
-
-            parser_ = new Controller::Parser();
-            strands_ = parser_->readOxDNA(conffile.c_str(), topfile.c_str());
-            std::vector<Model::Base> bases = parser_->bases;
-            printToConsole_("\nRendering strands... this may take a while.\n");
-            graphicsview_ -> drawStrands(strands_);
-            // set status text?
-            std::stringstream statusText;
-            statusText << "Strands: " << strands_.size() << ", bases: " << strands_.size();
-            std::string ststxt = statusText.str();
-            ui_->label->setText(QString(ststxt.c_str()));
-        }
     }
+    // open oxview model
+    else if (typeStr.find("oxview") != std::string::npos) {
+        printToConsole_("Opening model in .oxview format...\n");
+
+        parser_ = new Controller::Parser();
+        strands_ = parser_->readOxview(pathStr.c_str());
+        std::vector<Model::Base> bases = parser_->bases;
+        printToConsole_("\nRendering strands... this may take a while.\n");
+        graphicsview_ -> drawStrands(parser_->strands);
+        // set status text?
+        std::stringstream statusText;
+        unsigned long long basenum = 0;
+        unsigned int longest = 0;
+        for (const auto &s: strands_) {
+            if (s.bases_.size() > longest) {
+                longest = s.bases_.size();
+            }
+            basenum += s.bases_.size();
+        }
+        statusText << "Helices: " << helices_.size() << ", strands: " << strands_.size() << ", bases: " << basenum << ", longest strand: " << longest << " bases";
+        std::string ststxt = statusText.str();
+        ui_->label->setText(QString(ststxt.c_str()));
+
+    }
+
 }
 
 void MainWindow::on_actionAdd_sequence_triggered()
 {
-    SequenceDialog dialog(this);
+    SequenceDialog dialog(this, strands_);
     dialog.exec();
     std::string seq;
+    std::string targetStrand;
     if (dialog.result()) {
         seq = dialog.getSequence();
+        targetStrand = dialog.getTargetStrand();
     }
     if (!seq.size()) {
         return;
@@ -343,21 +345,21 @@ void MainWindow::on_actionAdd_sequence_triggered()
         Model::Strand &strand = strands_[s];
         if (!strand.forward_) {
             for (unsigned long long int j = 0; j < strand.bases_.size(); j++) {
-                if (strand.bases_[j]->opposite != nullptr) {
-                    if (strand.bases_[j]->opposite->nucleobase == Nucleobase::ADENINE) {
-                        strand.bases_[j]->nucleobase = Nucleobase::THYMINE;
+                if (strand.bases_[j]->getOpposite() != nullptr) {
+                    if (strand.bases_[j]->getOpposite()->getBase() == Nucleobase::ADENINE) {
+                        strand.bases_[j]->setBase(Nucleobase::THYMINE);
                     }
-                    else if (strand.bases_[j]->opposite->nucleobase == Nucleobase::CYTOSINE) {
-                        strand.bases_[j]->nucleobase = Nucleobase::GUANINE;
+                    else if (strand.bases_[j]->getOpposite()->getBase() == Nucleobase::CYTOSINE) {
+                        strand.bases_[j]->setBase(Nucleobase::GUANINE);
                     }
-                    else if (strand.bases_[j]->opposite->nucleobase == Nucleobase::THYMINE) {
-                        strand.bases_[j]->nucleobase = Nucleobase::ADENINE;
+                    else if (strand.bases_[j]->getOpposite()->getBase() == Nucleobase::THYMINE) {
+                        strand.bases_[j]->setBase(Nucleobase::ADENINE);
                     }
-                    else if (strand.bases_[j]->opposite->nucleobase == Nucleobase::GUANINE) {
-                        strand.bases_[j]->nucleobase = Nucleobase::CYTOSINE;
+                    else if (strand.bases_[j]->getOpposite()->getBase() == Nucleobase::GUANINE) {
+                        strand.bases_[j]->setBase(Nucleobase::CYTOSINE);
                     }
                     else {
-                        strand.bases_[j]->nucleobase = Nucleobase::NONE;
+                        strand.bases_[j]->setBase(Nucleobase::NONE);
                     }
                 }
             }
@@ -387,16 +389,16 @@ void MainWindow::on_actionExport_strand_sequences_triggered()
             for (const auto &s : strands_) {
                 tempsstr << s.name_ << "," << s.length_ << ",";
                 for (const auto &b : s.bases_) {
-                    if (b->nucleobase == Nucleobase::ADENINE) {
+                    if (b->getBase() == Nucleobase::ADENINE) {
                         tempsstr << "a";
                     }
-                    else if (b->nucleobase == Nucleobase::CYTOSINE) {
+                    else if (b->getBase() == Nucleobase::CYTOSINE) {
                         tempsstr << "c";
                     }
-                    else if (b->nucleobase == Nucleobase::THYMINE) {
+                    else if (b->getBase() == Nucleobase::THYMINE) {
                         tempsstr << "t";
                     }
-                    else if (b->nucleobase == Nucleobase::GUANINE) {
+                    else if (b->getBase() == Nucleobase::GUANINE) {
                         tempsstr << "g";
                     }
                     else {
@@ -422,25 +424,66 @@ void MainWindow::on_actionExport_strand_sequences_triggered()
     }
 }
 
-// saves the current helices, strands, bases and connections so they can be loaded again
+QMatrix3x3 getMatrix(double gamma, double beta, double alpha)
+{
+    gamma = gamma * (3.141592 / 180);
+    beta = beta * (3.141592 / 180);
+    alpha = -alpha * (3.141592 / 180);
+    double s1 = sin(alpha);
+    double s2 = sin(beta);
+    double s3 = sin(gamma);
+    double c1 = sin(alpha);
+    double c2 = sin(beta);
+    double c3 = sin(gamma);
+    float a = c1 * c2;
+    float b =  (c1 * s3 * s2) + (s1 * c3);
+    float c = (c1 * s2 * c3) - (s1 * s3);
+    float d = 0 - (s1 * c2);
+    float e = 0 - (s1 * s3 * s2) + (c1 * c3);
+    float f = 0 - (s1 * s3 * s2) - (c1 * s3);
+    float g = 0 - s2;
+    float h = s3 * c2;
+    float i = c2 * c3;
+    const float vals[] = {a,b,c,d,e,f,g,h,i};
+    const float* vals_ptr = vals;
+    return QMatrix3x3(vals_ptr);
+}
+
+QVector3D matrixVectorMult(QMatrix3x3 mat, QVector3D vec)
+{
+    QVector3D ret;
+    ret.setX(mat(0,0)*vec.x()+mat(0,1)*vec.y()+mat(0,2)*vec.z());
+    ret.setX(mat(1,0)*vec.x()+mat(1,1)*vec.y()+mat(1,2)*vec.z());
+    ret.setX(mat(2,0)*vec.x()+mat(2,1)*vec.y()+mat(2,2)*vec.z());
+    return ret;
+}
+
+// saves the current helices, strands, bases and connections so they can be loaded again in oxView or in this software
 void MainWindow::on_actionSave_current_model_triggered()
 {
     if (!(strands_.empty()) && !(helices_.empty())) {
-        QString fileName = QFileDialog::getSaveFileName(this, tr("Save the current model as .oxdna, .top & .vmeta"), "", "VHelix file (*.oxdna)");
+        // this is basically a json and there are existing libraries for this but let's just do this manually to avoid further dependencies
+        QString fileName = QFileDialog::getSaveFileName(this, tr("Save the current model as .oxview"), "", "oxView file (*.oxview)");
         if (fileName.isEmpty()) {
             return;
         }
         else {
             QFile file(fileName);
             if (!file.open(QIODevice::WriteOnly)) {
-                QMessageBox::information(this, tr("Unable to save configuration file"), file.errorString());
+                QMessageBox::information(this, tr("Unable to save oxView file"), file.errorString());
                 return;
             }
             QTextStream out(&file);
 
-            std::string temp;
-            std::stringstream tempsstr;
-            out << "t = 0\n";
+            auto time = std::chrono::system_clock::now();
+            std::time_t now = std::chrono::system_clock::to_time_t(time);
+            std::stringstream sstr;
+            sstr << "{\"date\":\"" << std::ctime(&now);     // ctime is deprecated, but ctime_s is not standard c++
+            std::string timestr = sstr.str();
+            timestr.erase(timestr.size()-1);
+            sstr.str(std::string());
+            sstr << timestr << "\",";
+            out << sstr.str().c_str();
             // find box size from max base coordinates
             float max = 0;
             long long int basecount = 0;
@@ -448,116 +491,194 @@ void MainWindow::on_actionSave_current_model_triggered()
                 for (const auto &b : s.bases_) {
                     basecount++;
                     for (unsigned int dim = 0; dim < 3; dim++) {
-                        if (b->position[dim] > max) {
-                            max = b->position[dim];
+                        if (b->getPos()[dim] > max) {
+                            max = b->getPos()[dim];
                         }
                     }
                 }
             }
-            int strandcount = strands_.size();
-            max *= 3;
-            out << "b = " << max << " " << max << " " << max << "\n";
-            out << "E = 0.000000 0.000000 0.000000\n";
+            max *= 3;       // 3x multiplier to box dimensions to make it large enough for the structure
+            out << "\"box\":[" << max << "," << max << "," << max << "],";
 
-            // write base positions, orientations and velocities in .oxdna file
+            // write systems (strands and bases). Currently, only one system supported as there is no such notion in vhelix
+            out << "\"systems\":[{\"id\":0,";
+            out << "\"strands\":[";
+
+            int store_dir = 1; // janky solution to a crossover bug
+            bool firstStrand = true;
             for (const auto &s : strands_) {
-                for (const auto &b : s.bases_) {
-                    QVector3D normalversor = b->getParent()->orientation_.vector();
-                    std::vector<float> oppositePos = {b->getOpposite()->position.x(), b->getOpposite()->position.y(), b->getOpposite()->position.z()};
-                    std::vector<float> currentPos = {b->position.x(), b->position.y(), b->position.z()};
-                    QVector3D backboneBaseversor = (b->getOpposite()->position - b->position) / (sqrt(std::inner_product(oppositePos.begin(), oppositePos.end(), currentPos.begin(), 0)));
-                    tempsstr << b->position.x() << " " << b->position.y() << " " << b->position.z() << backboneBaseversor.x() << " " << backboneBaseversor.y() << " " <<
-                             backboneBaseversor.z() << " " << normalversor.x() << " " << normalversor.y() << " " << normalversor.z() << " 0.0 0.0 0.0 0.0 0.0 0.0\n";
-                    temp = tempsstr.str();
-                    out << temp.c_str();
-                    tempsstr.str(std::string());
+                bool firstBase = true;
+                if (!firstStrand) {
+                    out << ",";
                 }
+                firstStrand = false;
+                out << "{\"id\":" << s.id_ << ",";
+                out << "\"monomers\":[";
+                unsigned long basenum = 0;
+                for (const auto &b : s.bases_) {
+
+                    if (!firstBase) {
+                        out << ",";
+                    }
+
+                    out << "{\"id\":" << b->baseId_ << ",";
+                    out << "\"type\":";
+                    if (b->getBase() == Nucleobase::ADENINE) {
+                        out << "\"A\",";
+                    }
+                    else  if (b->getBase() == Nucleobase::CYTOSINE) {
+                        out << "\"C\",";
+                    }
+                    else if (b->getBase() == Nucleobase::THYMINE) {
+                        out << "\"T\",";
+                    }
+                    else if (b->getBase() == Nucleobase::GUANINE) {
+                        out << "\"C\",";
+                    }
+                    else if (b->getBase() == Nucleobase::NONE) {
+                        out << "\"?\",";
+                    }
+
+                    out << "\"class\":\"DNA\",";                                  // TODO: RNA support
+
+                    // write position orientation. TODO: orientations still buggy in this format and some calculation goes awry
+
+                    Model::Helix *parent = b->getParent();
+                    // the tangent is the same for all bases in one strand so it could be calculated only once per strand
+
+                    // apparently Qt 3x3 matrices and vectors do not have overloaded multiplication operators...
+                    // use boost linear algebra libraries to make this more efficient and readable
+                    QVector3D base_normal = QVector3D(0,0,1);
+                    QMatrix3x3 parent_orientation = parent->orientation_.normalized().toRotationMatrix();
+
+                    QVector3D base_normal_3d;
+                    base_normal_3d.setX(parent_orientation(0,0) * base_normal.x() + parent_orientation(0,1) * base_normal.y() + parent_orientation(0,2) * base_normal.z());
+                    base_normal_3d.setY(parent_orientation(1,0) * base_normal.x() + parent_orientation(1,1) * base_normal.y() + parent_orientation(1,2) * base_normal.z());
+                    base_normal_3d.setZ(parent_orientation(2,0) * base_normal.x() + parent_orientation(2,1) * base_normal.y() + parent_orientation(2,2) * base_normal.z());
+                    base_normal_3d.normalize();
+                    QVector3D pos_dif = QVector3D();
+                    pos_dif.setX(b->getPos().x() - parent->position_.x());
+                    pos_dif.setY(b->getPos().y() - parent->position_.y());
+                    pos_dif.setZ(b->getPos().z() - parent->position_.z());
+                    QVector3D tangent = QVector3D::crossProduct(base_normal_3d, QVector3D::crossProduct(pos_dif, base_normal_3d).normalized());
+                    tangent.normalize();
+
+                    int direction;
+                    QVector3D zAxis(0.f,0.f,1.f);
+                    Model::Base* bForw = b->getForward();
+                    QVector3D a3;
+                    if (bForw) {
+                        QVector3D forwardTranslation = bForw->getPos();
+                        int dot = QVector3D::dotProduct(forwardTranslation - b->getPos(), zAxis);
+                        direction = (dot > 0) ? 1 : ((dot < 0) ? -1 : 0);
+                        QVector3D forwPosDiff = b->getPos() - bForw->getPos();
+                        a3 = (forwPosDiff) / sqrt(pow(forwPosDiff.x(),2)+pow(forwPosDiff.y(),2)+pow(forwPosDiff.z(),2));
+                    }
+                    else {
+                        Model::Base* bBack = b->getBackward();
+                        if (bBack) {
+                            QVector3D backwardTranslation = bBack->getPos();
+                            int dot = QVector3D::dotProduct(backwardTranslation - b->getPos(), zAxis);
+                            direction = (dot > 0) ? 1 : ((dot < 0) ? -1 : 0);
+                            QVector3D backwPosDiff = b->getPos() - bBack->getPos();
+                            a3 = (backwPosDiff) / sqrt(pow(backwPosDiff.x(),2)+pow(backwPosDiff.y(),2)+pow(backwPosDiff.z(),2));
+
+                        }
+                        else {
+                            direction = 1;
+                        }
+                    }
+
+                    if (direction == 0) {   // crappy solution to weird xover bug
+                        direction = store_dir;
+                    }
+                    store_dir = direction;  // save the direction for later next round as it may need to be
+                                            // used again
+
+                    Model::Base* pair = b->getOpposite();
+                    QVector3D link_versor;
+                    QVector3D posdiff;
+                    QQuaternion partner_parent_rotation;
+                    if (pair) {
+                        posdiff = pair->getPos() - b->getPos();
+                        link_versor = (posdiff) / sqrt(pow(posdiff.x(),2)+pow(posdiff.y(),2)+pow(posdiff.z(),2));
+                        partner_parent_rotation = pair->getParent()->orientation_;
+                    }
+                    else {
+                        link_versor = QVector3D(0, 1, 0);
+                        partner_parent_rotation = QQuaternion(0, 0, 0, 0);
+                    }
+                    QVector3D perp_versor(-link_versor.y(), link_versor.x(), 0.f);
+                    QVector3D unrotated_CoM_element = b->getPos() + (0.8494 * link_versor) - (0.1883 * perp_versor);
+                    QVector3D new_forw_pos = unrotated_CoM_element - ((0.6 * 0.8518) * link_versor);
+                    QVector3D new_backw_pos = unrotated_CoM_element + ((0.6 * 0.8518) * link_versor);
+                    QMatrix3x3 rot_mat = getMatrix(b->getParent()->orientation_.x(), b->getParent()->orientation_.y(), b->getParent()->orientation_.z());
+                    QVector3D rotated_forw_pos = matrixVectorMult(rot_mat, new_forw_pos);
+                    QMatrix3x3 back_rot_mat;
+                    QVector3D pairParentPos;
+                    if (pair) {
+                        pairParentPos = pair->getPos();
+                        back_rot_mat = getMatrix(partner_parent_rotation.x(), partner_parent_rotation.y(), partner_parent_rotation.z());
+                    }
+                    else {
+                        pairParentPos = QVector3D(0,0,0);
+                        back_rot_mat = getMatrix(0, 0, 0);
+                    }
+                    QVector3D rotated_backw_pos = matrixVectorMult(back_rot_mat, new_backw_pos);
+                    QVector3D correct_forw_pos = (rotated_forw_pos + b->getParent()->position_) / 0.8518;
+                    QVector3D correct_backw_pos = (rotated_backw_pos + pairParentPos) / 0.8518;
+                    QVector3D correctPosDiff = correct_backw_pos - correct_forw_pos;
+                    QVector3D a1 = (correctPosDiff) / sqrt(pow(correctPosDiff.x(),2)+pow(correctPosDiff.y(),2)+pow(correctPosDiff.z(),2));
+                    // multiply with 1.174 to change from nm to oxDNA length units, nudging each phosphate position with the tangent vector to get center of mass
+
+                    a1.setX(b->getPos().x() - b->getOpposite()->getPos().x());
+                    a1.setY(b->getPos().y() - b->getOpposite()->getPos().y());
+                    a1.setZ(b->getPos().z() - b->getOpposite()->getPos().z());
+                    a1.normalize();
+                    a1 = a1 * 1.2;
+
+
+                    //a3 = QVector3D::crossProduct(a1, b->getOpposite()->getPos()).normalized();
+                    a3 = a1;
+
+                    out << "\"p\":[" << (b->getPos().x() * 1.174) - a1.x() * 0.35 << ","
+                        << (b->getPos().y() * 1.174) - a1.y() * 0.35<< ","
+                        << (b->getPos().z() * 1.174) - a1.z() * 0.35<< "],";
+
+                    // in oxview, the 3' and 5' ends are incorrectly swapped
+                    if (b->getForward() != nullptr) {
+                        if (basenum != s.bases_.size()-1) {
+                            out << "\"n3\":" << b->getForward()->baseId_ << ",";
+                        }
+                    }
+                    if (b->getBackward() != nullptr) {
+                        if (!firstBase) {
+                            out << "\"n5\":" << b->getBackward()->baseId_ << ",";
+                        }
+                    }
+
+
+
+                    out << "\"cluster\":1,";
+                    out << "\"a1\":[" << a1.x()*-1.0 << "," << a1.y()*-1.0 << "," << a1.z()*-1.0 << "],";
+                    out << "\"a3\":[" << a3.x()*-1.0 << "," << a3.y()*-1.0 << "," << a3.z()*-1.0 << "],";
+
+                    if (b->getOpposite() != nullptr) {
+                        out << "\"bp\":" << b->getOpposite()->baseId_;
+                    }
+
+                    out << "}";
+                    firstBase = false;
+                    basenum++;
+                }
+                out << "],";        // close monomers-section for each strand
+                out << "\"end3\":" << s.bases_.at(0)->baseId_ << ",\"end5\":" << s.bases_.at(s.bases_.size()-1)->baseId_ << ",\"class\":\"NucleicAcidStrand\"}";
             }
+
+            out << "]";       // close strands-section
+            out << "}]";      // close systems-section
+            out << "}";       // close entire .json
             file.close();
-
-            // write topology and bases in .top file
-            fileName.chop(5);
-            fileName.append(QString("top"));
-            QFile topfile(fileName);
-            if (!topfile.open(QIODevice::WriteOnly)) {
-                QMessageBox::information(this, tr("Unable to save topology file."), file.errorString());
-                return;
-            }
-            QTextStream top_out(&topfile);
-            top_out << basecount << " " << strandcount << "\n";
-            unsigned long long strandindex = 1;
-            long long base_index = 0;
-            for (const auto &s : strands_) {
-                unsigned long long strand_basecount = 0;
-                for (const auto &b : s.bases_) {
-                    tempsstr << strandindex << " ";
-                    if (b->nucleobase == Nucleobase::ADENINE) {
-                        tempsstr << "A ";
-                    }
-                    else  if (b->nucleobase == Nucleobase::CYTOSINE) {
-                        tempsstr << "C ";
-                    }
-                    else if (b->nucleobase == Nucleobase::THYMINE) {
-                        tempsstr << "T ";
-                    }
-                    else if (b->nucleobase == Nucleobase::GUANINE) {
-                        tempsstr << "C ";
-                    }
-                    else if (b->nucleobase == Nucleobase::NONE) {
-                        tempsstr << "? ";
-                    }
-                    if (strand_basecount == 0) {
-                        tempsstr << "-1 ";
-                    }
-                    else {
-                        tempsstr << std::to_string(base_index-1) << " ";
-                    }
-                    if (strand_basecount == s.bases_.size()-1) {
-                        tempsstr << "-1";
-                    }
-                    else {
-                        tempsstr << std::to_string(base_index+1);
-                    }
-
-                    tempsstr << "\n";
-                    temp = tempsstr.str();
-                    top_out << temp.c_str();
-                    tempsstr.str(std::string());
-                    base_index++;
-                    strand_basecount++;
-                }
-                strandindex++;
-
-            }
-            topfile.close();
-
-            // finally, write the vhelix meta file .vmeta
-            fileName.chop(3);
-            fileName.append(QString("vmeta"));
-            QFile metafile(fileName);
-            if (!metafile.open(QIODevice::WriteOnly)) {
-                QMessageBox::information(this, tr("Unable to save metafile"), file.errorString());
-                return;
-            }
-            QTextStream meta_out(&metafile);
-            for (const auto &s : strands_) {
-                for (const auto &b : s.bases_) {
-                    Model::Base *opposite = b->getOpposite();
-                    if (opposite != nullptr) {
-                        for (unsigned long long i = 0; i < strands_.size(); i++) {
-                            if (strands_[i].name_ == opposite->strandname_) {
-                                tempsstr << std::to_string(i+1) << " " << opposite->offset_ << "\n";
-                            }
-                        }
-                    }
-                    else {
-                        tempsstr << "-1 -1\n";
-                    }
-                    temp = tempsstr.str();
-                    meta_out << temp.c_str();
-                    tempsstr.str(std::string());
-                }
-            }
         }
         std::stringstream message;
         std::string cfilename;
@@ -572,6 +693,7 @@ void MainWindow::on_actionSave_current_model_triggered()
         console_->write_(msg_temp);
     }
 }
+
 
 
 // ------------ Physical relaxation dialog -------------------
@@ -657,11 +779,22 @@ void RpolyDialog::getOpts(int &min, int &max)
 }
 // -------------Add sequence dialog ---------------------
 
-SequenceDialog::SequenceDialog(MainWindow *parent)
+SequenceDialog::SequenceDialog(MainWindow *parent, const std::vector<Model::Strand>& strands)
     : QDialog(nullptr)
 {
     ui_.setupUi(this);
     parent_ = parent;
+    for (unsigned long i = 0; i < strands.size(); i++) {
+        std::stringstream sstr;
+        if (!strands[i].name_.empty()) {
+            sstr << strands[i].name_ << ", length: " << strands[i].bases_.size();
+        }
+        else {
+            sstr << strands[i].id_ << ", length: " << strands[i].bases_.size();
+        }
+        std::string item = sstr.str();
+        ui_.comboBox->addItem(QString(item.c_str()));
+    }
 }
 
 std::string SequenceDialog::getSequence()
@@ -712,5 +845,10 @@ std::string SequenceDialog::getSequence()
     }
 
     return ret;
+}
+
+std::string SequenceDialog::getTargetStrand()
+{
+    return std::string(ui_.comboBox->currentText().toLocal8Bit().constData());
 }
 

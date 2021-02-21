@@ -59,7 +59,7 @@
        <enum>Qt::LeftToRight</enum>
       </property>
       <property name="text">
-       <string>For default strand lengths, leave these as 0.</string>
+       <string>For default strand lengths, leave these as 0..</string>
       </property>
      </widget>
     </item>

@@ -22,6 +22,7 @@ Included modules and source code:
 - [vHelix](http://www.vhelix.net)
 - [objToPly by Nabeel Hussain](https://github.com/nabeel3133/file-converter-.obj-to-.ply)
 - [oxDNAviewer](https://github.com/sulcgroup/oxdna-viewer)
+- [json by Niels Lohmann](https://github.com/nlohmann/json)
 
 If you use another platform than Win64 you need to recompile PhysXSDK 3.3 and Lemon for your system. You also need to compile the libraries on your own if you need a debug build.
 
@@ -38,14 +39,15 @@ Workflow/pipeline for generating a sequence and model from a .ply or .obj model:
 - If the routing is successful, the last line that appeard in the console pane should verify that you got a valid A-trail in the meshes
 - With the same .ply still selected, click Relaxation->PhysX. Here, you can estimate scaffold strand base usage based on the scaling value. Once you have scaled the model appropriately, you can run the relaxation. It may take a while, and in some cases with very short edges (small scaling value) it may run forever. The relaxation is ready when the console pane updates and an .rpoly file appears in the workspace.
 - The .rpoly file can be converted to oxDNA file format from Export->Export selection to oxDNA, or double clicked to generate and view the full model in the 3D graphics pane on the right. This can take a while depending on you hardware.
-- if you want to view the model in oxDNA format, there is a shortcut to a local oxDNAviewer from oxDNA->Open oxDNA viewer. You can drag and drop the .conf and .top files directly in the oxDNAviewer window to load them.
-- Once the 3D model appears on the right (performance is still rather poor), you can add a sequence to the scaffold strand from Edit->Add sequence, and after this you can export the strands as a .csv file from Export->Export strand sequences.
-- To export the generated model, click File->Save current model to save it in oxDNA format with a meta file (.conf, .top and .vmeta). Importer not yet implemented...
+- if you want to view the model in oxDNA format, there is a shortcut to a local oxDNAviewer from oxDNA->Open oxDNA viewer. You can drag and drop .conf and .top files or an .oxview file directly in the oxDNAviewer window to load them.
+- Once the 3D model appears on the right (3D performance not yet optimized), you can add a sequence to the scaffold strand from Edit->Add sequence, and after this you can export the strands as a .csv file from Export->Export strand sequences.
+- To export the generated model, click File->Save current model to save it in .oxview format usable in oxView
 
 ## Todo
 
 - Automated strand gap filling
-- .oxdna + .top + .vmeta DNA model importer
+- base rotation correction in .oxview export
 - Base estimation including filled in strand gaps (separately)
-- Qt3D performance improvements (instancing/batching of entities)
+- Qt3D performance improvements
 - Bugfixes: Python API crashes, strand-, helix- and base memory use optimizations
+- Code cleanup

@@ -22,26 +22,16 @@ link_directories(${root_SOURCE_DIR}/lib)
 link_directories(C:/Users/Henkka/AppData/Local/Programs/Python/Python38/libs)
 link_directories(${root_SOURCE_DIR}/scaffold_routing_rectification)
 add_subdirectory(scaffold_routing_rectification/)
+add_subdirectory(include/json)
 #add_executable(lemon ${root_SOURCE_DIR})
 #target_link_libraries(lemon)
 
+# turn off json library tets
+set(JSON_BuildTests OFF CACHE INTERNAL "")
+
 find_package(Qt5 COMPONENTS Core Gui Widgets REQUIRED 3DCore 3DExtras 3Drender 3DInput)
 
-if(ANDROID)
-  add_library(vHelix SHARED
-    main.cpp
-    mainwindow.cpp
-    mainwindow.h
-    console.cpp
-    console.h
-    mainwindow.ui
-    vhelix.cpp
-    vhelix.h
-    processio.h
-    processio.cpp
-  )
-else()
-  add_executable(vHelix
+add_executable(vHelix
     # main files
     main.cpp
     mainwindow.cpp
@@ -59,8 +49,8 @@ else()
     processio.cpp
     graphicsview.h
     graphicsview.cpp
-    rpolyparser.h
-    rpolyparser.cpp
+    fileparser.h
+    fileparser.cpp
     model.h
     model.cpp
     dna.h
@@ -104,169 +94,8 @@ else()
 
     # Modified vHelix maya plugin source code
     # Not used
-    # -- Headers --
     include/mayahelix/Definition.h
-    #[[
-    include/mayahelix/ApplySequence.h
-    include/mayahelix/ApplySequenceGui.h
-    include/mayahelix/BackboneArrow.h
-    include/mayahelix/Connect.h
-    include/mayahelix/CreateCurves.h
-    include/mayahelix/CreatorGui.h
-    include/mayahelix/Disconnect.h
-    include/mayahelix/Definition.h
-    include/mayahelix/DNA.h
-    include/mayahelix/Duplicate.h
-    include/mayahelix/ExportStrands.h
-    include/mayahelix/ExtendGui.h
-    include/mayahelix/ExtendStrand.h
-    include/mayahelix/FillStrandGaps.h
-    include/mayahelix/FindFivePrimeEnds.h
-    include/mayahelix/Helix.h
-    include/mayahelix/HelixBase.h
-    include/mayahelix/JSONTranslator.h
-    include/mayahelix/Locator.h
-    include/mayahelix/opengl.h
-    include/mayahelix/OxDnaTranslator.h
-    include/mayahelix/PaintStrand.h
-    include/mayahelix/RetargetBase.h
-    include/mayahelix/RoutedMeshTranslator.h
-    include/mayahelix/StrandLengthCount.h
-    include/mayahelix/TargetHelixBaseBackward.h
-    include/mayahelix/TextBasedTranslator.h
-    include/mayahelix/ToggleCylinderBaseView.h
-    include/mayahelix/ToggleLocatorRender.h
-    include/mayahelix/ToggleShowSuggestedConnections.h
-    include/mayahelix/Tracker.h
-    include/mayahelix/Utility.h
-    include/mayahelix/Creator.h
-    include/mayahelix/model/Base.h
-    include/mayahelix/model/Color.h
-    include/mayahelix/model/Helix.h
-    include/mayahelix/model/Material.h
-    include/mayahelix/model/Object.h
-    include/mayahelix/model/Strand.h
-    include/mayahelix/model/Space.h
-    include/mayahelix/controller/ApplySequence.h
-    include/mayahelix/controller/TextBasedImporter.h
-    include/mayahelix/controller/Connect.h
-    include/mayahelix/controller/CreateCurves.h
-    include/mayahelix/controller/Disconnect.h
-    include/mayahelix/controller/Duplicate.h
-    include/mayahelix/controller/ExportStrands.h
-    include/mayahelix/controller/ExtendStrand.h
-    include/mayahelix/controller/FillStrandGaps.h
-    include/mayahelix/controller/JSONImporter.h
-    include/mayahelix/controller/OxDnaExporter.h
-    include/mayahelix/controller/OxDnaImporter.h
-    include/mayahelix/controller/PaintStrand.h
-    include/mayahelix/controller/Operation.h
-    include/mayahelix/controller/RoutedMeshImporter.h
-    include/mayahelix/controller/StrandLengthCount.h
-    include/mayahelix/data/BackBoneArrow.h
-    include/mayahelix/json/json.h
-    include/mayahelix/json/json-forwards.h
-    include/mayahelix/view/BaseShape.h
-    include/mayahelix/view/BaseShapeUI.h
-    include/mayahelix/view/ConnectSuggestionsContext.h
-    include/mayahelix/view/ConnectSuggestionsContextCommand.h
-    include/mayahelix/view/ConnectSuggestionsLocatorNode.h
-    include/mayahelix/view/ConnectSuggestionsToolCommand.h
-    include/mayahelix/view/HelixShape.h
-    include/mayahelix/view/HelixShapeUI.h
-    # -- .cpp
-    mayahelix/ApplySequence.cpp
-    mayahelix/ApplySequenceGui.cpp
-    mayahelix/Connect.cpp
-    mayahelix/CreateCurves.cpp
-    mayahelix/Creator.cpp
-    mayahelix/CreatorGui.cpp
-    mayahelix/Disconnect.cpp
-    mayahelix/DNA.cpp
-    mayahelix/Duplicate.cpp
-    mayahelix/ExportStrands.cpp
-    mayahelix/ExtendGui.cpp
-    mayahelix/ExtendStrand.cpp
-    mayahelix/FillStrandGaps.cpp
-    mayahelix/FindFivePrimeEnds.cpp
-    mayahelix/Helix.cpp
-    mayahelix/HelixBase.cpp
-    mayahelix/jsoncpp.cpp
-    mayahelix/JSONTranslator.cpp
-    mayahelix/Locator.cpp
-    mayahelix/main.cpp
-    mayahelix/opengl.cpp
-    mayahelix/OxDnaTranslator.cpp
-    mayahelix/PaintStrand.cpp
-    mayahelix/RetargetBase.cpp
-    mayahelix/RoutedMeshTranslator.cpp
-    mayahelix/StrandLengthCount.cpp
-    mayahelix/StrandLengthCount.cpp
-    mayahelix/TargetHelixBaseBackward.cpp
-    mayahelix/TextBasedTranslator.cpp
-    mayahelix/ToggleCylinderBaseView.cpp
-    mayahelix/ToggleLocatorRender.cpp
-    mayahelix/ToggleShowSuggestedConnections.cpp
-    mayahelix/Tracker.cpp
-    mayahelix/Utility.cpp
-    mayahelix/controller/TextBasedImporterController.cpp
-    mayahelix/controller/ApplySequenceController.cpp
-    mayahelix/controller/ConnectController.cpp
-    mayahelix/controller/CreateCurvesController.cpp
-    mayahelix/controller/DisconnectController.cpp
-    mayahelix/controller/DuplicateController.cpp
-    mayahelix/controller/ExportStrandsController.cpp
-    mayahelix/controller/ExtendStrandController.cpp
-    mayahelix/controller/FillStrandGapsController.cpp
-    mayahelix/controller/JSONImporterController.cpp
-    mayahelix/controller/OxDnaExporterController.cpp
-    mayahelix/controller/OxDnaImporterController.cpp
-    mayahelix/controller/PaintStrandController.cpp
-    mayahelix/controller/RoutedMeshImporterController.cpp
-    mayahelix/controller/StrandLengthCountController.cpp
-    mayahelix/model/ObjectModel.cpp
-    mayahelix/model/BaseModel.cpp
-    mayahelix/model/ColorModel.cpp
-    mayahelix/model/HelixModel.cpp
-    mayahelix/model/MaterialModel.cpp
-    mayahelix/model/StrandModel.cpp
-    mayahelix/view/BaseShape.cpp
-    mayahelix/view/BaseShapeUI.cpp
-    mayahelix/view/ConnectSuggestionsContext.cpp
-    mayahelix/view/ConnectSuggestionsContextCommand.cpp
-    mayahelix/view/ConnectSuggestionsLocatorNode.cpp
-    mayahelix/view/ConnectSuggestionsToolCommand.cpp
-    mayahelix/view/double_arrow.cpp
-    mayahelix/view/HelixShape.cpp
-    mayahelix/view/HelixShapeUI.cpp]]
-  )
-endif()
-
-#find_library(LEMON_LIB lemon.lib HINTS ${root_SOURCE_DIR})
-#if( ${LEMON_LIB} STREQUAL "LEMON_LIB-NOTFOUND")
-#    message("Please set LEMON_LIB variable to location of lemon.lib")
-#endif()
-
-#FIND_PATH(LEMON_SOURCE_ROOT_DIR CMakeLists.txt
-#  PATHS ${CMAKE_SOURCE_DIR}/lemon ${CMAKE_SOURCE_DIR}/deps/lemon
-#  NO_DEFAULT_PATH
-#  DOC "Location of LEMON source as a CMAKE subproject")
-#
-#IF(EXISTS ${LEMON_SOURCE_ROOT_DIR})
-#  ADD_SUBDIRECTORY(${LEMON_SOURCE_ROOT_DIR} deps/lemon)
-#  SET(LEMON_INCLUDE_DIRS
-#    ${LEMON_SOURCE_ROOT_DIR}
-#    ${CMAKE_BINARY_DIR}/deps/lemon
-#  )
-#  SET(LEMON_LIBRARIES lemon)
-#  UNSET(LEMON_ROOT_DIR CACHE)
-#  UNSET(LEMON_DIR CACHE)
-#  UNSET(LEMON_INCLUDE_DIR CACHE)
-#  UNSET(LEMON_LIBRARY CACHE)
-#ELSE()
-#  FIND_PACKAGE(LEMON QUIET NO_MODULE)
-#  FIND_PACKAGE(LEMON REQUIRED)
-#ENDIF()
+)
 
 
 # Force compiler flags from PhysX3 libraries to multithreading MT (MT_StaticRelease)
@@ -290,5 +119,5 @@ target_link_libraries(vHelix PRIVATE Qt5::Widgets Qt5::3DCore Qt5::3DExtras
     PhysX3_x64 PhysX3Common_x64 PhysX3Extensions PhysXProfileSDK
     PhysX3_x64 PhysX3Common_x64
     PhysX3CharacterKinematic_x64 PhysX3Cooking_x64
-    )
-# lemon
+    nlohmann_json::nlohmann_json
+)

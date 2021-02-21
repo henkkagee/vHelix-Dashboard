@@ -22,7 +22,7 @@ GraphicsView::GraphicsView(QWidget *parent)
 
     rootEntity_ = new Qt3DCore::QEntity();
 
-    // enable depth testing for all renderstates. This is at least a temporary fix for Qt3D 5.9.9 where depth testing is missing.
+    // enable depth testing for all renderstates. This is at least a temporary fix for Qt3D 5.9.9 where depth testing is broken.
     Qt3DRender::QMaterial *  rootMaterial   = new Qt3DRender::QMaterial(rootEntity_);
             Qt3DRender::QEffect *effect = rootMaterial->effect();
             if (effect)
@@ -87,7 +87,7 @@ GraphicsView::~GraphicsView()
     delete view_;
 }
 
-void GraphicsView::addSphere(const QVector3D &translation, const QQuaternion &rotation, const QColor &color)
+void GraphicsView::addSphere(const QVector3D &translation, const QQuaternion &rotation, const QColor &color, const float &radius)
 {
     // Sphere shape data
     Qt3DCore::QEntity *m_sphereEntity = new Qt3DCore::QEntity();
@@ -95,7 +95,7 @@ void GraphicsView::addSphere(const QVector3D &translation, const QQuaternion &ro
     Qt3DExtras::QSphereMesh *sphereMesh = new Qt3DExtras::QSphereMesh();
     sphereMesh->setRings(4);
     sphereMesh->setSlices(4);
-    sphereMesh->setRadius(0.2f);
+    sphereMesh->setRadius(radius);
 
     // Sphere mesh transform
     Qt3DCore::QTransform *sphereTransform = new Qt3DCore::QTransform();
@@ -214,15 +214,15 @@ void GraphicsView::drawHelices(std::vector<Model::Helix> helices)
         }
 
         for (int i = 0; i < h.bases_; i++) {
-            addSphere(h.Fbases[i].position, QQuaternion(), colors[col]);
-            addSphere(h.Bbases[i].position, QQuaternion(), colors[col]);
+            addSphere(h.Fbases_[i].getPos(), QQuaternion(), colors[col], 0.2f);
+            addSphere(h.Bbases_[i].getPos(), QQuaternion(), colors[col], 0.2f);
             // test connection visibility
             //drawLine(h.Fbases[i].position, h.Bbases[i].position, QColor(QRgb(0x000000)), rootEntity_);
         }
-        if (h.Fbases[h.bases_ - 1].getForward() != nullptr) {
+        if (h.Fbases_[h.bases_ - 1].getForward() != nullptr) {
             first = 1;
             //drawLine(h.Fbases[h.bases_ - 1].position, h.Fbases[h.bases_ - 1].getForward()->position, QColor(QRgb(0x000000)), rootEntity_);
-            drawLine(h.position_, h.Fbases[h.bases_ - 1].getForward()->getParent()->position_, QColor(QRgb(0x000000)), rootEntity_);
+            drawLine(h.position_, h.Fbases_[h.bases_ - 1].getForward()->getParent()->position_, QColor(QRgb(0x000000)), rootEntity_);
         }
         cnt++;
     }
@@ -251,8 +251,16 @@ void GraphicsView::drawStrands(std::vector<Model::Strand> strands)
             colour = colours[col];
         }
         for (unsigned long long int i = 0; i < s.bases_.size(); i++) {
-            addSphere(s.bases_[i]->position, QQuaternion(), colour);
-            drawLine(s.bases_[i]->position, s.bases_[i]->opposite->position, QRgb(0x000000), rootEntity_);
+            if (s.scaffold_) {
+                if (i == 0) {
+                    addSphere(s.bases_[i]->getPos(), QQuaternion(), QRgb(0x00ff00), 0.5f);
+                }
+                else if (i == s.bases_.size() - 1) {
+                    addSphere(s.bases_[i]->getPos(), QQuaternion(), QRgb(0xff0000), 0.5f);
+                }
+            }
+            addSphere(s.bases_[i]->getPos(), QQuaternion(), colour, 0.2f);
+            //drawLine(s.bases_[i]->position, s.bases_[i]->opposite->position, QRgb(0x000000), rootEntity_);
         }
         num++;
         col++;

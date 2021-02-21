@@ -24,10 +24,14 @@
 #define BUFFER_SIZE 1024
 // 0.84 scaling is ad hoc solution to get good looking models
 #define POSITION_SCALING 0.84f
+
+using json = nlohmann::json;
+
 Controller::Parser::Parser()
 {
 
 }
+
 
 namespace Controller {
     struct non_nicked_strand_t {
@@ -112,16 +116,22 @@ namespace Controller {
         file.clear();
         file.seekg(0);
         helices.reserve(num_helices + 1);
-        std::cout << "ORIENTATIONS" << std::endl;
+        unsigned long bIdStart = 0;
         while (file.good()) {
             std::string line;
             std::getline(file, line);
             QVector3D position;
             if (sscanf(line.c_str(), "h %s %lf %lf %lf %lf %lf %lf %lf", nameBuffer, &pos[0], &pos[1], &pos[2], &ori[0], &ori[1], &ori[2], &ori[3]) == 8) {
                 // 0.84 scaling is ad hoc solution to get good looking models
+                // no explicit base length per helix strand specified... this should not be used currently
+                // TODO
+
+                std::vector<Model::Helix> helices_empty;
+                return helices_empty;
+
                 position.setX(pos[0]/POSITION_SCALING);  position.setY(pos[1]/POSITION_SCALING); position.setZ(pos[2]/POSITION_SCALING);
                 QQuaternion orientation(ori[3], QVector3D(ori[0], ori[1], ori[2]));
-                helices.push_back(Model::Helix(position, orientation, nameBuffer));
+                helices.push_back(Model::Helix(position, orientation, nameBuffer, bIdStart));
                 for (int num_bases = 0; num_bases < helices.back().bases_; num_bases++) {
                     helices.back().Fbases[num_bases].parent = &helices.back();
                     helices.back().Bbases[num_bases].parent = &helices.back();
@@ -130,12 +140,10 @@ namespace Controller {
             else if (sscanf(line.c_str(), "hb %s %u %lf %lf %lf %lf %lf %lf %lf", nameBuffer, &bases, &pos[0], &pos[1], &pos[2], &ori[0], &ori[1], &ori[2], &ori[3]) == 9) {
                 // 0.84 scaling is ad hoc solution to get good looking models
                 position.setX(pos[0]/POSITION_SCALING);  position.setY(pos[1]/POSITION_SCALING); position.setZ(pos[2]/POSITION_SCALING);
-                //QQuaternion orientation(ori[3], QVector3D(ori[0], ori[1], ori[2]));
-                //QQuaternion dir = QQuaternion::fromDirection(QVector3D(0.65f, -0.76f, 0.0f), QVector3D(0.f, 1.f, 0.f));
-                //orientation = dir * orientation;
-                // QQuaternion orientation = QQuaternion::fromAxisAndAngle(QVector3D(ori[0], ori[1], ori[2]), ori[3]);
                 QQuaternion orientation;
                 float *values = new float[9];
+                // helix rotation x,y,z and w to 3x3 rotation matrix
+                // no Qt method for this?
                 values[0] = 1-2*pow(ori[1],2)-2*pow(ori[2],2);
                 values[1] = 2*ori[0]*ori[1]-2*ori[2]*ori[3];
                 values[2] = 2*ori[0]*ori[2]+2*ori[1]*ori[3];
@@ -145,18 +153,14 @@ namespace Controller {
                 values[6] = 2*ori[0]*ori[2]-2*ori[1]*ori[3];
                 values[7] = 2*ori[1]*ori[2]+2*ori[0]*ori[3];
                 values[8] = 1-2*pow(ori[0], 2)-2*pow(ori[1],2);
-                std::cout << "Values: " << std::endl;
-                for (int i = 0; i < 9; i++) {
-                    std::cout << values[i] << " ";
-                }
-                std::cout << std::endl;
                 orientation = QQuaternion::fromRotationMatrix(QMatrix3x3(values));
-                std::cout << "Orientation: " << orientation.x() << " " << orientation.y() << " " << orientation.z() << std::endl;
-                helices.push_back(Model::Helix(position, orientation, nameBuffer, bases));
+                helices.push_back(Model::Helix(position, orientation, nameBuffer, bIdStart, bases));
                 for (int num_bases = 0; num_bases < helices.back().bases_; num_bases++) {
                     helices.back().Fbases[num_bases].parent = &helices.back();
                     helices.back().Bbases[num_bases].parent = &helices.back();
                 }
+                bIdStart += helices.back().bases_*2;
+                //std::cout << "Bases: " << helices.back().bases_ << " -- next bIdStart: " << bIdStart << std::endl << std::flush;
                 delete[] values;
             }
             /*else if (sscanf(line.c_str(), "b %s %s %lf %lf %lf %s %c", nameBuffer, helixNameBuffer, &position[0], &position[1], &position[2], materialNameBuffer, &label) == 7) {
@@ -186,7 +190,7 @@ namespace Controller {
         string_helix_map_t helixStructures;
 
         for (std::vector<Model::Helix>::iterator it(helices.begin()); it != helices.end(); ++it) {
-            std::cout << it->name_ << std::endl << std::flush;
+            //std::cout << it->name_ << std::endl << std::flush;
             //helixStructures.insert(std::make_pair(it->name_, *it));
             if (autostaple && it->bases_ > 1) {
                 Model::Base *base = it->getBackwardThreePrime();
@@ -200,7 +204,7 @@ namespace Controller {
                     }
                 }
                 if (it->bases_ > nicking_min_length) {
-                    std::cout << "Base at " << base->getParent()->name_ << " in pos " << base->offset_ << " should be disconnected. Parent is: " << base->getParent() << "\n" << std::flush;
+                    //std::cout << "Base at " << base->getParent()->name_ << " in pos " << base->offset_ << " should be disconnected. Parent is: " << base->getParent() << "\n" << std::flush;
                     disconnectBackwardBases.push_back(base);
                     paintStrandBases.push_back(base);
                 }
@@ -486,6 +490,87 @@ namespace Controller {
                 }
             }
         }
+
+        // divide strands so none are longer than nicking_max_length
+        /*
+        bool pass = false;
+        while (!pass) {
+            if (nicking_max_length > 0) {
+                for (int i = 0; i < strands.size(); i++) {
+                    if (strands[i].length_ > nicking_max_length) {
+                        if (strands[i].forward_) {
+                            continue;
+                        }
+                        std::cout << "Strand " << i << " too long at " << strands[i].length_ << std::endl << std::flush;
+                        if (strands[i].length_ - nicking_max_length > nicking_max_length) {
+                            std::cout << "new" << std::endl << std::flush;
+                            // create new strand
+                            Model::Strand newstrand = Model::Strand();
+                            std::string firstname = strands[i].bases_[nicking_max_length]->parent->name_;
+                            for (int b = nicking_max_length; b < strands[i].length_; b++) {
+                                newstrand.bases_.push_back(strands[i].bases_[b]);
+                            }
+                            strands[i].bases_.erase(strands[i].bases_.begin() + nicking_max_length, strands[i].bases_.end());
+                            strands[i].length_ = strands[i].bases_.size();
+                            newstrand.length_ = newstrand.bases_.size();
+                            if (strands[i].forward_) {
+                                newstrand.forward_ = true;
+                            }
+                            else {
+                                newstrand.forward_ = false;
+                            }
+                            i = -1;
+                            continue;
+                        }
+                        else {
+                            std::cout << "extend" << std::endl << std::flush;
+                            bool forw = false; bool backw = false;
+                            if (strands[i].bases_[0]->getBackward()) {
+                                backw = true;
+                            }
+                            if (strands[i].bases_[0]->getForward()) {
+                                forw = true;
+                            }
+                            int extraBases = strands[i].length_ - nicking_max_length;
+                            if (forw && backw) {
+                                std::string findb = strands[i].bases_[0]->getBackward()->strandname_;
+                                std::string findf = strands[i].bases_[0]->getForward()->strandname_;
+                                Model::Strand* backws; Model::Strand* forws;
+                                for (int s = 0; s < strands.size(); s++) {
+                                    if (strands[s].name_ == findb) {
+                                        backws = &strands[s];
+                                    }
+                                    if (strands[s].name_ == findf) {
+                                        forws = &strands[s];
+                                    }
+                                }
+                                int cnt = 0;
+                                for (int bc = nicking_max_length; bc < strands[i].length_; bc++) {
+                                    if (cnt < int(extraBases/2)) {
+                                        backws->bases_.push_back(strands[i].bases_[bc]);
+                                    }
+                                    else {
+                                        forws->bases_.insert(forws->bases_.begin(), strands[i].bases_[bc]);
+                                    }
+                                    cnt++;
+                                }
+                                strands[i].bases_.erase(strands[i].bases_.begin() + nicking_max_length, strands[i].bases_.end());
+                                strands[i].length_ = strands[i].bases_.size();
+                                backws->length_ = backws->bases_.size();
+                                forws->length_ = forws->bases_.size();
+                            }
+                            i = -1;
+                            continue;
+                        }
+                    }
+                    pass = true;
+                }
+            }
+            else {
+                pass = true;
+            }
+        }*/
+
         std::cout << "Number of strands: " << strands.size() << std::endl << std::flush;
         for (std::vector<Model::Strand>::iterator s(strands.begin()); s != strands.end(); s++) {
 
@@ -497,6 +582,7 @@ namespace Controller {
                 Model::Base *b = s->bases_[0];
                 b = b->strand_backward;
                 Model::Strand *strand_to_expand;
+                // TODO: empty strands?
                 for (unsigned long long i = 0; i < strands.size(); i++) {
                     if (b->strandname_ == strands[i].name_) {
                         strand_to_expand = &strands[i];
@@ -513,117 +599,150 @@ namespace Controller {
                 s--;
             }
         }
-        long long int totalbases = 0;
+        unsigned long sId = 0;
         for (auto &s : strands) {
-            totalbases += s.length_;
-            std::cout << s.length_ << std::endl << std::flush;
+            s.id_ = sId;
             if (s.forward_) {
                 s.scaffold_ = true;
             }
+            sId++;
         }
         return helices;
     }
 
+    // open oxview model
+    std::vector<Model::Strand> Parser::readOxview(const char *path) {
 
-    // Temporary implementation using OxDNA files to visualize the structure
-    std::vector<Model::Strand> Parser::readOxDNA(const char *conffile, const char *topfile) {
+        //clear vectors if they have been in use from before
+        helices.clear();
+        connections.clear();
+        strands.clear();
+        bases.clear();
+        explicitBases.clear();
+        explicitBaseLabels.clear();
+
         std::string status;
-        std::ifstream file(topfile);
+        std::ifstream file(path);
         if (file.fail()) {
-            std::cout << "Failed to open file \"%s\"" << topfile << std::endl << std::flush;
+            std::cout << "Failed to open file \"%s\"" << path << std::endl << std::flush;
             std::vector<Model::Strand> ret;
             return ret;
         }
-        std::cout << "Parsing...\n" << std::flush;
-        char firstline = 1;
-        unsigned long long int nbases = 0;
-        unsigned long long int nstrands = 0;
-        unsigned long long int strandNo, base3neigh, base5neigh;
-        unsigned char nucleotide;
-        // reading the topology file first with connection and strand information
-        unsigned long long int linecount = 0;
-        while (file.good()) {
-            std::string line;
-            std::getline(file, line);
-            if (firstline == 1) {
-                if (sscanf(line.c_str(), "%lld %lld", &nbases, &nstrands) == 2) {
-                    bases.reserve(nbases);
-                    strands.reserve(nstrands);
-                }
-                else {
-                    std::vector<Model::Strand> ret;
-                    return ret;
-                }
-                firstline++;
-            }
 
-            else if (sscanf(line.c_str(), "%lld %c %lld %lld", &strandNo, &nucleotide, &base3neigh, &base5neigh) == 4) {
-                bases.push_back(Model::Base(strandNo, nucleotide, base3neigh, base5neigh, linecount));
-                if (strands.size() < strandNo) {
-                    strands.push_back(Model::Strand(0, strandNo));
-                }
-                strands[strandNo-1].bases_.push_back(&(bases.back()));
-                strands[strandNo-1].length_ += 1;
-            }
-            linecount++;
-        }
+        json j = json::parse(file);
 
-        // now read the configuration file with base coordinates and rotations
-        std::ifstream conf(conffile);
-        if (conf.fail()) {
-            std::cout << "Failed to open configuration file \"%s\"" << conffile;
-            std::vector<Model::Strand> ret;
-            return ret;
-        }
-        linecount = 1;
-        std::vector<double> pos(3);
-        std::vector<double> bbv(3); // backbone-base unit vector
-        std::vector<double> nv(3); // normal unit vector, same for all bases belonging to the same strand
-        std::vector<double> v(3); // velocity of nucleotide, not used
-        std::vector<double> av(3); // angular velococity of nucleotide, not used
-        std::vector<double> box_size(3);
-        while (conf.good()) {
-            std::string line;
-            std::getline(conf, line);
-            if (linecount <= 3) {
-                switch(line[0]) {
-                    case 't':   // Timestep information. Not used.
-                        break;
-                    case 'b':   // box side lengths Lx, Ly, Lz.
-                        sscanf(line.c_str(), "b = %lf %lf %lf", &box_size[0], &box_size[0], &box_size[0]);
-                        break;
-                    case 'E':
-                        break;  // simulation energies Etot, Y and K. Not used.
+        unsigned long basecount = 0;
+        for (auto &system : j["systems"]) {
+            for (auto &strand : system["strands"]) {
+                for (auto &base : strand["monomers"]) {
+                    basecount++;
                 }
             }
-            else if (sscanf(line.c_str(), "%lf %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf",
-                            &pos[0], &pos[1], &pos[2], &bbv[0], &bbv[1], &bbv[2], &nv[0], &nv[1], &nv[2],
-                            &v[0], &v[1], &v[2], &av[0], &av[1], &av[2]) == 15)
-                {
-                bases[linecount - 4].position = QVector3D(pos[0], pos[1], pos[2]);
+        }
+        bases.reserve(basecount+1);
 
-                // FIXME: set base rotation later
-
+        for (auto &system : j["systems"]) {
+            for (auto &strand : system["strands"]) {
+                Model::Strand s = Model::Strand();
+                s.id_ = strand["id"];
+                for (auto &base : strand["monomers"]) {
+                    std::stringstream sstr;
+                    sstr << base["type"];
+                    std::string btype = sstr.str();
+                    long n3, n5, bp;
+                    if (base.find("n5") != base.end()) {
+                        n5 = base["n5"];
+                    }
+                    else {
+                        n5 = -1;
+                    }
+                    if (base.find("n3") != base.end()) {
+                        n3 = base["n3"];
+                    }
+                    else {
+                        n3 = -1;
+                    }
+                    if (base.find("bp") != base.end()) {
+                        bp = base["bp"];
+                    }
+                    else {
+                        bp = -1;
+                    }
+                    Model::Base b = Model::Base(s.id_, btype, n3, n5, base["id"], bp);
+                    b.position = QVector3D();
+                    int index = 0;
+                    for (auto &dim : base["p"]) {
+                        switch(index) {
+                            case 0:
+                                b.position.setX(dim);
+                                break;
+                            case 1:
+                                b.position.setY(dim);
+                                break;
+                            case 2:
+                                b.position.setZ(dim);
+                                break;
+                        }
+                        index++;
+                    }
+                    bases.push_back(b);
+                    s.bases_.push_back(&bases.at(bases.size()-1));
+                }
+                strands.push_back(s);
             }
-            linecount++;
         }
-
-        // identify the scaffold strand if there is one
-        std::vector<unsigned long int> strand_lengths;
-        unsigned long long strands_size = strands.size();
-        for (unsigned long long i = 0; i < strands_size; i++) {
-            strand_lengths.push_back(strands[i].bases_.size());
-        }
-        std::sort(strand_lengths.begin(), strand_lengths.end());
-        unsigned long long median = strand_lengths[int(strands_size/2)];
-        for (unsigned long long j = 0; j < strands_size; j++) {
-            std::cout << strand_lengths[j] << " > " << "(median=" << median << " * " << strands_size - 1 << ")...\n" << std::flush;
-            if (strand_lengths[j] > (median * (int(strands_size/2) - 5)) && strand_lengths[j] < (median * (int(strands_size/2) + 5))) {
-                std::cout << "\n " << j << " is likely a scaffold strand" << std::flush;
-                strands[j].scaffold_ = true;
+        // create base connections
+        for (auto &b : bases) {
+            // base pair
+            if (b.oppneigh_ != -1) {
+                for (auto &bp : bases) {
+                    long bId = bp.baseId_;
+                    if (bId == b.oppneigh_) {
+                        b.setOpposite(&bp);
+                        bp.setOpposite(&b);
+                    }
+                }
+            }
+            // 3' neighbour
+            if (b.base3neigh_ != -1) {
+                for (auto &b3 : bases) {
+                    long bId = b3.baseId_;
+                    if (bId == b.base3neigh_) {
+                        b.setForward(&b3);
+                        b3.setBackward(&b);
+                    }
+                }
+            }
+            // 5' neighbour
+            if (b.base5neigh_ != -1) {
+                for (auto &b5 : bases) {
+                    long bId = b5.baseId_;
+                    if (bId == b.base5neigh_) {
+                        b.setBackward(&b5);
+                        b5.setForward(&b);
+                    }
+                }
             }
         }
-
+        int longest = 0;
+        unsigned int longestId = 0;
+        for (auto &s : strands) {
+            s.length_ = s.bases_.size();
+            if (s.length_ > longest) {
+                longestId = s.id_;
+                longest = s.length_;
+            }
+        }
+        for (auto &s : strands) {
+            if (s.id_ == longestId) {
+                s.scaffold_ = true;
+            }
+            else {
+                s.scaffold_ = false;
+            }
+        }
         return strands;
     }
+
+
 }

@@ -16,6 +16,8 @@
 #include <random>
 #include <cmath>
 #include <numeric>
+#include <chrono>
+#include <ctime>
 
 #include <QMainWindow>
 #include <QFile>
@@ -31,7 +33,7 @@
 #include <console.h>
 #include <dirview.h>
 #include "graphicsview.h"
-#include "rpolyparser.h"
+#include "fileparser.h"
 #include "model.h"
 
 // the .ui designer forms are used (and automatically generated in Qtcreator)
@@ -140,8 +142,9 @@ class SequenceDialog : public QDialog
 {
     Q_OBJECT
 public:
-    explicit SequenceDialog(MainWindow *parent);
+    explicit SequenceDialog(MainWindow *parent, const std::vector<Model::Strand>& strands);
     std::string getSequence();
+    std::string getTargetStrand();
 private:
     Ui::SequenceDialog ui_;
     MainWindow *parent_;

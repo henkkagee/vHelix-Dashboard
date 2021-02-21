@@ -7,39 +7,7 @@
 
 #include "model.h"
 
-void Model::Base::setForward(Base *base)
-{
-    forward = base;
-}
-void Model::Base::setBackward(Base *base)
-{
-    backward = base;
-}
-void Model::Base::setOpposite(Base *base)
-{
-    opposite = base;
-}
-void Model::Base::setBase(Nucleobase nb)
-{
-    nucleobase = nb;
-}
-
-Model::Base* Model::Base::getOpposite()
-{
-    return opposite;
-}
-Model::Base* Model::Base::getForward()
-{
-    return forward;
-}
-Model::Base* Model::Base::getBackward()
-{
-    return backward;
-}
-Model::Helix* Model::Base::getParent()
-{
-    return parent;
-}
+// utility functions
 
 void rotate_vector_by_quaternion(const QVector3D& v, const QQuaternion& q, QVector3D& vprime)
 {
@@ -51,17 +19,118 @@ void rotate_vector_by_quaternion(const QVector3D& v, const QQuaternion& q, QVect
 }
 
 
+// Base members
 
-Model::Helix::Helix(const QVector3D &position, const QQuaternion &orientation, const char *name, unsigned int bases)
+void Model::Base::setForward(Base *base)
+{
+    forward_ = base;
+}
+void Model::Base::setBackward(Base *base)
+{
+    backward_ = base;
+}
+void Model::Base::setOpposite(Base *base)
+{
+    opposite_ = base;
+}
+void Model::Base::setBase(Nucleobase nb)
+{
+    nucleobase_ = nb;
+}
+void Model::Base::setParent(Helix* helix)
+{
+    parent_ = helix;
+}
+void Model::Base::setType(Type set_type)
+{
+    type_ = set_type;
+}
+void Model::Base::setPos(QVector3D pos)
+{
+    position_ = pos;
+}
+
+Model::Base* Model::Base::getOpposite()
+{
+    return opposite_;
+}
+Model::Base* Model::Base::getForward()
+{
+    return forward_;
+}
+Model::Base* Model::Base::getBackward()
+{
+    return backward_;
+}
+Model::Helix* Model::Base::getParent()
+{
+    return parent_;
+}
+Type &Model::Base::getType()
+{
+    return type_;
+}
+Nucleobase &Model::Base::getBase()
+{
+    return nucleobase_;
+}
+QVector3D &Model::Base::getPos()
+{
+    return position_;
+}
+
+// standard constructor for structure generation
+Model::Base::Base(const QVector3D &arg_position, Type arg_type, int offset, unsigned long BaseId) :
+    position_(arg_position), type_(arg_type), in_strand_(false), offset_(offset), baseId_(BaseId)
+{
+    backward_ = nullptr;
+    forward_ = nullptr;
+    opposite_ = nullptr;
+    strand_forward_ = nullptr;
+    strand_backward_ = nullptr;
+    checked_ = false;
+}
+
+// constructor for loading existing structures from .oxview-format
+Model::Base::Base(unsigned int StrandId, std::string& nb, long Base3neigh, long Base5neigh, unsigned long BaseId, long Oppneigh)
+    : strandId_(StrandId), base3neigh_(Base3neigh), base5neigh_(Base5neigh), baseId_(BaseId), oppneigh_(Oppneigh)
+{
+    if (nb == "A" || nb == "a") {
+        nucleobase_ = Nucleobase::ADENINE;
+    }
+    else if (nb == "T" || nb == "t") {
+        nucleobase_ = Nucleobase::THYMINE;
+    }
+    else if (nb == "G" || nb == "g") {
+        nucleobase_ = Nucleobase::GUANINE;
+    }
+    else if (nb == "C" || nb == "c") {
+        nucleobase_ = Nucleobase::CYTOSINE;
+    }
+    else {
+        nucleobase_ = Nucleobase::NONE;
+    }
+    backward_ = nullptr;
+    forward_ = nullptr;
+    opposite_ = nullptr;
+    strand_forward_ = nullptr;
+    strand_backward_ = nullptr;
+    checked_ = false;
+}
+
+
+
+// Helix members
+
+Model::Helix::Helix(const QVector3D &position, const QQuaternion &orientation, const char *name, unsigned long bIdStart, unsigned int bases)
  : position_(position), orientation_(orientation), name_(name), bases_(bases), sequence_assigned_(false)
 {
     // create the bases and position them
     QVector3D basePositions[2];
     Model::Base *base_objects[2], *last_base_objects[2];
     QVector3D pos1, pos2;
-    Fbases.reserve(bases_);
-    Bbases.reserve(bases_);
-
+    Fbases_.reserve(bases_);
+    Bbases_.reserve(bases_);
     for (int i = 0; i < bases_; i++) {
         /*
          * Get the positions for the bases from DNA.h
@@ -93,19 +162,19 @@ Model::Helix::Helix(const QVector3D &position, const QQuaternion &orientation, c
             typeF = Type::BASE;
             typeB = Type::BASE;
         }
-        Fbases.push_back(Model::Base(pos1, typeF, i));
-        Bbases.push_back(Model::Base(pos2, typeB, i));
+        Fbases_.push_back(Model::Base(pos1, typeF, i, bIdStart+i));
+        Bbases_.push_back(Model::Base(pos2, typeB, i, bIdStart+bases_+i));
         /*
          * Now connect them
          */
-        base_objects[0] = &Fbases[i];
-        base_objects[1] = &Bbases[i];
+        base_objects[0] = &Fbases_[i];
+        base_objects[1] = &Bbases_[i];
 
-        Fbases[i].setOpposite(&Bbases[i]);
-        Bbases[i].setOpposite(&Fbases[i]);
+        Fbases_[i].setOpposite(&Bbases_[i]);
+        Bbases_[i].setOpposite(&Fbases_[i]);
         // default
-        Fbases[i].setBase(Nucleobase::NONE);
-        Bbases[i].setBase(Nucleobase::NONE);
+        Fbases_[i].setBase(Nucleobase::NONE);
+        Bbases_[i].setBase(Nucleobase::NONE);
 
         /*
          * Now connect the previous bases to the newly created ones
@@ -114,38 +183,38 @@ Model::Helix::Helix(const QVector3D &position, const QQuaternion &orientation, c
             last_base_objects[0]->setForward(base_objects[0]);
             last_base_objects[1]->setBackward(base_objects[1]);
             // strand traversal
-            last_base_objects[0]->strand_forward = base_objects[0];
-            last_base_objects[1]->strand_backward = base_objects[1];
+            last_base_objects[0]->strand_forward_ = base_objects[0];
+            last_base_objects[1]->strand_backward_ = base_objects[1];
 
         }
         if (i == 0 ) {
-            forward5Prime = &Fbases[i];
-            backward3Prime = &Bbases[i];
-            Fbases[i].setBackward((Model::Base*)nullptr);
-            Bbases[i].setForward((Model::Base*)nullptr);
+            forward5Prime_ = &Fbases_[i];
+            backward3Prime_ = &Bbases_[i];
+            Fbases_[i].setBackward((Model::Base*)nullptr);
+            Bbases_[i].setForward((Model::Base*)nullptr);
             // strand traversal
-            Fbases[i].strand_backward = nullptr;
-            Bbases[i].strand_forward = nullptr;
+            Fbases_[i].strand_backward_ = nullptr;
+            Bbases_[i].strand_forward_ = nullptr;
         }
         else if (i == bases_ -1) {
-            forward3Prime = &Fbases[i];
-            backward5Prime = &Bbases[i];
-            Fbases[i].setForward((Model::Base*)nullptr);
-            Bbases[i].setForward(last_base_objects[1]);
-            Fbases[i].setBackward(last_base_objects[0]);
-            Bbases[i].setBackward((Model::Base*)nullptr);
+            forward3Prime_ = &Fbases_[i];
+            backward5Prime_ = &Bbases_[i];
+            Fbases_[i].setForward((Model::Base*)nullptr);
+            Bbases_[i].setForward(last_base_objects[1]);
+            Fbases_[i].setBackward(last_base_objects[0]);
+            Bbases_[i].setBackward((Model::Base*)nullptr);
             // strand traversal
-            Fbases[i].strand_forward = nullptr;
-            Bbases[i].strand_forward = last_base_objects[1];
-            Fbases[i].strand_backward = last_base_objects[0];
-            Bbases[i].strand_backward = nullptr;
+            Fbases_[i].strand_forward_ = nullptr;
+            Bbases_[i].strand_forward_ = last_base_objects[1];
+            Fbases_[i].strand_backward_ = last_base_objects[0];
+            Bbases_[i].strand_backward_ = nullptr;
         }
         else {
-            Fbases[i].setBackward(last_base_objects[0]);
-            Bbases[i].setForward(last_base_objects[1]);
+            Fbases_[i].setBackward(last_base_objects[0]);
+            Bbases_[i].setForward(last_base_objects[1]);
             // strand traversal
-            Fbases[i].strand_backward = last_base_objects[0];
-            Bbases[i].strand_forward = last_base_objects[1];
+            Fbases_[i].strand_backward_ = last_base_objects[0];
+            Bbases_[i].strand_forward_ = last_base_objects[1];
         }
         for(int j = 0; j < 2; j++) {
             last_base_objects[j] = base_objects[j];
@@ -155,48 +224,18 @@ Model::Helix::Helix(const QVector3D &position, const QQuaternion &orientation, c
 
 Model::Base* Model::Helix::getForwardFivePrime()
 {
-    return forward5Prime;
+    return forward5Prime_;
 }
 Model::Base* Model::Helix::getBackwardFivePrime()
 {
-    return backward5Prime;
+    return backward5Prime_;
 }
 Model::Base* Model::Helix::getBackwardThreePrime()
 {
-    return backward3Prime;
+    return backward3Prime_;
 }
 Model::Base*Model::Helix::getForwardThreePrime()
 {
-    return forward3Prime;
+    return forward3Prime_;
 }
 
-Model::Base::Base(const QVector3D &arg_position, Type arg_type, int offset) :
-    position(arg_position), type(arg_type), in_strand(false), offset_(offset)
-{
-    backward = nullptr;
-    forward = nullptr;
-    opposite = nullptr;
-    strand_forward = nullptr;
-    strand_backward = nullptr;
-    checked = 43;
-}
-
-Model::Base::Base(long long int strandId, unsigned char &nb, long long int base3neigh, long long int base5neigh, unsigned long long int baseId)
-    : strandId_(strandId), base3neigh_(base3neigh), base5neigh_(base5neigh), baseId_(baseId)
-{
-    if (nb == 'A' || nb == 'a') {
-        nucleobase = Nucleobase::ADENINE;
-    }
-    else if (nb == 'T' || nb == 't') {
-        nucleobase = Nucleobase::THYMINE;
-    }
-    else if (nb == 'G' || nb == 'g') {
-        nucleobase = Nucleobase::GUANINE;
-    }
-    else if (nb == 'C' || nb == 'c') {
-        nucleobase = Nucleobase::CYTOSINE;
-    }
-    else {
-        nucleobase = Nucleobase::NONE;
-    }
-}
