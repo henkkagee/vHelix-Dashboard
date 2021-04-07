@@ -7,17 +7,6 @@
 
 #include "model.h"
 
-// utility functions
-
-void rotate_vector_by_quaternion(const QVector3D& v, const QQuaternion& q, QVector3D& vprime)
-{
-    QVector3D u(q.x(), q.y(), q.z());
-    float s = q.scalar();
-    vprime = 2.0f * QVector3D::dotProduct(u, v) * u
-          + (s*s - QVector3D::dotProduct(u, u)) * v
-          + 2.0f * s * QVector3D::crossProduct(u, v);
-}
-
 
 // Base members
 
@@ -81,7 +70,7 @@ QVector3D &Model::Base::getPos()
 
 // standard constructor for structure generation
 Model::Base::Base(const QVector3D &arg_position, Type arg_type, int offset, unsigned long BaseId) :
-    position_(arg_position), type_(arg_type), in_strand_(false), offset_(offset), baseId_(BaseId)
+    in_strand_(false), offset_(offset), baseId_(BaseId), position_(arg_position), type_(arg_type)
 {
     backward_ = nullptr;
     forward_ = nullptr;
@@ -93,7 +82,7 @@ Model::Base::Base(const QVector3D &arg_position, Type arg_type, int offset, unsi
 
 // constructor for loading existing structures from .oxview-format
 Model::Base::Base(unsigned int StrandId, std::string& nb, long Base3neigh, long Base5neigh, unsigned long BaseId, long Oppneigh)
-    : strandId_(StrandId), base3neigh_(Base3neigh), base5neigh_(Base5neigh), baseId_(BaseId), oppneigh_(Oppneigh)
+    : base3neigh_(Base3neigh), base5neigh_(Base5neigh), oppneigh_(Oppneigh), strandId_(StrandId), baseId_(BaseId)
 {
     if (nb == "A" || nb == "a") {
         nucleobase_ = Nucleobase::ADENINE;
@@ -123,7 +112,7 @@ Model::Base::Base(unsigned int StrandId, std::string& nb, long Base3neigh, long 
 // Helix members
 
 Model::Helix::Helix(const QVector3D &position, const QQuaternion &orientation, const char *name, unsigned long bIdStart, unsigned int bases)
- : position_(position), orientation_(orientation), name_(name), bases_(bases), sequence_assigned_(false)
+ : position_(position/1.174), orientation_(orientation), name_(name), bases_(bases), sequence_assigned_(false)
 {
     // create the bases and position them
     QVector3D basePositions[2];
@@ -144,10 +133,10 @@ Model::Helix::Helix(const QVector3D &position, const QQuaternion &orientation, c
          * Now create the two opposite base pairs
          */
 
-        rotate_vector_by_quaternion(basePositions[0], orientation, pos1);
-        rotate_vector_by_quaternion(basePositions[1], orientation, pos2);
-        pos1 += position;
-        pos2 += position;
+        utils::rotate_vector_by_quaternion(basePositions[0], orientation, pos1);
+        utils::rotate_vector_by_quaternion(basePositions[1], orientation, pos2);
+        pos1 += position_;
+        pos2 += position_;
 
         Type typeF, typeB;
         if (i == 0) {
@@ -169,6 +158,13 @@ Model::Helix::Helix(const QVector3D &position, const QQuaternion &orientation, c
          */
         base_objects[0] = &Fbases_[i];
         base_objects[1] = &Bbases_[i];
+
+        // set their a3 vector from the helix orientation
+        QVector3D xax; QVector3D yax; QVector3D zax;
+        orientation_.normalized().getAxes(&xax, &yax, &zax);
+        base_objects[0]->a3_ = zax;
+        base_objects[1]->a3_ = -zax;
+
 
         Fbases_[i].setOpposite(&Bbases_[i]);
         Bbases_[i].setOpposite(&Fbases_[i]);

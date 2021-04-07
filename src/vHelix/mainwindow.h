@@ -33,7 +33,7 @@
 #include <console.h>
 #include <dirview.h>
 #include "graphicsview.h"
-#include "fileparser.h"
+#include "modelhandler.h"
 #include "model.h"
 
 // the .ui designer forms are used (and automatically generated in Qtcreator)
@@ -63,12 +63,8 @@ private:
     DirView *dirview_;
     RelaxDialog *dialog_;
     GraphicsView *graphicsview_;
-    Controller::Parser *parser_;
+    Controller::Handler *handler_;
     std::vector<std::string> selection_;
-
-    // temporary solution
-    std::vector<Model::Helix> helices_;
-    std::vector<Model::Strand> strands_;
 
     void printToConsole_(std::string str);
 
@@ -100,6 +96,7 @@ private slots:
     void on_actionAdd_sequence_triggered();
     void on_actionExport_strand_sequences_triggered();
     void on_actionSave_current_model_triggered();
+    void on_actionAutofill_strands_triggered();
 };
 
 

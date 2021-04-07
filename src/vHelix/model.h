@@ -15,6 +15,7 @@
 #include <array>
 
 #include "dna.h"
+#include "utils.h"
 
 enum Nucleobase {
     ADENINE = 0,
@@ -31,7 +32,7 @@ enum Type {
     END = 3
 };
 
-void rotate_vector_by_quaternion(const QVector3D &v, const QQuaternion& q, QVector3D& vprime);
+
 
 namespace Model {
 
@@ -65,7 +66,7 @@ namespace Model {
         bool in_strand_;
         int offset_;
         bool checked_;
-        std::string strandname_;    // remove
+        QVector3D a3_;
 
         // ID's
         // existing base ID's are always positive integers, but forward/backward/neighbouring ID's can be negative
@@ -74,15 +75,16 @@ namespace Model {
         long base5neigh_;
         long oppneigh_;
         unsigned int strandId_;
-        unsigned long baseId_;
+        long baseId_;
 
         // for finding the neighbouring strands in the structure that are not connected
         Base *strand_forward_;
         Base *strand_backward_;
 
+        Base *forward_;
+
     private:
         QVector3D position_;
-        Base *forward_;
         Base *backward_;
         Base *opposite_;
         Helix *parent_;
@@ -122,14 +124,12 @@ namespace Model {
 
     struct Strand {
         Strand() : sequenced_(false) {}
-        Strand(unsigned long long int length, unsigned long id) : length_(length), id_(id), scaffold_(false) {}
+        Strand(unsigned long long int length, unsigned long id) : length_(length), id_(id), scaffold_(false), sequenced_(false) {}
 
         std::vector<Base*> bases_;
         bool sequenced_;
         int length_;
 
-        // use either one
-        std::string name_;  // remove
         unsigned long id_;
 
         bool scaffold_;

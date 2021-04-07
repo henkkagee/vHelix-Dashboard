@@ -260,7 +260,16 @@ void GraphicsView::drawStrands(std::vector<Model::Strand> strands)
                 }
             }
             addSphere(s.bases_[i]->getPos(), QQuaternion(), colour, 0.2f);
-            //drawLine(s.bases_[i]->position, s.bases_[i]->opposite->position, QRgb(0x000000), rootEntity_);
+            if (s.bases_[i]->getOpposite() != nullptr) {
+                drawLine(s.bases_[i]->getPos(), s.bases_[i]->getOpposite()->getPos(), QRgb(0x000000), rootEntity_);
+            }
+            /*if (s.bases_[i]->getForward() != nullptr) {
+                drawLine(s.bases_[i]->getPos(), s.bases_[i]->getForward()->getPos(), QRgb(0xFF0000), rootEntity_);
+            }
+            if (s.bases_[i]->getBackward() != nullptr) {
+                drawLine(s.bases_[i]->getPos(), s.bases_[i]->getBackward()->getPos(), QRgb(0xFF0000), rootEntity_);
+            }*/
+
         }
         num++;
         col++;

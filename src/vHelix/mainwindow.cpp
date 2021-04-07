@@ -18,7 +18,7 @@ MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent),
     ui_(new Ui::MainWindow),
     dialog_(nullptr),
-    parser_(nullptr)
+    handler_(nullptr)
 {
     ui_->setupUi(this);
     console_ = ui_->plainTextEdit;
@@ -33,8 +33,8 @@ MainWindow::~MainWindow()
     delete ui_;
     delete console_;
     delete graphicsview_;
-    if (parser_) {
-        delete parser_;
+    if (handler_) {
+        delete handler_;
     }
 }
 
@@ -210,24 +210,27 @@ void MainWindow::on_treeView_doubleClicked(const QModelIndex &index)
             if (dialog.result()) {
                 int min = 0;
                 int max = 0;
-                parser_ = new Controller::Parser();
+                delete(handler_);
+                handler_ = new Controller::Handler();
                 dialog.getOpts(min, max);
                 printToConsole_("Opening rpoly...\n");
-                helices_ = parser_->readRpoly(pathStr.c_str(), min, max);
-                strands_ = parser_->strands;
+                std::vector<Model::Helix> &helices = handler_->readRpoly(pathStr.c_str(), min, max);
+                std::vector<Model::Strand> &strands = handler_->strands;
+
+
                 printToConsole_("\nRendering strands... this may take a while.\n");
                 //graphicsview_ -> drawHelices(helices_);
-                graphicsview_ -> drawStrands(strands_);
+                graphicsview_ -> drawStrands(strands);
                 std::stringstream statusText;
                 unsigned long long basenum = 0;
-                int longest = 0;
-                for (const auto &s: strands_) {
-                    if (s.length_ > longest) {
-                        longest = s.length_;
+                unsigned long long longest = 0;
+                for (const auto &s: strands) {
+                    if (s.bases_.size() > longest) {
+                        longest = s.bases_.size();
                     }
-                    basenum += s.length_;
+                    basenum += s.bases_.size();
                 }
-                statusText << "Helices: " << helices_.size() << ", strands: " << strands_.size() << ", bases: " << basenum << ", longest strand: " << longest << " bases";
+                statusText << "Helices: " << helices.size() << ", strands: " << strands.size() << ", bases: " << basenum << ", longest strand: " << longest << " bases";
                 std::string ststxt = statusText.str();
                 ui_->label->setText(QString(ststxt.c_str()));
 
@@ -237,32 +240,30 @@ void MainWindow::on_treeView_doubleClicked(const QModelIndex &index)
     else if (typeStr.find("oxview") != std::string::npos) {
         printToConsole_("Opening model in .oxview format...\n");
 
-        parser_ = new Controller::Parser();
-        strands_ = parser_->readOxview(pathStr.c_str());
-        std::vector<Model::Base> bases = parser_->bases;
+        delete(handler_);
+        handler_ = new Controller::Handler();
+        std::vector<Model::Strand> &strands = handler_->readOxview(pathStr.c_str());
         printToConsole_("\nRendering strands... this may take a while.\n");
-        graphicsview_ -> drawStrands(parser_->strands);
+        graphicsview_ -> drawStrands(handler_->strands);
         // set status text?
         std::stringstream statusText;
         unsigned long long basenum = 0;
         unsigned int longest = 0;
-        for (const auto &s: strands_) {
+        for (const auto &s: strands) {
             if (s.bases_.size() > longest) {
                 longest = s.bases_.size();
             }
             basenum += s.bases_.size();
         }
-        statusText << "Helices: " << helices_.size() << ", strands: " << strands_.size() << ", bases: " << basenum << ", longest strand: " << longest << " bases";
+        statusText  << "Strands: " << strands.size() << ", bases: " << basenum << ", longest strand: " << longest << " bases";
         std::string ststxt = statusText.str();
         ui_->label->setText(QString(ststxt.c_str()));
-
     }
-
 }
 
 void MainWindow::on_actionAdd_sequence_triggered()
 {
-    SequenceDialog dialog(this, strands_);
+    SequenceDialog dialog(this, handler_->strands);
     dialog.exec();
     std::string seq;
     std::string targetStrand;
@@ -290,8 +291,8 @@ void MainWindow::on_actionAdd_sequence_triggered()
     unsigned long long int i = 0;       // char counter
     Nucleobase nb;
     bool random_start = false;
-    while (s < strands_.size()) {
-        Model::Strand &strand = strands_[s];
+    while (s < handler_->strands.size()) {
+        Model::Strand &strand = handler_->strands[s];
         if (strand.forward_) {
             for (unsigned long long int j = 0; j < strand.bases_.size(); j++) {
                 if (!random_start) {
@@ -341,8 +342,8 @@ void MainWindow::on_actionAdd_sequence_triggered()
 
     // assign complementary bases on opposite (reverse) strands
     s = 0;
-    while (s < strands_.size()) {
-        Model::Strand &strand = strands_[s];
+    while (s < handler_->strands.size()) {
+        Model::Strand &strand = handler_->strands[s];
         if (!strand.forward_) {
             for (unsigned long long int j = 0; j < strand.bases_.size(); j++) {
                 if (strand.bases_[j]->getOpposite() != nullptr) {
@@ -370,7 +371,7 @@ void MainWindow::on_actionAdd_sequence_triggered()
 
 void MainWindow::on_actionExport_strand_sequences_triggered()
 {
-    if (!(strands_.empty())) {
+    if (!(handler_->strands.empty())) {
         QString fileName = QFileDialog::getSaveFileName(this, tr("Export strand sequences to .csv"), "", "Comma-Separated Values file (*.csv)");
         if (fileName.isEmpty()) {
             return;
@@ -386,8 +387,8 @@ void MainWindow::on_actionExport_strand_sequences_triggered()
             std::string temp;
             std::stringstream tempsstr;
             out << "name,length,sequence\n";
-            for (const auto &s : strands_) {
-                tempsstr << s.name_ << "," << s.length_ << ",";
+            for (const auto &s : handler_->strands) {
+                tempsstr << s.id_ << "," << s.length_ << ",";
                 for (const auto &b : s.bases_) {
                     if (b->getBase() == Nucleobase::ADENINE) {
                         tempsstr << "a";
@@ -424,45 +425,12 @@ void MainWindow::on_actionExport_strand_sequences_triggered()
     }
 }
 
-QMatrix3x3 getMatrix(double gamma, double beta, double alpha)
-{
-    gamma = gamma * (3.141592 / 180);
-    beta = beta * (3.141592 / 180);
-    alpha = -alpha * (3.141592 / 180);
-    double s1 = sin(alpha);
-    double s2 = sin(beta);
-    double s3 = sin(gamma);
-    double c1 = sin(alpha);
-    double c2 = sin(beta);
-    double c3 = sin(gamma);
-    float a = c1 * c2;
-    float b =  (c1 * s3 * s2) + (s1 * c3);
-    float c = (c1 * s2 * c3) - (s1 * s3);
-    float d = 0 - (s1 * c2);
-    float e = 0 - (s1 * s3 * s2) + (c1 * c3);
-    float f = 0 - (s1 * s3 * s2) - (c1 * s3);
-    float g = 0 - s2;
-    float h = s3 * c2;
-    float i = c2 * c3;
-    const float vals[] = {a,b,c,d,e,f,g,h,i};
-    const float* vals_ptr = vals;
-    return QMatrix3x3(vals_ptr);
-}
-
-QVector3D matrixVectorMult(QMatrix3x3 mat, QVector3D vec)
-{
-    QVector3D ret;
-    ret.setX(mat(0,0)*vec.x()+mat(0,1)*vec.y()+mat(0,2)*vec.z());
-    ret.setX(mat(1,0)*vec.x()+mat(1,1)*vec.y()+mat(1,2)*vec.z());
-    ret.setX(mat(2,0)*vec.x()+mat(2,1)*vec.y()+mat(2,2)*vec.z());
-    return ret;
-}
 
 // saves the current helices, strands, bases and connections so they can be loaded again in oxView or in this software
 void MainWindow::on_actionSave_current_model_triggered()
 {
-    if (!(strands_.empty()) && !(helices_.empty())) {
-        // this is basically a json and there are existing libraries for this but let's just do this manually to avoid further dependencies
+    if (handler_ && !(handler_->strands.empty()) && !(handler_->helices.empty())) {
+        // could use nlohmann::json here
         QString fileName = QFileDialog::getSaveFileName(this, tr("Save the current model as .oxview"), "", "oxView file (*.oxview)");
         if (fileName.isEmpty()) {
             return;
@@ -487,7 +455,7 @@ void MainWindow::on_actionSave_current_model_triggered()
             // find box size from max base coordinates
             float max = 0;
             long long int basecount = 0;
-            for (const auto &s : strands_) {
+            for (const auto &s : handler_->strands) {
                 for (const auto &b : s.bases_) {
                     basecount++;
                     for (unsigned int dim = 0; dim < 3; dim++) {
@@ -504,9 +472,8 @@ void MainWindow::on_actionSave_current_model_triggered()
             out << "\"systems\":[{\"id\":0,";
             out << "\"strands\":[";
 
-            int store_dir = 1; // janky solution to a crossover bug
             bool firstStrand = true;
-            for (const auto &s : strands_) {
+            for (const auto &s : handler_->strands) {
                 bool firstBase = true;
                 if (!firstStrand) {
                     out << ",";
@@ -539,113 +506,33 @@ void MainWindow::on_actionSave_current_model_triggered()
                         out << "\"?\",";
                     }
 
-                    out << "\"class\":\"DNA\",";                                  // TODO: RNA support
+                    // TODO: RNA support?
+                    out << "\"class\":\"DNA\",";
 
-                    // write position orientation. TODO: orientations still buggy in this format and some calculation goes awry
-
-                    Model::Helix *parent = b->getParent();
-                    // the tangent is the same for all bases in one strand so it could be calculated only once per strand
-
-                    // apparently Qt 3x3 matrices and vectors do not have overloaded multiplication operators...
-                    // use boost linear algebra libraries to make this more efficient and readable
-                    QVector3D base_normal = QVector3D(0,0,1);
-                    QMatrix3x3 parent_orientation = parent->orientation_.normalized().toRotationMatrix();
-
-                    QVector3D base_normal_3d;
-                    base_normal_3d.setX(parent_orientation(0,0) * base_normal.x() + parent_orientation(0,1) * base_normal.y() + parent_orientation(0,2) * base_normal.z());
-                    base_normal_3d.setY(parent_orientation(1,0) * base_normal.x() + parent_orientation(1,1) * base_normal.y() + parent_orientation(1,2) * base_normal.z());
-                    base_normal_3d.setZ(parent_orientation(2,0) * base_normal.x() + parent_orientation(2,1) * base_normal.y() + parent_orientation(2,2) * base_normal.z());
-                    base_normal_3d.normalize();
-                    QVector3D pos_dif = QVector3D();
-                    pos_dif.setX(b->getPos().x() - parent->position_.x());
-                    pos_dif.setY(b->getPos().y() - parent->position_.y());
-                    pos_dif.setZ(b->getPos().z() - parent->position_.z());
-                    QVector3D tangent = QVector3D::crossProduct(base_normal_3d, QVector3D::crossProduct(pos_dif, base_normal_3d).normalized());
-                    tangent.normalize();
-
-                    int direction;
-                    QVector3D zAxis(0.f,0.f,1.f);
-                    Model::Base* bForw = b->getForward();
+                    QVector3D a1;
                     QVector3D a3;
-                    if (bForw) {
-                        QVector3D forwardTranslation = bForw->getPos();
-                        int dot = QVector3D::dotProduct(forwardTranslation - b->getPos(), zAxis);
-                        direction = (dot > 0) ? 1 : ((dot < 0) ? -1 : 0);
-                        QVector3D forwPosDiff = b->getPos() - bForw->getPos();
-                        a3 = (forwPosDiff) / sqrt(pow(forwPosDiff.x(),2)+pow(forwPosDiff.y(),2)+pow(forwPosDiff.z(),2));
-                    }
-                    else {
-                        Model::Base* bBack = b->getBackward();
-                        if (bBack) {
-                            QVector3D backwardTranslation = bBack->getPos();
-                            int dot = QVector3D::dotProduct(backwardTranslation - b->getPos(), zAxis);
-                            direction = (dot > 0) ? 1 : ((dot < 0) ? -1 : 0);
-                            QVector3D backwPosDiff = b->getPos() - bBack->getPos();
-                            a3 = (backwPosDiff) / sqrt(pow(backwPosDiff.x(),2)+pow(backwPosDiff.y(),2)+pow(backwPosDiff.z(),2));
-
-                        }
-                        else {
-                            direction = 1;
-                        }
+                    if (b->getOpposite() == nullptr) {
+                        a1 = QVector3D(sin(b->getPos().x()),sin(b->getPos().y()), sin(b->getPos().z())).normalized();
+                        a3 = QVector3D::crossProduct(a1, QVector3D(0, 1, 0));
                     }
 
-                    if (direction == 0) {   // crappy solution to weird xover bug
-                        direction = store_dir;
+                    if (b->getOpposite() != nullptr) {
+                        a1.setX(b->getPos().x() - b->getOpposite()->getPos().x());
+                        a1.setY(b->getPos().y() - b->getOpposite()->getPos().y());
+                        a1.setZ(b->getPos().z() - b->getOpposite()->getPos().z());
+                        a1 = a1.normalized();
+                        a3 = b->a3_.normalized();
+                        //QMatrix4x4 rot;
+                        //QVector3D offset = QVector3D::crossProduct(a1, a3);
+                        //rot.setToIdentity();
+                        //rot.rotate(-25, a3);
+                        //a1 = rot * a1;
                     }
-                    store_dir = direction;  // save the direction for later next round as it may need to be
-                                            // used again
 
-                    Model::Base* pair = b->getOpposite();
-                    QVector3D link_versor;
-                    QVector3D posdiff;
-                    QQuaternion partner_parent_rotation;
-                    if (pair) {
-                        posdiff = pair->getPos() - b->getPos();
-                        link_versor = (posdiff) / sqrt(pow(posdiff.x(),2)+pow(posdiff.y(),2)+pow(posdiff.z(),2));
-                        partner_parent_rotation = pair->getParent()->orientation_;
-                    }
-                    else {
-                        link_versor = QVector3D(0, 1, 0);
-                        partner_parent_rotation = QQuaternion(0, 0, 0, 0);
-                    }
-                    QVector3D perp_versor(-link_versor.y(), link_versor.x(), 0.f);
-                    QVector3D unrotated_CoM_element = b->getPos() + (0.8494 * link_versor) - (0.1883 * perp_versor);
-                    QVector3D new_forw_pos = unrotated_CoM_element - ((0.6 * 0.8518) * link_versor);
-                    QVector3D new_backw_pos = unrotated_CoM_element + ((0.6 * 0.8518) * link_versor);
-                    QMatrix3x3 rot_mat = getMatrix(b->getParent()->orientation_.x(), b->getParent()->orientation_.y(), b->getParent()->orientation_.z());
-                    QVector3D rotated_forw_pos = matrixVectorMult(rot_mat, new_forw_pos);
-                    QMatrix3x3 back_rot_mat;
-                    QVector3D pairParentPos;
-                    if (pair) {
-                        pairParentPos = pair->getPos();
-                        back_rot_mat = getMatrix(partner_parent_rotation.x(), partner_parent_rotation.y(), partner_parent_rotation.z());
-                    }
-                    else {
-                        pairParentPos = QVector3D(0,0,0);
-                        back_rot_mat = getMatrix(0, 0, 0);
-                    }
-                    QVector3D rotated_backw_pos = matrixVectorMult(back_rot_mat, new_backw_pos);
-                    QVector3D correct_forw_pos = (rotated_forw_pos + b->getParent()->position_) / 0.8518;
-                    QVector3D correct_backw_pos = (rotated_backw_pos + pairParentPos) / 0.8518;
-                    QVector3D correctPosDiff = correct_backw_pos - correct_forw_pos;
-                    QVector3D a1 = (correctPosDiff) / sqrt(pow(correctPosDiff.x(),2)+pow(correctPosDiff.y(),2)+pow(correctPosDiff.z(),2));
-                    // multiply with 1.174 to change from nm to oxDNA length units, nudging each phosphate position with the tangent vector to get center of mass
+                    out << "\"p\":[" << (b->getPos().x() * 1.104) - a1.x() * 0.35 << ","
+                        << (b->getPos().y() * 1.104) - a1.y() * 0.35<< ","
+                        << (b->getPos().z() * 1.104) - a1.z() * 0.35<< "],";
 
-                    a1.setX(b->getPos().x() - b->getOpposite()->getPos().x());
-                    a1.setY(b->getPos().y() - b->getOpposite()->getPos().y());
-                    a1.setZ(b->getPos().z() - b->getOpposite()->getPos().z());
-                    a1.normalize();
-                    a1 = a1 * 1.2;
-
-
-                    //a3 = QVector3D::crossProduct(a1, b->getOpposite()->getPos()).normalized();
-                    a3 = a1;
-
-                    out << "\"p\":[" << (b->getPos().x() * 1.174) - a1.x() * 0.35 << ","
-                        << (b->getPos().y() * 1.174) - a1.y() * 0.35<< ","
-                        << (b->getPos().z() * 1.174) - a1.z() * 0.35<< "],";
-
-                    // in oxview, the 3' and 5' ends are incorrectly swapped
                     if (b->getForward() != nullptr) {
                         if (basenum != s.bases_.size()-1) {
                             out << "\"n3\":" << b->getForward()->baseId_ << ",";
@@ -656,17 +543,13 @@ void MainWindow::on_actionSave_current_model_triggered()
                             out << "\"n5\":" << b->getBackward()->baseId_ << ",";
                         }
                     }
-
-
-
                     out << "\"cluster\":1,";
                     out << "\"a1\":[" << a1.x()*-1.0 << "," << a1.y()*-1.0 << "," << a1.z()*-1.0 << "],";
-                    out << "\"a3\":[" << a3.x()*-1.0 << "," << a3.y()*-1.0 << "," << a3.z()*-1.0 << "],";
+                    out << "\"a3\":[" << a3.x()*-1.0 << "," << a3.y()*-1.0 << "," << a3.z()*-1.0 << "]";
 
                     if (b->getOpposite() != nullptr) {
-                        out << "\"bp\":" << b->getOpposite()->baseId_;
+                        out << ",\"bp\":" << b->getOpposite()->baseId_;
                     }
-
                     out << "}";
                     firstBase = false;
                     basenum++;
@@ -693,6 +576,33 @@ void MainWindow::on_actionSave_current_model_triggered()
         console_->write_(msg_temp);
     }
 }
+
+void MainWindow::on_actionAutofill_strands_triggered()
+{
+    /*QMessageBox::information(
+        this,
+        tr("vHelix Dashboard"),
+        tr("Autofilling strand gaps...") );*/
+    handler_->autofillStrandGaps();
+    // get the new structures
+    // draw them
+    printToConsole_("\nAutofilling strand gaps... \n");
+    graphicsview_ -> drawStrands(handler_->strands);
+    // set status text?
+    std::stringstream statusText;
+    unsigned long long basenum = 0;
+    unsigned int longest = 0;
+    for (const auto &s: handler_->strands) {
+        if (s.bases_.size() > longest) {
+            longest = s.bases_.size();
+        }
+        basenum += s.bases_.size();
+    }
+    statusText  << "Strands: " << handler_->strands.size() << ", bases: " << basenum << ", longest strand: " << longest << " bases";
+    std::string ststxt = statusText.str();
+    ui_->label->setText(QString(ststxt.c_str()));
+}
+
 
 
 
@@ -786,12 +696,7 @@ SequenceDialog::SequenceDialog(MainWindow *parent, const std::vector<Model::Stra
     parent_ = parent;
     for (unsigned long i = 0; i < strands.size(); i++) {
         std::stringstream sstr;
-        if (!strands[i].name_.empty()) {
-            sstr << strands[i].name_ << ", length: " << strands[i].bases_.size();
-        }
-        else {
-            sstr << strands[i].id_ << ", length: " << strands[i].bases_.size();
-        }
+        sstr << strands[i].id_ << ", length: " << strands[i].bases_.size();
         std::string item = sstr.str();
         ui_.comboBox->addItem(QString(item.c_str()));
     }
@@ -843,7 +748,6 @@ std::string SequenceDialog::getSequence()
             tr("Warning"),
             tr("Assigning empty sequence.") );
     }
-
     return ret;
 }
 
@@ -851,4 +755,3 @@ std::string SequenceDialog::getTargetStrand()
 {
     return std::string(ui_.comboBox->currentText().toLocal8Bit().constData());
 }
-

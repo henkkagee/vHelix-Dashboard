@@ -14,7 +14,7 @@ b) To build the program on your system, you need the following dependencies:
 - Python 3.8 with Python/C API libraries and headers which are probably automatically installed
 
 Included modules and source code:
-- [PhysXSDK 3.3]((https://github.com/yangzhengxing/PhysX-3.3). PhysXSDK 3.3 is used for physical relaxation DNA structures. It free software as of 2015 and its win64 binaries are included.
+- [PhysXSDK 3.3](https://github.com/yangzhengxing/PhysX-3.3). PhysXSDK 3.3 is used for physical relaxation DNA structures. It free software as of 2015 and its win64 binaries are included.
 - [Lemon Graph library](https://lemon.cs.elte.hu/trac/lemon)
 - [Boost C++ libraries](https://www.boost.org/)
 - [bscor by Abdulmelik Mohammed (Aalto University)](https://github.com/mohamma1/bscor)
@@ -45,9 +45,6 @@ Workflow/pipeline for generating a sequence and model from a .ply or .obj model:
 
 ## Todo
 
-- Automated strand gap filling
-- base rotation correction in .oxview export
-- Base estimation including filled in strand gaps (separately)
+- Base estimation in relaxation including filled in strand gaps (separately)
 - Qt3D performance improvements
-- Bugfixes: Python API crashes, strand-, helix- and base memory use optimizations
-- Code cleanup
+- Linux port stability fixes

@@ -49,13 +49,15 @@ add_executable(vHelix
     processio.cpp
     graphicsview.h
     graphicsview.cpp
-    fileparser.h
-    fileparser.cpp
+    modelhandler.h
+    modelhandler.cpp
     model.h
     model.cpp
     dna.h
     dna.cpp
     sequencedialog.ui
+    utils.cpp
+    utils.h
 
     # BSCOR
     ply_to_dimacs/ply_to_dimacs.hpp

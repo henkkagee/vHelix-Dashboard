@@ -21,20 +21,23 @@
 #include <vector>
 #include <string>
 #include <sstream>
+#include <cmath>
 
 #include <QQuaternion>
 #include <include/json/single_include/nlohmann/json.hpp>
 
 namespace Controller {
 
-class Parser
+class Handler
 {
 public:
-    Parser();
+    Handler();
     void read();
-    std::vector<Model::Helix> readRpoly(const char *filename, int nicking_min_length = 0, int nicking_max_length = 0);
+    std::vector<Model::Helix> &readRpoly(const char *filename, int nicking_min_length = 0, int nicking_max_length = 0);
 
-    std::vector<Model::Strand> readOxview(const char *path);
+    std::vector<Model::Strand> &readOxview(const char *path);
+
+    void autofillStrandGaps();
 
     struct Base {
         std::string name, helixName, materialName;
@@ -76,6 +79,9 @@ public:
     std::vector<Connection> connections;
     std::vector<Model::Strand> strands;
     std::vector<Model::Base> bases;
+    // bases_ext - vector for storing autofilled strand gaps. This is the only case where existing parts of a structure are extended in the original intended use of this software
+    // Since the structure is navigated through direct pointers for efficiency, the existing vectors of bases should not be extended due to memory relocation.
+    std::vector<Model::Base> bases_ext;
 
     std::vector<Base> explicitBases; // Bases explicitly created with the 'b' command.
     explicit_base_labels_t explicitBaseLabels;
