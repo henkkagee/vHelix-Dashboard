@@ -333,9 +333,10 @@ namespace Controller {
                 current = current->strand_forward_;
             }
         }
-        // loop through all helices and look for staple loops that weren't assigned to strands
+        // loop through all helices and look for staple loops that weren't added to strands
         sId++;
         strand = Model::Strand(0, sId);
+        bool found;
         for (unsigned int i = 0; i < helices.size(); i++) {
             for (int j = 0; j < 2; j++) {
                 if (j == 0) {
@@ -346,33 +347,33 @@ namespace Controller {
                     current = helices[i].getBackwardFivePrime();
                     forward = false;
                 }
+                found = false;
+                int firstloopid = current->baseId_;
+                bool first = true;
                 while (true) {
                     // found unassigned loop
                     if (!current->in_strand_) {
-                        std::cout << "Found unassigned loop!\n" << std::flush;
+                        found = true;
                         if (!current || (strand.length_ > nicking_min_length + (nicking_max_length - nicking_min_length)/2 && !forward) || current->in_strand_) {
                             // make sure that the last strand isn't too short if we looped back to already assigned bases
-                            if (strand.length_ < nicking_min_length) {
-                                strands.push_back(strand);
-                                std::vector<Model::Strand>::iterator strandit = --strands.end();
-                                std::vector<Model::Strand>::iterator prevStrand;
-                                // loop through last strands and adjust in case they are too short
-                                while (strandit->length_ < nicking_min_length) {
-                                    // get previous strand
-                                    // auto prevStrand = find_if(strands.begin(), strands.end(), [&prevSId](const Model::Strand& str) {return str.id_ == prevSId;});
-                                    prevStrand = strandit - 1;
-                                    // transfer bases from previous strand to current strand until it is long enough
-                                    while (strandit->length_ < nicking_min_length) {
-                                        strandit->bases_.insert(strandit->bases_.begin(), prevStrand->bases_[prevStrand->bases_.size()-1]);
-                                        prevStrand->bases_.pop_back();
-                                        strandit->length_ = strandit->length_ + 1;
-                                        prevStrand->length_ = prevStrand->length_ -1;
-                                    }
-                                    strandit = prevStrand;
-                                }
-                            }
                             if (current->in_strand_) {
-                                break;
+                                int helix_len = current->getParent()->Bbases_.size();
+                                int minlen = helix_len > 2.5 * MIN_NICK_VERTEX_DISTANCE ? MIN_NICK_VERTEX_DISTANCE : helix_len / 2;
+                                unsigned int nextstrid = current->strandId_;
+                                Model::Strand* nextstrand;
+                                for (unsigned int ss = 0; ss < strands.size(); ++ss) {
+                                    if (strands[ss].id_ == nextstrid) {
+                                        nextstrand = &strands[ss];
+                                    }
+                                }
+                                for (int l = 0; l < minlen; l++) {
+                                    strand.bases_.push_back(current);
+                                    strand.length_++;
+                                    current->strandId_ = strand.id_;
+                                    nextstrand->bases_.erase(nextstrand->bases_.begin());
+                                    nextstrand->length_--;
+                                    current = current->strand_forward_;
+                                }
                             }
                             strands.push_back(strand);
                             sId++;
@@ -387,9 +388,16 @@ namespace Controller {
 
                         // next
                         current = current->strand_forward_;
+                        first = false;
+                    }
+                    else if (current->in_strand_ && found) {
+                        // skip entire helix edge as it is already assigned
+                        strands.push_back(strand);
+                        sId++;
+                        strand = Model::Strand(0, sId);
+                        break;
                     }
                     else {
-                        // skip entire helix edge as it is already assigned
                         break;
                     }
                 }
@@ -397,29 +405,41 @@ namespace Controller {
         }
 
         // finally, check that we did not add a nick too close to a vertex
-        int mnvd;  // minimum distance between strand nick and vertex
+
+        /*int mnvd;  // minimum distance between strand nick and vertex
+        long long x = 0;
+
         for (auto s : strands) {
+            std::cout << "x: " << x << "\n" << std::flush;
+            if (s.forward_) {
+                continue;
+            }
             current = s.bases_[0];
             int helix_len = current->getParent()->Bbases_.size();
             mnvd = helix_len > 2.5 * MIN_NICK_VERTEX_DISTANCE ? MIN_NICK_VERTEX_DISTANCE : helix_len / 2;
             if (current->offset_ < mnvd ) {
                 unsigned int prevstrandid = current->strand_backward_->strandId_;
-                Model::Strand* prevstrand;
+                Model::Strand* prevstrand = nullptr;
                 for (unsigned int ss = 0; ss < strands.size(); ++ss) {
                     if (strands[ss].id_ == prevstrandid) {
                         prevstrand = &strands[ss];
                     }
                 }
                 int offset = current->offset_;
+                std::cout << "Current s: " << s.length_ << ", prev s:" << prevstrand->length_ << std::flush;
                 while (offset < mnvd) {
+                    std::cout << "26\n" << std::flush;
                     prevstrand->bases_.push_back(current);
+                    prevstrand->length_++;
                     s.bases_.erase(s.bases_.begin());
+                    s.length_--;
                     current = current->strand_forward_;
                     offset = current->offset_;
                 }
             }
             current = s.bases_[s.bases_.size()-1];
             if (current->offset_ > (helix_len - mnvd)) {
+                std::cout << "27\n" << std::flush;
                 unsigned int nextstrandid = current->strand_forward_->strandId_;
                 Model::Strand* nextstrand;
                 for (unsigned int ss = 0; ss < strands.size(); ++ss) {
@@ -429,10 +449,32 @@ namespace Controller {
                 }
                 int offset = current->offset_;
                 while (offset > helix_len-1 - mnvd) {
+                    std::cout << "28\n" << std::flush;
                     nextstrand->bases_.insert(nextstrand->bases_.begin(), current);
+                    nextstrand->length_++;
                     s.bases_.pop_back();
+                    s.length_--;
                     current = current->strand_backward_;
                     offset = current->offset_;
+                }
+            }
+            x++;
+        }*/
+
+        // finally, connect all bases inside strands and disconnect connections between strands
+        for (auto s : strands) {
+            for (unsigned long b = 0; b < s.bases_.size(); ++b) {
+                if (b == 0) {
+                    s.bases_[b]->setBackward(nullptr);
+                    s.bases_[b]->setForward(s.bases_[b+1]);
+                }
+                else if (b == s.bases_.size()-1) {
+                    s.bases_[b]->setBackward(s.bases_[b-1]);
+                    s.bases_[b]->setForward(nullptr);
+                }
+                else {
+                    s.bases_[b]->setBackward(s.bases_[b-1]);
+                    s.bases_[b]->setForward(s.bases_[b+1]);
                 }
             }
         }

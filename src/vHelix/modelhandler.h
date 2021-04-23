@@ -73,7 +73,7 @@ public:
 #endif /* Not windows */
 
 
-
+    // optimization: use maps instead for fast random access
 
     std::vector<Model::Helix> helices;
     std::vector<Connection> connections;
