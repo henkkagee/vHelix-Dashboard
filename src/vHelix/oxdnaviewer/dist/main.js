@@ -23,45 +23,45 @@ If you have any questions, feel free to open an issue on the GitHub page.
 class ElementMap extends Map {
     constructor() {
         super();
-        this.gidCounter = 0;
+        this.idCounter = 0;
     }
     // Avoid using this unless you really need to set
-    // a specific gid.
-    set(gid, element) {
-        if (this.gidCounter < gid + 1) {
-            this.gidCounter = gid + 1;
+    // a specific id.
+    set(id, element) {
+        if (this.idCounter < id + 1) {
+            this.idCounter = id + 1;
         }
         // Reading oxDNA files we set elements as undefined for
         // concurrency issues
         if (element) {
-            element.gid = gid;
+            element.id = id;
         }
-        return super.set(gid, element);
+        return super.set(id, element);
     }
     /**
      * Add an element, keeping track of
      * global id
      * @param element
-     * @returns gid
+     * @returns id
      */
     push(e) {
-        e.gid = this.gidCounter++;
-        super.set(e.gid, e);
-        return e.gid;
+        e.id = this.idCounter++;
+        super.set(e.id, e);
+        return e.id;
     }
     /**
      * Remove element
-     * @param gid
+     * @param id
      */
-    delete(gid) {
-        // If we delete the last added, we can decrease the gid counter.
-        if (this.gidCounter == gid + 1) {
-            this.gidCounter = gid;
+    delete(id) {
+        // If we delete the last added, we can decrease the id counter.
+        if (this.idCounter == id + 1) {
+            this.idCounter = id;
         }
-        return super.delete(gid);
+        return super.delete(id);
     }
     getNextId() {
-        return this.gidCounter;
+        return this.idCounter;
     }
 }
 // store rendering mode RNA  
@@ -71,17 +71,18 @@ let elements = new ElementMap(); //contains references to all BasicElements
 //initialize the space
 const systems = [];
 var tmpSystems = []; //used for editing
-const ANMs = [];
-const forces = [];
+//const ANMs: ANM[] = [];
+let forces = [];
+var forcesTable = [];
 var forceHandler;
 var sysCount = 0;
 var strandCount = 0;
 var selectedBases = new Set();
-var bbLast;
+var selectednetwork = 0; // Only used for networks
+const networks = []; // Only used for networks, replaced anms
+const graphDatasets = []; // Only used for graph
+const pdbFileInfo = []; //Stores all PDB Info (Necessary for future Protein Models)
 var lut, devs; //need for Lut coloring
-const DNA = 0;
-const RNA = 1;
-const AA = 2;
 const editHistory = new EditHistory();
 let clusterCounter = 0; // Cluster counter
 //to keep track of if the topology was edited at any point.
@@ -102,6 +103,13 @@ function findBasepairs() {
     });
 }
 ;
+// Ugly hacks for testing
+function getElements() {
+    return elements;
+}
+function getSystems() {
+    return systems;
+}
 //Temporary solution to adding configuration storage
 //This section sets interface values from the storage 
 if (window.sessionStorage.centerOption) {

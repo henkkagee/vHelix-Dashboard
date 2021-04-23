@@ -38,13 +38,14 @@ Workflow/pipeline for generating a sequence and model from a .ply or .obj model:
 - Click on the .ply file you imported in the workspace window (lower left pane) to select it, and route it from Route->Atrail
 - If the routing is successful, the last line that appeard in the console pane should verify that you got a valid A-trail in the meshes
 - With the same .ply still selected, click Relaxation->PhysX. Here, you can estimate scaffold strand base usage based on the scaling value. Once you have scaled the model appropriately, you can run the relaxation. It may take a while, and in some cases with very short edges (small scaling value) it may run forever. The relaxation is ready when the console pane updates and an .rpoly file appears in the workspace.
-- The .rpoly file can be converted to oxDNA file format from Export->Export selection to oxDNA, or double clicked to generate and view the full model in the 3D graphics pane on the right. This can take a while depending on you hardware.
-- if you want to view the model in oxDNA format, there is a shortcut to a local oxDNAviewer from oxDNA->Open oxDNA viewer. You can drag and drop .conf and .top files or an .oxview file directly in the oxDNAviewer window to load them.
-- Once the 3D model appears on the right (3D performance not yet optimized), you can add a sequence to the scaffold strand from Edit->Add sequence, and after this you can export the strands as a .csv file from Export->Export strand sequences.
+- The .rpoly file can be converted to oxDNA file format from Export->Export selection to oxDNA, or double clicked to generate and view the full model in the 3D graphics pane on the right. This can take a while depending on your hardware.
+- If you want to view the model in oxDNA format, there is a shortcut to a local oxDNAviewer from oxDNA->Open oxDNA viewer. You can drag and drop .conf and .top files or an .oxview file directly in the oxDNAviewer window to load them. However, it is recommended to use the most recent version online instead: https://github.com/sulcgroup/oxdna-viewer
+- Once the 3D model appears on the right (3D performance not yet optimized), you can do the following actions: add a sequence to the scaffold strand from Edit->Add sequence, automatically fill strand gaps, and export the strands as a .csv file from Export->Export strand sequences.
 - To export the generated model, click File->Save current model to save it in .oxview format usable in oxView
 
 ## Todo
 
+- Strand nicking limit near vertices
 - Base estimation in relaxation including filled in strand gaps (separately)
 - Qt3D performance improvements
 - Linux port stability fixes

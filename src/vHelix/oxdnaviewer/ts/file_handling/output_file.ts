@@ -16,11 +16,12 @@ function makeOutputFiles() { //makes .dat and .top files with update position in
     let dat = view.getInputBool("datDownload");
 
     if (dat) {
+        console.log(reorganized)
         let {file_name, file} = makeDatFile(name, reorganized);
         makeTextFile(file_name, file);	
     }
 
-    if (ANMs.length > 0) {
+    if (networks.length > 0) {
         let {file_name, file} = makeParFile(name, reorganized, counts);
         makeTextFile(file_name, file);
     }
@@ -72,23 +73,26 @@ function make3dOutput(){ //makes stl or gltf export from the scene
     }
 }
 
-
-function makeTopFile(name){
-    const top: string[] = []; //string of contents of .top file
-
-    let proteinMode: Boolean = false
-    let peptides = []
-    let nas = []
+function getNewIds(): [Map<BasicElement, number>, Map<Strand, number>, {
+    totParticles: number;
+    totStrands: number;
+    totNuc: number;
+    totAA: number;
+    totNucleic: number;
+}] {
+    //remove any gaps in the particle numbering
+    //have to rebuild the system to keep all proteins contiguous or else oxDNA will segfault
+    let peptides = [];
+    let nas = [];
 
     //figure out if there are any proteins in the system
     systems.forEach(system => {
         system.strands.forEach(strand => {
-            if (strand.getType() == Peptide.name) {
-                proteinMode = true;
+            if (strand.isPeptide()) {
                 peptides.push(strand);
             }
             else {
-                nas.push(strand)
+                nas.push(strand);
             }
         });
     });
@@ -96,92 +100,81 @@ function makeTopFile(name){
     const newStrandIds = new Map();
     const newElementIds = new Map();
 
-    let totParticles = 0;
-    let totStrands = 0;
-    let firstLine;
+    let totNuc = 0;
+    let totAA = 0;
+    let totNucleic = 0;
+    let totPeptide = 0;
 
-    //remove any gaps in the particle numbering
-    if (!proteinMode) {
-        peptides = undefined;
-        nas = undefined;
+    let sidCounter = -1;
+    let idCounter = 0;
 
-        let totNuc: number = 0; //total # of elements
-        let totNucleic: number = 0; //total # of strands
-    
-        let sidCounter = 1;    
-        let gidCounter = 0;
-
-        systems.forEach(system =>{
-            totNucleic += system.strands.length; // Count strands
-            system.strands.forEach((strand: Strand) => {
-                newStrandIds.set(strand, sidCounter++); //Assign new strandID
-                totNuc += strand.monomers.length; // Count elements
-                strand.getOrderedMonomers().forEach(e => {
-                    newElementIds.set(e, gidCounter++); //Assign new elementID
-                });
-            });
+    peptides.forEach(strand =>{
+        newStrandIds.set(strand, sidCounter--);
+        totPeptide += 1;
+        strand.forEach((e: BasicElement) => {
+            newElementIds.set(e, idCounter++);
+            totAA++;
         });
-        totParticles = totNuc;
-        totStrands = totNucleic;
-        firstLine = [totParticles, totStrands]
+    });
 
-    }
-    else { //have to rebuild the system to keep all proteins contiguous or else oxDNA will segfault
-        let totNuc = 0;
-        let totAA = 0;
-        let totNucleic = 0;
-        let totPeptide = 0;
+    sidCounter = 1;
+    nas.forEach(strand => {
+        newStrandIds.set(strand, sidCounter++);
+        totNucleic += 1;
+        strand.forEach((e: BasicElement) => {
+            newElementIds.set(e, idCounter++);
+            totNuc++;
+        }, true // Iterate in 3' to 5' direction, per oxDNA convention
+        );
+    });
 
-        let sidCounter = -1;
-        let gidCounter = 0;
+    const counts = {
+        totParticles: totNuc + totAA,
+        totStrands: totPeptide + totNucleic,
+        totNuc: totNuc,
+        totAA: totAA,
+        totNucleic: totNucleic
+    };
 
-        peptides.forEach(strand =>{
-            newStrandIds.set(strand, sidCounter--);
-            totPeptide += 1
-            totParticles += strand.monomers.length;
-            totAA += strand.monomers.length;
-            strand.monomers.forEach(e => {
-                newElementIds.set(e, gidCounter++);
-            });
-        });
-
-        sidCounter = 1;
-        nas.forEach(strand => {
-            newStrandIds.set(strand, sidCounter++);
-            totNucleic += 1;
-            totParticles += strand.monomers.length;
-            totNuc += strand.monomers.length;
-            strand.monomers.forEach(e => {
-                newElementIds.set(e, gidCounter++);
-            });
-        });
-
-        totParticles = totNuc + totAA;
-        totStrands = totPeptide + totNucleic;
-        firstLine = [totParticles, totStrands, totNuc, totAA, totNucleic]
+    if (counts.totParticles != elements.size) {
+        notify(`Length of totNuc (${counts.totParticles}) is not equal to length of elements array (${elements.size})`);
     }
 
-    top.push(firstLine.join(" "))
+    return [newElementIds, newStrandIds, counts];
+ }
 
-    if (totParticles != elements.size) {
-        notify(`Length of totNuc (${totParticles}) is not equal to length of elements array (${elements.size})`);
+function makeTopFile(name){
+    const top: string[] = []; // string of contents of .top file
+
+    // remove any gaps in the particle numbering
+    let [newElementIds, newStrandIds, counts] = getNewIds();
+
+    let firstLine = [counts['totParticles'], counts['totStrands']];
+
+    // Add extra counts needed in protein simulation
+    if (counts['totAA'] > 0) {
+        firstLine = firstLine.concat(['totNuc', 'totAA', 'totNucleic'].map(v=>counts[v]));
     }
 
-    newElementIds.forEach((_gid, e) => { //for each nucleotide
-        let neighbor3 = e.neighbor3 ? newElementIds.get(e.neighbor3) : -1;
-        let neighbor5 = e.neighbor5 ? newElementIds.get(e.neighbor5) : -1;
+    top.push(firstLine.join(" "));
+
+    newElementIds.forEach((_id, e) => { //for each nucleotide
+        let n3 = e.n3 ? newElementIds.get(e.n3) : -1;
+        let n5 = e.n5 ? newElementIds.get(e.n5) : -1;
         let cons: number[] = []
         
-        if (proteinMode) {
-            for (let i = 0; i < e.connections.length; i++) {
-                let c = e.connections[i];
-                if (newElementIds.get(c.p2) > newElementIds.get(e) && newElementIds.get(c.p2) != neighbor5) {
-                    cons.push(newElementIds.get(c.p2));
+        // Protein mode
+        if (counts['totAA'] > 0) {
+            if (e.isAminoAcid()) {
+                for (let i = 0; i < e.connections.length; i++) {
+                    let c = e.connections[i];
+                    if (newElementIds.get(c) > newElementIds.get(e) && newElementIds.get(c) != n5) {
+                        cons.push(newElementIds.get(c));
+                    }
                 }
             }
         }
-
-        top.push([newStrandIds.get(e.strand), e.type, neighbor3, neighbor5, ...cons].join(' '));
+        top.push([newStrandIds.get(e.strand), e.type, n3, n5, ...cons].join(' '));
     });
     //makeTextFile(name+".top", top.join("\n")); //make .top 
 
@@ -200,7 +193,7 @@ function makeDatFile(name, altNumbering=undefined) {
         ))
     });
     let dat: string = "";
-    let box: number = Math.ceil(6 * maxCoord);
+    let box: number = Math.ceil(3 * maxCoord);
     dat = [
         `t = 0`,
         `b = ${box} ${box} ${box}`,
@@ -209,16 +202,17 @@ function makeDatFile(name, altNumbering=undefined) {
 
     // get coordinates for all elements, in the correct order
     if (altNumbering) {
-        altNumbering.forEach((_gid, e) => {
+        altNumbering.forEach((_id, e) => {
             dat += e.getDatFileOutput();
         });
     }
     else {
         systems.forEach(system =>{
             system.strands.forEach((strand: Strand) => {
-                strand.monomers.forEach(e => {
+                strand.forEach(e => {
+                    console.log(e.id)
                     dat += e.getDatFileOutput();
-                });
+                }, true); //oxDNA runs 3'-5'
             });
         });
     }
@@ -229,19 +223,34 @@ function makeParFile(name: string, altNumbering, counts) {
     const par: string[] = [];
     par.push(counts[3]);
 
-    ANMs.forEach ((anm: ANM) => {
-        //ANMs can be huge so we need to use a traditional for loop here
-        const l = anm.children.length
-        for (let i = 0; i < l; i++) {
-            const curCon = anm.children[i]
-            const p1ID: number = altNumbering.get(curCon.p1);
-            const p2ID: number = altNumbering.get(curCon.p2);
-
-            const line = [p1ID, p2ID, curCon.eqDist, curCon.type, curCon.strength];
-            par.push(line.join(" "));
-        } 
+    networks.forEach((net: Network) => {
+        const t = net.reducedEdges.total;
+        if(t != 0){
+            for(let i= 0; i<t; i++){
+                let p1 = net.particles[net.reducedEdges.p1[i]]; // old element old id
+                let p2 = net.particles[net.reducedEdges.p2[i]];
+                const p1ID: number = altNumbering.get(p1);
+                const p2ID: number = altNumbering.get(p2);
+                const line = [p1ID, p2ID, net.reducedEdges.eqDist[i], net.reducedEdges.types[i], net.reducedEdges.ks[i]].concat(net.reducedEdges.extraParams[i]);
+                par.push(line.join(" "));
+            }
+        }
     });
-    return {file_name :name+".par", file : par.join('\n') };
+
+    return {file_name: name+".par", file: par.join('\n') };
+    // ANMs.forEach ((anm: ANM) => {
+    //     //ANMs can be huge so we need to use a traditional for loop here
+    //     const l = anm.children.length
+    //     for (let i = 0; i < l; i++) {
+    //         const curCon = anm.children[i]
+    //         const p1ID: number = altNumbering.get(curCon.p1);
+    //         const p2ID: number = altNumbering.get(curCon.p2);
+    //
+    //         const line = [p1ID, p2ID, curCon.eqDist, curCon.type, curCon.strength].concat(curCon.extraParams);
+    //         par.push(line.join(" "));
+    //     }
+    // });
+    // return {file_name: name+".par", file: par.join('\n') };
 }
 
 function writeMutTrapText(base1: number, base2: number): string { //create string to be inserted into mutual trap file
@@ -253,58 +262,24 @@ function writeMutTrapText(base1: number, base2: number): string { //create strin
 		"PBC = 1" + "\n}\n\n";
 }
 
-function makeMutualTrapFile() { //make download of mutual trap file from selected bases
-    let mutTrapText: string = "";
-    let listBases = Array.from(selectedBases).map(e=>e.gid);
-    for (let x = 0; x < listBases.length; x = x + 2) { //for every selected nucleotide in listBases string
-        if (listBases[x+1] !== undefined) { //if there is another nucleotide in the pair
-            mutTrapText = mutTrapText + writeMutTrapText(listBases[x], listBases[x + 1]) + writeMutTrapText(listBases[x + 1], listBases[x]); //create mutual trap data for the 2 nucleotides in a pair - selected simultaneously
-		}
-		else { //if there is no 2nd nucleotide in the pair
-			notify("The last selected base does not have a pair and thus cannot be included in the Mutual Trap File."); //give error message
-		}
-	}
-	makeTextFile("mutual_trap.txt", mutTrapText); //after addding all mutual trap data, make mutual trap file
-}
-
-function makePairTrapFile() {
-    let write = () => {
-        let mutTrapText: string = "";
-        elements.forEach(e=>{
-            // If element is paired, add a trap
-            if (e.isPaired()) {
-                mutTrapText += writeMutTrapText(
-                    e.gid, (e as Nucleotide).pair.gid
-                );
-            }
-        });
-        makeTextFile("basepair_trap.txt", mutTrapText); //after addding all mutual trap data, make mutual trap file
-    }
-    // Find out if we have calculated pairs already
-    let pairsCalculated = false;
-    for (let element of elements) {
-        if (element[1].isPaired()) {
-            pairsCalculated = true;
-            break;
-        }
-    }
-    if (!pairsCalculated) {
-        view.longCalculation(findBasepairs, view.basepairMessage, write);
+function makeForceFile() {
+    if(forces.length > 0) {
+        makeTextFile("external_forces.txt", forcesToString());
     } else {
-        write();
+        notify("No forces have been added yet, please click Dynamics/Forces", "alert");
     }
 }
 
 function makeSelectedBasesFile() { //make selected base file
-    makeTextFile("baseListFile", Array.from(selectedBases).map(e=>e.gid).join(" "));
+    makeTextFile("baseListFile", Array.from(selectedBases).map(e=>e.id).join(" "));
 }
 
 function makeSequenceFile() {
     let seqTxts = [];
     systems.forEach((sys: System)=>{
         sys.strands.forEach((strand: Strand)=>{
-            let label = strand.label ? strand.label : `strand_${strand.strandID}`;
-            seqTxts.push(`${label}, ${api.getSequence(strand.monomers)}`);
+            let label = strand.label ? strand.label : `strand_${strand.id}`;
+            seqTxts.push(`${label}, ${strand.getSequence()}`);
       })
     });
     makeTextFile("sequences.csv", seqTxts.join("\n"));
@@ -314,7 +289,8 @@ function makeOxViewJsonFile(space?: string | number) {
     makeTextFile("output.oxview", JSON.stringify({
         date: new Date(),
         box: box.toArray(),
-        systems: systems
+        systems: systems,
+        forces: forces
     }, null, space));
 }
 
@@ -329,3 +305,35 @@ function makeTextFile(filename: string, text: string) { //take the supplied text
     document.body.removeChild(elem); //
     //window.parent.FakeDataDownload(blob, filename);
 };
+
+function makeIndxFile(indxarray) {
+    let write = () => {
+        let text: string = "";
+        indxarray.forEach(ind => {
+            ind.forEach((sub, si) => {
+                if(si != 0 && si != sub.length-1){
+                    text += " ";
+                }
+                text += sub.toString(); // Add particle id
+            })
+            // Newline between each particles array
+            text += '\n';
+        })
+        makeTextFile("index.txt", text);
+    }
+
+    if(indxarray.length == 0){
+        notify("Index Data is Empty");
+        return;
+    } else {
+        write();
+    }
+}
+
+function makeNetworkJSONFile(nid) {
+    makeTextFile("network.json", JSON.stringify(networks[nid].toJson()));
+}
+
+function makeFluctuationFile(gid) {
+    makeTextFile("flux.json", JSON.stringify(graphDatasets[gid].toJson()));
+}

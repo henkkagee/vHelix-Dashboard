@@ -97,10 +97,51 @@ class RevertableDeletion extends RevertableEdit {
     }
     ;
 }
+class RevertableMassDiscretization extends RevertableEdit {
+    constructor(victims, newelements, newinstcopies) {
+        const saved = victims.map(e => new InstanceCopy(e));
+        let undo = function () {
+            // delete added mass particles
+            edit.deleteElements(this.newbies);
+            // add original system back
+            this.victims = edit.addElements(saved);
+        };
+        let redo = function () {
+            // delete original Elements
+            edit.deleteElements(this.victims);
+            // Add the new elements
+            this.newbies = edit.addElements(newinstcopies);
+        };
+        super(undo, redo);
+        // construct and save discretizedMassSystem
+        this.victims = victims;
+        this.newbies = newelements;
+    }
+    ;
+}
+class RevertableNetworkCreation extends RevertableEdit {
+    constructor(elems, nid) {
+        // construct network
+        let lastsel = selectednetwork;
+        const network = new Network(nid, elems);
+        let undo = function () {
+            //Remove Network from networks array
+            networks.splice(nid, 1);
+            selectednetwork = lastsel;
+        };
+        let redo = function () {
+            //Add network to networks array
+            networks.push(network);
+            selectednetwork = network.nid;
+        };
+        super(undo, redo);
+    }
+    ;
+}
 class RevertableNick extends RevertableEdit {
     constructor(element) {
-        const end3 = element.gid;
-        const end5 = element.neighbor3.gid;
+        const end3 = element.id;
+        const end5 = element.n3.id;
         let undo = function () { edit.ligate(elements.get(end3), elements.get(end5)); };
         let redo = function () { edit.nick(elements.get(end3)); };
         super(undo, redo);
@@ -111,13 +152,13 @@ class RevertableLigation extends RevertableEdit {
     constructor(e1, e2) {
         let end5, end3;
         // Find out which is the 5' end and which is 3'
-        if (!e1.neighbor5 && !e2.neighbor3) {
-            end5 = e1.gid;
-            end3 = e2.gid;
+        if (!e1.n5 && !e2.n3) {
+            end5 = e1.id;
+            end3 = e2.id;
         }
-        else if (!e1.neighbor3 && !e2.neighbor5) {
-            end5 = e2.gid;
-            end3 = e1.gid;
+        else if (!e1.n3 && !e2.n5) {
+            end5 = e2.id;
+            end3 = e1.id;
         }
         else {
             notify("Please select one nucleotide with an available 3' connection and one with an available 5'");
@@ -132,7 +173,7 @@ class RevertableLigation extends RevertableEdit {
 }
 class RevertableSequenceEdit extends RevertableEdit {
     constructor(elems, sequence, setComplementaryBases) {
-        const oldseq = api.getSequence(elems);
+        const oldseq = edit.getSequence(elems);
         let undo = function () { edit.setSequence(elems, oldseq, setComplementaryBases); };
         let redo = function () { edit.setSequence(elems, sequence, setComplementaryBases); };
         super(undo, redo);

@@ -16,9 +16,13 @@ class InstanceCopy {
             }
         });
         this.type = e.type;
-        this.gid = e.gid;
-        this.n3gid = e.neighbor3 ? e.neighbor3.gid : -1;
-        this.n5gid = e.neighbor5 ? e.neighbor5.gid : -1;
+        this.id = e.id;
+        this.clusterId = e.clusterId;
+        this.n3id = e.n3 ? e.n3.id : -1;
+        this.n5id = e.n5 ? e.n5.id : -1;
+        if (e.isPaired()) {
+            this.bpid = e.pair.id;
+        }
         this.elemType = e.constructor;
         this.system = e.getSystem();
     }
@@ -34,7 +38,7 @@ function copyWrapper() {
         notify("Please select monomers to copy");
         return;
     }
-    let toCopy = Array.from(selectedBases).map(e => e.gid); // Save so that we can clear the selection
+    let toCopy = Array.from(selectedBases).map(e => e.id); // Save so that we can clear the selection
     clearSelection();
     copied = toCopy.map(i => new InstanceCopy(elements.get(i)));
 }
@@ -165,21 +169,89 @@ function setSeqWrapper() {
         notify("Please type a sequence into the box");
         return;
     }
-    let e = Array.from(selectedBases);
-    let n = [];
-    e.forEach(elem => {
-        if (elem instanceof Nucleotide) {
-            n.push(elem);
-        }
-    });
-    if (n.length == 0) {
+    if (selectedBases.size == 0) {
         notify("Please select nucleotides to apply sequence to");
         return;
     }
-    if (n.length > seq.length) {
+    if (selectedBases.size > seq.length) {
         notify("Sequence is shorter than the selection");
         return;
     }
-    editHistory.do(new RevertableSequenceEdit(n, seq, setCompl));
+    editHistory.do(new RevertableSequenceEdit(selectedBases, seq, setCompl));
     topologyEdited = true;
+}
+function moveToWrapper() {
+    // assuming last element of the selection is the move to position
+    let bases = Array.from(selectedBases);
+    let e = bases.pop();
+    edit.move_to(e, bases);
+}
+function createNetworkWrapper() {
+    // Makes a Network
+    let bases = Array.from(selectedBases);
+    // copied = bases.map(e => new InstanceCopy(e)); // this is probably unnecessary
+    let nid = networks.length;
+    editHistory.do(new RevertableNetworkCreation(bases, nid));
+    view.addNetwork(nid); // don't know if it's a good idea to call this here or not?
+}
+function deleteNetworkWrapper(nid) {
+    let net = networks[nid];
+    if (net.onscreen) {
+        net.toggleVis(); // turn it off
+    }
+    networks.splice(nid, 1);
+    if (selectednetwork == nid)
+        selectednetwork = -1;
+    view.removeNetwork(nid);
+}
+function fillEdgesWrapper(nid, edgecase) {
+    // Easy expansion for other edge methods
+    if (networks.length == 0) {
+        notify('No Networks Found, Please Create Network');
+    }
+    else {
+        let net = networks[nid];
+        switch (edgecase) {
+            case 0:
+                let cutoff = view.getInputNumber("edgeCutoff");
+                if (typeof (cutoff) != "number" || cutoff > 1000 || cutoff <= 0 || isNaN(cutoff)) {
+                    notify("Please enter recongized value into 'Edge Cutoff' box");
+                }
+                else {
+                    net.edgesByCutoff(cutoff);
+                }
+        }
+    }
+}
+function visualizeNetworkWrapper(nid) {
+    let net = networks[nid];
+    if (net.reducedEdges.total == 0) {
+        notify("Connections must be assigned prior to Network Visualization");
+        return;
+    }
+    net.toggleVis();
+}
+function selectNetworkWrapper(nid) {
+    clearSelection();
+    let net = networks[nid];
+    net.selectNetwork();
+}
+function discretizeMassWrapper() {
+    if (selectedBases.size == 0) { // Need Elements
+        notify("Please select Bases");
+        return;
+    }
+    let cellSize = view.getInputNumber("cellSize");
+    if (cellSize <= 0 || typeof (cellSize) != "number" || isNaN(cellSize)) { //Valid value for cellsize
+        notify("Please Enter Valid Cell Size into the Cell Size Box");
+        return;
+    }
+    else {
+        let elems = Array.from(selectedBases); // Save so that we can clear the selection
+        clearSelection();
+        let ret = edit.discretizeMass(elems, cellSize);
+        const InstMassSys = ret["elems"].map(e => new InstanceCopy(e));
+        editHistory.add(new RevertableAddition(InstMassSys, ret["elems"]));
+        flux.prepIndxButton(ret["indx"]);
+    }
 }

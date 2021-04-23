@@ -7,132 +7,182 @@
 
 abstract class Strand {
 
-    strandID: number; //system location
+    id: number; //system location
     system: System;
     pos: THREE.Vector3;
-    circular: boolean;
-    monomers: BasicElement[] = [];
     label: string;
+    end3: BasicElement;
+    end5: BasicElement;
+
 
     constructor(id: number, system: System) {
-        this.strandID = id;
+        this.id = id;
         this.system = system;
-        this.circular = false;
     };
 
-    addMonomer(elem: BasicElement) {
-        this.monomers.push(elem);
-        elem.strand = this;
-    };
+    setFrom(e: BasicElement) {
+        if (e) {
+            this.end3 = this.end5 = e;
+            this.updateEnds();
+            this.forEach(e=>{
+                e.strand = this;
+            })
+        } else {
+            throw new Error("Cannot set empty strand end");
+        }
+    }
 
-    createBasicElement(gid?: number): BasicElement {
+    isCircular() {
+        return this.end3.n3 != null && this.end3.n3 == this.end5;
+    }
+
+    createBasicElement(id?: number): BasicElement {
         throw "Cannot create a basic element, need to be a nucleotide, amino acid, etc.";
     }
 
-    excludeElements(elements: BasicElement[]) {
-        // detach from strand
-        elements.forEach(e => {
-            e.strand = null;
-        });
-        // create a new list of strand elements  
-        this.monomers = this.monomers.filter(e => {
-            return !elements.includes(e);
-        });
-    };
-
-    get3prime(): Nucleotide {
-        let start = this.monomers[0];
-        let i = start;
-        // Rewind until to 3' end or back to start (if circular)
-        while (i.neighbor3) {
-            if (i.neighbor3 === start) {
-                // Back to start, circular
-                this.circular = true;
-                return start as Nucleotide;
-            }
-            i = i.neighbor3;
-        }
-        return i as Nucleotide;
+    getSequence() {
+        return this.map(e=>e.type).join('');
     }
 
-    get5prime(): Nucleotide {
-        let start = this.monomers[this.monomers.length];
-        let i = start;
-        // Rewind until to 5' end or back to start (if circular)
-        while (i.neighbor5) {
-            if (i.neighbor5 === start) {
-                // Back to start, circular
-                this.circular = true;
-                return start as Nucleotide;
-            }
-            i = i.neighbor5;
+    getLength() {
+        let e = this.end3;
+        let i = 0;
+        while(e) {
+            e = e.n5;
+            i++;
+            if(e === this.end3) break;
         }
-        return i as Nucleotide;
+        return i;
     }
 
-    getOrderedMonomers(): Nucleotide[] {
-        let ordered = [];
-        let start = this.get3prime();
-        let i = start;
-        while(i) {
-            ordered.push(i);
-            i = i.neighbor5 as Nucleotide;
-            if(i === start) {
-                break;
+    updateEnds() {
+        let start = this.end3;
+        while(this.end3.n3 && this.end3.n3 != this.end5) {
+            this.end3 = this.end3.n3;
+            // Avoid infinite loop on circular strand
+            if (this.end3 == start) {
+                this.end5 = this.end3.n3;
+                return;
             }
-        }
-        console.assert(ordered.length == this.monomers.length);
-        return ordered;
+        };
+        start = this.end5;
+        while(this.end5.n5  && this.end3.n5 != this.end3) {
+            this.end5 = this.end5.n5;
+            // Avoid infinite loop on circular strand
+            if (this.end5 == start) {
+                this.end3 = this.end5.n5;
+                return;
+            }
+        };
     }
 
+    /**
+     * Return a list of all monomers in strand, in 5' to 3' order
+     * @param reverse If set to true, return list in 3' to 5' order instead
+     */
+    getMonomers(reverse?:boolean): BasicElement[] {
+        return this.map(e=>e, reverse);
+    }
+
+    /**
+     * Performs the specified action for each element in an array.
+     * @param callbackfn A function that accepts up to two arguments
+     * @param reverse Iterate in 3' to 5' direction, instead of the default 5' to 3'
+     * @param condition If provided, only continue looping while condition is true
+     */
+    forEach(callbackfn: (value: BasicElement, index: number)=>void, reverse?:boolean, condition?: (value: BasicElement, index: number)=>boolean) {
+        const start = reverse ? this.end3 : this.end5;
+        let e = start;
+        let i = 0;
+        while(e && (!condition || condition(e,i))) {
+            callbackfn(e, i);
+            e = reverse ? e.n5 : e.n3;
+            i++;
+            if(e === start) break;
+        }
+    }
+
+    /**
+     * Calls a defined callback function on each monomer of the strand, and returns an array that contains the results
+     * @param callbackfn A function that accepts up to two arguments
+     * @param reverse Iterate in 3' to 5' direction, instead of the default 5' to 3'
+     */
+    map(callbackfn: (value: BasicElement, index: number)=>void, reverse?:boolean) {
+        let list = [];
+        this.forEach((e,i)=>{list.push(callbackfn(e, i))}, reverse);
+        return list;
+    }
+
+    /**
+     * Returns the monomers of the strand that meet the condition specified in a callback function.
+     * @param callbackfn — A function that accepts up to two arguments, returning a boolean
+     * @param reverse Retur filtered list in 3' to 5' direction, instead of the default 5' to 3'
+     */
+    filter(callbackfn: (value: BasicElement, index: number)=>boolean, reverse?:boolean) {
+        let list = [];
+        this.forEach((e,i)=>{
+            if(callbackfn(e,i)){
+                list.push(e);
+            }
+        }, reverse);
+        return list;
+    }
+
+    //reverse is set to true so things select in standard oxDNA d3'-5' order
     toggleMonomers() {
-        this.monomers.forEach(e=>e.toggle());
+        this.forEach(e=>e.toggle(), true);
     }
 
     select() {
-        this.monomers.forEach(e=>e.select());
+        this.forEach(e=>e.select(), true);
     }
 
     deselect() {
-        this.monomers.forEach(e=>e.deselect());
+        this.forEach(e=>e.deselect(), true);
     }
 
     isEmpty(): Boolean {
-        return this.monomers.length == 0;
+        //console.assert(this.end3 ? true : !this.end5, "Stand incorrectly empty");
+        return !this.end3 && !this.end5;
     }
 
-    getCom() {
-        const com = new THREE.Vector3(0, 0, 0);
-        const l = this.monomers.length;
-        const cmOffs = this.system.cmOffsets;
-        for (
-            let i = ((this.monomers[0] as BasicElement).gid - this.system.globalStartId) * 3; 
-            i <= ((this.monomers[l-1] as BasicElement).gid - this.system.globalStartId) * 3;
-            i+=3)
-        {
-            com.add(new THREE.Vector3(cmOffs[i], cmOffs[i+1], cmOffs[i+2]));
-        }
-        return(com.multiplyScalar(1/l))
+    getPos() {
+        let com = new THREE.Vector3();
+        let length = 0;
+        this.forEach(e=>{
+            com.add(e.getPos());
+            length ++;
+        })
+        return com.divideScalar(length);
     };
 
     abstract translateStrand(amount: THREE.Vector3): void;
 
+    isPeptide(): boolean{
+        return false;
+    }
+
+    isNucleicAcid(): boolean {
+        return false;
+    }
+
+    isGS(): boolean {
+        return false;
+    }
+
     toJSON() {
         // Specify required attributes
         let json = {
-            id: this.strandID,
-            monomers: this.monomers
+            id: this.id,
+            monomers: this.getMonomers(),
+            end3: this.end3.id,
+            end5: this.end5.id
         };
         // Specify optional attributes
         if (this.label) json['label'] = this.label;
 
         return json;
     };
-
-    //this is so dirty...
-    getType() {
-        return (this as any).__proto__.constructor.name
-    }
 };
 
 class NucleicAcidStrand extends Strand {
@@ -140,46 +190,31 @@ class NucleicAcidStrand extends Strand {
         super(id, system);
     };
 
-    createBasicElement(gid?: number) {
+    createBasicElement(id?: number) {
         if (RNA_MODE)
-            return new RNANucleotide(gid, this);
+            return new RNANucleotide(id, this);
         else
-            return new DNANucleotide(gid, this);
+            return new DNANucleotide(id, this);
     };
 
+    /**
+     * Translate the strand by a given amount
+     * @param amount Vector3 with the amount to translate the strand
+     */
     translateStrand(amount: THREE.Vector3) {
         const s = this.system;
-        for (
-            let i = ((this.monomers[0] as Nucleotide).gid - s.globalStartId) * 3;
-            i <= ((this.monomers[this.monomers.length-1] as Nucleotide).gid - s.globalStartId) * 3;
-            i+=3)
-        {
-            s.bbOffsets[i] += amount.x;
-            s.bbOffsets[i + 1] += amount.y;
-            s.bbOffsets[i + 2] += amount.z;
-
-            s.nsOffsets[i] += amount.x;
-            s.nsOffsets[i + 1] += amount.y;
-            s.nsOffsets[i + 2] += amount.z;
-
-            s.conOffsets[i] += amount.x;
-            s.conOffsets[i + 1] += amount.y;
-            s.conOffsets[i + 2] += amount.z;
-
-            s.bbconOffsets[i] += amount.x;
-            s.bbconOffsets[i + 1] += amount.y;
-            s.bbconOffsets[i + 2] += amount.z;
-
-            s.cmOffsets[i] += amount.x;
-            s.cmOffsets[i + 1] += amount.y;
-            s.cmOffsets[i + 2] += amount.z;
-        } 
+        const monomers = this.getMonomers(true);
+        monomers.forEach(e => e.translatePosition(amount));
+        
         s.callUpdates(['instanceOffset'])
         if (tmpSystems.length > 0) {
             tmpSystems.forEach((s) => {
                 s.callUpdates(['instanceOffset'])
             })
         }
+    }
+    isNucleicAcid(): boolean {
+        return true;
     }
     toJSON() {
         // Get superclass attributes
@@ -193,15 +228,16 @@ class Peptide extends Strand {
         super(id, system);
     };
 
-    createBasicElement(gid?: number) {
-        return new AminoAcid(gid, this);
+    createBasicElement(id?: number) {
+        return new AminoAcid(id, this);
     };
 
     translateStrand(amount: THREE.Vector3) {
         const s = this.system;
+        const monomers = this.getMonomers();
         for (
-            let i = ((this.monomers[0] as AminoAcid).gid - s.globalStartId) * 3;
-            i <= ((this.monomers[this.monomers.length-1] as AminoAcid).gid - s.globalStartId) * 3;
+            let i = monomers[0].sid * 3;
+            i <= monomers[monomers.length-1].sid * 3;
             i+=3)
         {
 
@@ -228,10 +264,130 @@ class Peptide extends Strand {
             })
         }
     };
+
+    isPeptide(): boolean{
+        return true;
+    }
+
     toJSON() {
         // Get superclass attributes
         let json = super.toJSON();
         json['class'] = 'Peptide';
         return json;
     };
+
+    //the default for DNA/RNA reflects that DNA/RNA are written backwards in oxDNA, but proteins are written the normal way.
+    getMonomers(reverse?:boolean): BasicElement[] {
+        return super.getMonomers(!reverse)
+    }
+
+    forEach(callbackfn: (value: BasicElement, index: number)=>void, reverse?:boolean, condition?: (value: BasicElement, index: number)=>boolean) {
+        super.forEach(callbackfn, !reverse, condition);
+    }
+
+    map(callbackfn: (value: BasicElement, index: number)=>void, reverse?:boolean) {
+        return super.map(callbackfn, !reverse);
+    }
+
+    filter(callbackfn: (value: BasicElement, index: number)=>boolean, reverse?:boolean) {
+        return super.filter(callbackfn, !reverse)
+    }
+
+    toggleMonomers() {
+        this.forEach(e=>e.toggle());
+    }
+
+    select() {
+        this.forEach(e=>e.select());
+    }
+
+    deselect() {
+        this.forEach(e=>e.deselect());
+    }
+
 }
+
+// Meant to hold multi-sized generic spheres representing arbitrary particle types
+class Generic extends Strand {
+    constructor(id: number, system: System) {
+        super(id, system);
+    };
+
+    createBasicElement(id?: number) {
+        return new GenericSphere(id, this);
+    };
+
+    translateStrand(amount: THREE.Vector3) {
+        const s = this.system;
+        const monomers = this.getMonomers();
+        for (
+            let i = monomers[0].sid * 3;
+            i <= monomers[monomers.length-1].sid * 3;
+            i+=3)
+        {
+
+            s.nsOffsets[i] += amount.x;
+            s.nsOffsets[i + 1] += amount.y;
+            s.nsOffsets[i + 2] += amount.z;
+
+            s.bbOffsets[i] += amount.x;
+            s.bbOffsets[i + 1] += amount.y;
+            s.bbOffsets[i + 2] += amount.z;
+
+            s.bbconOffsets[i] += amount.x;
+            s.bbconOffsets[i + 1] += amount.y;
+            s.bbconOffsets[i + 2] += amount.z;
+
+            s.cmOffsets[i] += amount.x;
+            s.cmOffsets[i + 1] += amount.y;
+            s.cmOffsets[i + 2] += amount.z;
+        }
+        s.callUpdates(['instanceOffset'])
+        if (tmpSystems.length > 0) {
+            tmpSystems.forEach((s) => {
+                s.callUpdates(['instanceOffset'])
+            })
+        }
+    };
+    // is Generic Sphere method
+    isGS(): boolean{
+        return true;
+    }
+    toJSON() {
+        // Get superclass attributes
+        let json = super.toJSON();
+        json['class'] = 'GS';
+        return json;
+    }
+
+    //the default for DNA/RNA reflects that DNA/RNA are written backwards in oxDNA, but proteins are written the normal way.
+    getMonomers(reverse?:boolean): BasicElement[] {
+        return super.getMonomers(!reverse)
+    }
+
+    forEach(callbackfn: (value: BasicElement, index: number)=>void, reverse?:boolean, condition?: (value: BasicElement, index: number)=>boolean) {
+        super.forEach(callbackfn, !reverse, condition);
+    }
+
+    map(callbackfn: (value: BasicElement, index: number)=>void, reverse?:boolean) {
+        return super.map(callbackfn, !reverse);
+    }
+
+    filter(callbackfn: (value: BasicElement, index: number)=>boolean, reverse?:boolean) {
+        return super.filter(callbackfn, !reverse)
+    }
+
+    toggleMonomers() {
+        this.forEach(e=>e.toggle());
+    }
+
+    select() {
+        this.forEach(e=>e.select());
+    }
+
+    deselect() {
+        this.forEach(e=>e.deselect());
+    }
+
+}
+

@@ -8,10 +8,12 @@ canvas.addEventListener("keydown", event => {
             break;
         // Mapping the next and prev to the arrow keys
         case 'arrowright':
-            trajReader.nextConfig();
+            if (trajReader.lookupReader.readyState != 1)
+                trajReader.nextConfig();
             break;
         case 'arrowleft':
-            trajReader.previousConfig();
+            if (trajReader.lookupReader.readyState != 1)
+                trajReader.previousConfig();
             break;
         // Copy, cut, paste and delete. Holding shift pastes with preserved location
         case 'c':
@@ -26,11 +28,19 @@ canvas.addEventListener("keydown", event => {
             break;
         case 'v':
             if (event.ctrlKey || event.metaKey) {
-                pasteWrapper(event.shiftKey);
+                pasteWrapper(!event.shiftKey); // Hold down shift to paste in front of camera
+                view.transformMode.set('Translate'); // Show translate gizmo
             }
             break;
+        // Editing shortcuts
         case 'delete':
             deleteWrapper();
+            break;
+        case 'l':
+            ligateWrapper();
+            break;
+        case 'n':
+            nickWrapper();
             break;
         // Undo: ctrl-z, cmd-z
         // Redo: ctrl-shift-z, ctrl-y, cmd-shift-z, cmd-y
@@ -96,7 +106,7 @@ canvas.addEventListener("keydown", event => {
             if (event.ctrlKey || event.metaKey) {
                 event.preventDefault();
                 Metro.dialog.open('#exportOxdnaDialog');
-                document.getElementById('gidUpdateWarning').hidden = !topologyEdited;
+                document.getElementById('idUpdateWarning').hidden = !topologyEdited;
                 break;
             }
             // Toggle selection:

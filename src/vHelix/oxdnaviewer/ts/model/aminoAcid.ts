@@ -4,10 +4,13 @@
  */
 
 class AminoAcid extends BasicElement {
-    constructor(gid: number, strand: Strand) {
-        super(gid, strand);
-        this.elementType = AA;
-        
+    a1: THREE.Vector3;
+    a3: THREE.Vector3;
+
+    constructor(id: number, strand: Strand) {
+        super(id, strand);
+        this.a1 = new THREE.Vector3(0.,0.,0.);
+        this.a3 = new THREE.Vector3(0.,0.,0.);
     };
 
     elemToColor(elem: number | string): THREE.Color {
@@ -16,22 +19,27 @@ class AminoAcid extends BasicElement {
         return nucleosideColors[elem];
     };
 
-    calcPositionsFromConfLine(l: string[]) {
+    calcPositionsFromConfLine(l: string[], colorUpdate?: boolean) {
         //extract position
         const p = new THREE.Vector3(
             parseFloat(l[0]),
             parseFloat(l[1]),
             parseFloat(l[2])
         );
-        this.calcPositions(p);
+        let a1 = new THREE.Vector3(parseFloat(l[3]), parseFloat(l[4]), parseFloat(l[5]));
+        let a3 = new THREE.Vector3(parseFloat(l[6]), parseFloat(l[7]), parseFloat(l[8]));
+        this.calcPositions(p, a1, a3, colorUpdate);
     }
 
-    calcPositions(p: THREE.Vector3) {
-        const sys = this.getSystem(),
-        sid = this.gid - sys.globalStartId;
+    calcPositions(p: THREE.Vector3, a1?: THREE.Vector3, a3?: THREE.Vector3, colorUpdate?: boolean) {
+        const sys = this.getSystem();
+        let sid = this.sid;
+        this.a1 = a1.clone();
+        this.a3 = a3.clone();
         // compute backbone positions/rotations, or set them all to 0 if there is no neighbor.
         let sp: THREE.Vector3, spLen: number, spRotation: THREE.Quaternion;
-        if (this.neighbor3 && this.neighbor3.lid < this.lid) {
+        if (this.n3 && this.n3 != this.strand.end5) {
+            let bbLast = this.n3.getInstanceParameter3('bbOffsets');
             sp = p.clone().add(bbLast).divideScalar(2);
             spLen = p.distanceTo(bbLast)
 
@@ -48,11 +56,18 @@ class AminoAcid extends BasicElement {
 
         this.handleCircularStrands(sys, sid, p);
 
-        // determine the mesh color, either from a supplied colormap json or by the strand ID.
-        let color = new THREE.Color();
-        color = this.strandToColor(this.strand.strandID);
-        let idColor = new THREE.Color();
-        idColor.setHex(this.gid+1); //has to be +1 or you can't grab nucleotide 0
+        if (colorUpdate) {
+            // determine the mesh color, either from a supplied colormap json or by the strand ID.
+            const bbColor = this.strandToColor(this.strand.id);
+            sys.fillVec('bbColors', 3, sid, [bbColor.r, bbColor.g, bbColor.b]);
+
+            const nsColor = this.elemToColor(this.type);
+            sys.fillVec('nsColors', 3, sid, [nsColor.r, nsColor.g, nsColor.b]);
+
+            let idColor = new THREE.Color();
+            idColor.setHex(this.id+1); //has to be +1 or you can't grab nucleotide 0
+            sys.fillVec('bbLabels', 3, sid, [idColor.r, idColor.g, idColor.b]);
+        }
 
         // fill in the instancing matrices
         sys.fillVec('cmOffsets', 3, sid, p.toArray());
@@ -72,68 +87,12 @@ class AminoAcid extends BasicElement {
         } else {
             sys.fillVec('bbconScales', 3, sid, [1, spLen, 1]);
         }
-        sys.fillVec('bbColors', 3, sid, [color.r, color.g, color.b]);
         sys.fillVec('visibility', 3, sid, [1,1,1]);
-
-        color = this.elemToColor(this.type);
-        sys.fillVec('nsColors', 3, sid, [color.r, color.g, color.b]);
-        
-        sys.fillVec('bbLabels', 3, sid, [idColor.r, idColor.g, idColor.b]);
-
-        // keep track of last backbone for sugar-phosphate positioning
-        bbLast = p.clone();
-    };
-
-    calculateNewConfigPositions(l: string[]) {
-        const sys = this.getSystem(),
-        sid = this.gid - sys.globalStartId;
-
-        //extract position
-        const p = new THREE.Vector3(
-            parseFloat(l[0]),
-            parseFloat(l[1]),
-            parseFloat(l[2])
-        );
-
-        //calculate new backbone connector position/rotation
-        let sp: THREE.Vector3, spLen: number, spRotation: THREE.Quaternion;
-        if (this.neighbor3 != null && this.neighbor3.lid < this.lid) {
-            sp = new THREE.Vector3(
-                (p.x + xbbLast) / 2,
-                (p.y + ybbLast) / 2,
-                (p.z + zbbLast) / 2
-            );
-            spLen = p.distanceTo(bbLast);
-
-            spRotation = new THREE.Quaternion().setFromUnitVectors(
-                new THREE.Vector3(0, 1, 0), sp.clone().sub(p).normalize()
-            );
-        }
-        else {
-            sp = new THREE.Vector3();
-            spLen = 0;
-            spRotation = new THREE.Quaternion(0, 0, 0, 0);
-        }
-
-        this.handleCircularStrands(sys, sid, p);
-
-        sys.fillVec('cmOffsets', 3, sid, p.toArray());
-        sys.fillVec('bbOffsets', 3, sid, p.toArray());
-        sys.fillVec('nsOffsets', 3, sid, p.toArray());
-        sys.fillVec('bbconOffsets', 3, sid, sp.toArray());
-        sys.fillVec('bbconRotation', 4, sid, [spRotation.w, spRotation.z, spRotation.y, spRotation.x]);
-        if(spLen == 0) {
-            sys.fillVec('bbconScales', 3, sid, [0, 0, 0]);
-        } else {
-            sys.fillVec('bbconScales', 3, sid, [1, spLen, 1]);
-        }
-        
-        bbLast = p.clone();
     };
 
     translatePosition(amount: THREE.Vector3) {
         const sys = this.getSystem(),
-            id = (this.gid - sys.globalStartId)*3;
+            id = (this.sid)*3;
 
         sys.bbOffsets[id] += amount.x;
         sys.bbOffsets[id + 1] += amount.y;
@@ -154,10 +113,9 @@ class AminoAcid extends BasicElement {
 
     updateColor() {
         let sys = this.getSystem(),
-            sid = this.gid - sys.globalStartId;
-        if (this.dummySys !== null) {
-            sys = this.dummySys
             sid = this.sid;
+        if (this.dummySys !== null) {
+            sys = this.dummySys;
         }
         let bbColor: THREE.Color;
         let aaColor: THREE.Color;
@@ -167,11 +125,11 @@ class AminoAcid extends BasicElement {
         } else {
             switch (view.coloringMode.get()) {
                 case "Strand": 
-                    bbColor = backboneColors[(Math.abs(this.strand.strandID) + this.getSystem().systemID) % backboneColors.length]; 
+                    bbColor = backboneColors[(Math.abs(this.strand.id) + this.getSystem().id) % backboneColors.length]; 
                     aaColor = this.elemToColor(this.type);
                     break;
                 case "System": 
-                    bbColor = backboneColors[this.getSystem().systemID % backboneColors.length]; 
+                    bbColor = backboneColors[this.getSystem().id % backboneColors.length]; 
                     aaColor = this.elemToColor(this.type);
                     break;
                 case "Cluster":
@@ -186,6 +144,15 @@ class AminoAcid extends BasicElement {
                 case "Overlay": 
                     bbColor = sys.lutCols[sid]; 
                     aaColor = bbColor.clone()
+                    break;
+                case "Custom":
+                    if (!this.color) {
+                        bbColor = GREY;
+                        aaColor = GREY;
+                    } else {
+                        bbColor = this.color;
+                        aaColor = this.color;
+                    }
                     break;
             }
         }
@@ -209,7 +176,14 @@ class AminoAcid extends BasicElement {
         const x: number = tempVec.x;
         const y: number = tempVec.y;
         const z: number = tempVec.z;
-        dat = x + " " + y + " " + z + " 1.0 1.0 0.0 0.0 0.0 -1.0 0.0 0.0 0.0 0.0 0.0 0.0" + "\n"; //add all locations to dat file string
+        let xA1 = this.a1.x;
+        let yA1 = this.a1.y;
+        let zA1 = this.a1.z;
+        let xA3 = this.a3.x;
+        let yA3 = this.a3.y;
+        let zA3 = this.a3.z;
+        dat = x + " " + y + " " + z + " " + xA1 + " " + yA1 + " " + zA1 + " " + xA3 + " " + yA3 +
+            " " + zA3 + " 0 0 0 0 0 0" + "\n"; //add all locations to dat file string //add all locations to dat file string
         return dat;
     };
 

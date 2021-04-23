@@ -24,52 +24,52 @@ If you have any questions, feel free to open an issue on the GitHub page.
 
 
 class ElementMap extends Map<number, BasicElement>{
-    gidCounter: number;
+    idCounter: number;
 
     constructor(){
         super();
-        this.gidCounter = 0;
+        this.idCounter = 0;
     }
 
     // Avoid using this unless you really need to set
-    // a specific gid.
-    set(gid: number, element: BasicElement): this {
-        if(this.gidCounter < gid+1){
-            this.gidCounter = gid+1;
+    // a specific id.
+    set(id: number, element: BasicElement): this {
+        if(this.idCounter < id+1){
+            this.idCounter = id+1;
         }
         // Reading oxDNA files we set elements as undefined for
         // concurrency issues
         if (element) {
-            element.gid = gid;
+            element.id = id;
         }
-        return super.set(gid, element);
+        return super.set(id, element);
     }
 
     /**
      * Add an element, keeping track of
      * global id
      * @param element
-     * @returns gid
+     * @returns id
      */
     push(e: BasicElement): number {
-        e.gid = this.gidCounter++;
-        super.set(e.gid, e);
-        return e.gid;
+        e.id = this.idCounter++;
+        super.set(e.id, e);
+        return e.id;
     }
     /**
      * Remove element
-     * @param gid
+     * @param id
      */
-    delete(gid: number): boolean {
-        // If we delete the last added, we can decrease the gid counter.
-        if(this.gidCounter == gid+1){
-            this.gidCounter = gid;
+    delete(id: number): boolean {
+        // If we delete the last added, we can decrease the id counter.
+        if(this.idCounter == id+1){
+            this.idCounter = id;
         }
-        return super.delete(gid);
+        return super.delete(id);
     }
 
     getNextId(): number {
-        return this.gidCounter;
+        return this.idCounter;
     }
 }
 
@@ -82,22 +82,24 @@ let elements: ElementMap = new ElementMap(); //contains references to all BasicE
 //initialize the space
 const systems: System[] = [];
 var tmpSystems: System[] = [] //used for editing
-const ANMs: ANM[] = [];
-const forces: Force[] = [];
+//const ANMs: ANM[] = [];
+let forces: Force[] = [];
+var forcesTable: string[][] = [];
 var forceHandler;
 var sysCount: number = 0;
 var strandCount: number = 0;
 var selectedBases = new Set<BasicElement>();
-var bbLast: THREE.Vector3;
+
+var selectednetwork: number = 0; // Only used for networks
+const networks: Network[] = []; // Only used for networks, replaced anms
+const graphDatasets: graphData[] = []; // Only used for graph
+const pdbFileInfo: pdbinfowrapper[] = []; //Stores all PDB Info (Necessary for future Protein Models)
 
 var lut, devs: number[]; //need for Lut coloring
 
-const DNA: number = 0;
-const RNA: number = 1;
-const AA: number = 2;
 
 const editHistory = new EditHistory();
-let clusterCounter = 0 // Cluster counter
+let clusterCounter = 0; // Cluster counter
 
 //to keep track of if the topology was edited at any point.
 var topologyEdited: Boolean = false;
@@ -119,6 +121,14 @@ function findBasepairs() {
         }
     });
 };
+
+// Ugly hacks for testing
+function getElements(): ElementMap {
+    return elements;
+}
+function getSystems(): System[] {
+    return systems;
+}
 
 //Temporary solution to adding configuration storage
 //This section sets interface values from the storage 

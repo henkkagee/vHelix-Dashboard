@@ -9,25 +9,26 @@ function rotateElements(elements, axis, angle, about) {
     let q = new THREE.Quaternion();
     q.setFromAxisAngle(axis, angle);
     rotateElementsByQuaternion(elements, q, about);
+    if (forceHandler)
+        forceHandler.redraw();
 }
 function rotateElementsByQuaternion(elements, q, about) {
     // For some reason, we have to rotate the orientations
     // around an axis with inverted y-value...
     let q2 = q.clone();
     q2.y *= -1;
-    elements.forEach((base) => {
-        let sys = base.getSystem();
-        let sid = base.gid - sys.globalStartId;
-        if (base.dummySys !== null) {
-            sys = base.dummySys;
-            sid = base.sid;
+    elements.forEach((e) => {
+        let sys = e.getSystem();
+        let sid = e.sid;
+        if (e.dummySys !== null) {
+            sys = e.dummySys;
         }
         //get current positions
-        let cmPos = base.getPos();
-        let bbPos = base.getInstanceParameter3("bbOffsets");
-        let nsPos = base.getInstanceParameter3("nsOffsets");
-        let conPos = base.getInstanceParameter3("conOffsets");
-        let bbconPos = base.getInstanceParameter3("bbconOffsets");
+        let cmPos = e.getPos();
+        let bbPos = e.getInstanceParameter3("bbOffsets");
+        let nsPos = e.getInstanceParameter3("nsOffsets");
+        let conPos = e.getInstanceParameter3("conOffsets");
+        let bbconPos = e.getInstanceParameter3("bbconOffsets");
         //the rotation center needs to be (0,0,0)
         cmPos.sub(about);
         bbPos.sub(about);
@@ -40,11 +41,11 @@ function rotateElementsByQuaternion(elements, q, about) {
         conPos.applyQuaternion(q);
         bbconPos.applyQuaternion(q);
         //get current rotations and convert to THREE coordinates
-        let nsRotationV = base.getInstanceParameter4("nsRotation");
+        let nsRotationV = e.getInstanceParameter4("nsRotation");
         let nsRotation = glsl2three(nsRotationV);
-        let conRotationV = base.getInstanceParameter4("conRotation");
+        let conRotationV = e.getInstanceParameter4("conRotation");
         let conRotation = glsl2three(conRotationV);
-        let bbconRotationV = base.getInstanceParameter4("bbconRotation");
+        let bbconRotationV = e.getInstanceParameter4("bbconRotation");
         let bbconRotation = glsl2three(bbconRotationV);
         //apply individual object rotation
         nsRotation.multiply(q2);
@@ -68,11 +69,11 @@ function rotateElementsByQuaternion(elements, q, about) {
     });
     // Update backbone connections for bases with neigbours outside the selection set
     elements.forEach((base) => {
-        if (base.neighbor3 !== null && base.neighbor3 !== undefined && !elements.has(base.neighbor3)) {
-            calcsp(base); //calculate sp between current and neighbor3
+        if (base.n3 !== null && base.n3 !== undefined && !elements.has(base.n3)) {
+            calcsp(base); //calculate sp between current and n3
         }
-        if (base.neighbor5 !== null && base.neighbor5 !== undefined && !elements.has(base.neighbor5)) {
-            calcsp(base.neighbor5); //calculate sp between current and neighbor5
+        if (base.n5 !== null && base.n5 !== undefined && !elements.has(base.n5)) {
+            calcsp(base.n5); //calculate sp between current and n5
         }
     });
     for (let i = 0; i < systems.length; i++) {
@@ -91,10 +92,10 @@ function calcsp(currentNuc) {
     }
     let temp;
     try {
-        temp = currentNuc.neighbor3.getInstanceParameter3("bbOffsets");
+        temp = currentNuc.n3.getInstanceParameter3("bbOffsets");
     }
     catch (error) {
-        notify("Can't calculate backbone connection for particle " + currentNuc.gid + " because there is no upstream connection");
+        notify("Can't calculate backbone connection for particle " + currentNuc.id + " because there is no upstream connection");
         return;
     }
     let xbbLast = temp.x, ybbLast = temp.y, zbbLast = temp.z;
@@ -108,24 +109,29 @@ function calcsp(currentNuc) {
     let spRotation = new THREE.Quaternion().setFromUnitVectors(new THREE.Vector3(0, 1, 0), new THREE.Vector3(xsp - xbb, ysp - ybb, zsp - zbb).normalize());
     currentNuc.setInstanceParameter('bbconOffsets', [xsp, ysp, zsp]);
     currentNuc.setInstanceParameter('bbconRotation', [spRotation.w, spRotation.z, spRotation.y, spRotation.x]);
-    currentNuc.setInstanceParameter('bbconScales', [1, spLen, 1]);
+    //introduce distance based cutoff of the backbone connectors
+    if (spLen >= box.x * .9 || spLen >= box.y * .9 || spLen >= box.z * .9 || currentNuc.isGS()) {
+        currentNuc.setInstanceParameter('bbconScales', [0, 0, 0]);
+    }
+    else {
+        currentNuc.setInstanceParameter('bbconScales', [1, spLen, 1]);
+    }
     sys.bbconnector.geometry["attributes"].instanceOffset.needsUpdate = true;
     sys.bbconnector.geometry["attributes"].instanceRotation.needsUpdate = true;
     sys.bbconnector.geometry["attributes"].instanceScale.needsUpdate = true;
 }
 function translateElements(elements, v) {
-    elements.forEach((base) => {
-        let sys = base.getSystem();
-        let sid = base.gid - sys.globalStartId;
-        if (base.dummySys !== null) {
-            sys = base.dummySys;
-            sid = base.sid;
+    elements.forEach((e) => {
+        let sys = e.getSystem();
+        let sid = e.sid;
+        if (e.dummySys !== null) {
+            sys = e.dummySys;
         }
-        let cmPos = base.getPos();
-        let bbPos = base.getInstanceParameter3("bbOffsets");
-        let nsPos = base.getInstanceParameter3("nsOffsets");
-        let conPos = base.getInstanceParameter3("conOffsets");
-        let bbconPos = base.getInstanceParameter3("bbconOffsets");
+        let cmPos = e.getPos();
+        let bbPos = e.getInstanceParameter3("bbOffsets");
+        let nsPos = e.getInstanceParameter3("nsOffsets");
+        let conPos = e.getInstanceParameter3("conOffsets");
+        let bbconPos = e.getInstanceParameter3("bbconOffsets");
         cmPos.add(v);
         bbPos.add(v);
         nsPos.add(v);
@@ -141,11 +147,11 @@ function translateElements(elements, v) {
     // to loop through all? We only need to update bases with neigbours
     // outside the selection set)
     elements.forEach((base) => {
-        if (base.neighbor3 !== null && base.neighbor3 !== undefined) {
-            calcsp(base); //calculate sp between current and neighbor3
+        if (base.n3 !== null && base.n3 !== undefined) {
+            calcsp(base); //calculate sp between current and n3
         }
-        if (base.neighbor5 !== null && base.neighbor5 !== undefined) {
-            calcsp(base.neighbor5); //calculate sp between current and neighbor5
+        if (base.n5 !== null && base.n5 !== undefined) {
+            calcsp(base.n5); //calculate sp between current and n5
         }
     });
     for (let i = 0; i < systems.length; i++) {
@@ -154,6 +160,8 @@ function translateElements(elements, v) {
     for (let i = 0; i < tmpSystems.length; i++) {
         tmpSystems[i].callUpdates(['instanceOffset']);
     }
+    if (forceHandler)
+        forceHandler.redraw();
     render();
 }
 //dragControls.activate();
