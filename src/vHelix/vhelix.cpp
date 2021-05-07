@@ -274,9 +274,9 @@ void vHelix::action_(std::string cmd, QVector<QVariant> arg)
         export_(arg);
     }
     else if (cmd.find("estimate bases") != std::string::npos) {
-        int estimate = estimate_base_use_(arg);
+        std::pair<int,int> estimate = estimate_base_use_(arg);
         std::stringstream retsstr;
-        retsstr << "relaxmenu " << estimate;
+        retsstr << "relaxmenu " << std::get<0>(estimate) << " + " << std::get<1>(estimate) << "(filled strand gaps)";
         std::string ret = retsstr.str();
         sendToConsole_(ret);
     }
@@ -615,7 +615,7 @@ void vHelix::convert_(const std::string& format)
 }
 
 // estimate base use for structure based on relaxation scaling value (/2 = scaffold strand length)
-int vHelix::estimate_base_use_(const QVector<QVariant> &args)
+std::pair<int,int> vHelix::estimate_base_use_(const QVector<QVariant> &args)
 {
     double scaling = args[0].toDouble();
     openPLY();
@@ -626,8 +626,8 @@ int vHelix::estimate_base_use_(const QVector<QVariant> &args)
                 std::pow(plydata_->y[edge[0]] - plydata_->y[edge[1]], 2) +
                 std::pow(plydata_->z[edge[0]] - plydata_->z[edge[1]], 2) );
     }
-    int estimated_use = (int)((totalLength * scaling * 3.08) - plydata_->vertexnr * 18);
-    return estimated_use/2;
+    int estimated_use = (int)((totalLength * scaling * 2.80) - plydata_->vertexnr * 18);
+    return std::make_pair(estimated_use/2, plydata_->vertexnr*4);
 }
 
 void vHelix::physX_relaxation_(const QVector<QVariant> args)

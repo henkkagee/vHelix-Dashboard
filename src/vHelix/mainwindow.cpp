@@ -535,12 +535,12 @@ void MainWindow::on_actionSave_current_model_triggered()
 
                     if (b->getForward() != nullptr) {
                         if (basenum != s.bases_.size()-1) {
-                            out << "\"n3\":" << b->getForward()->baseId_ << ",";
+                            out << "\"n5\":" << b->getForward()->baseId_ << ",";
                         }
                     }
                     if (b->getBackward() != nullptr) {
                         if (!firstBase) {
-                            out << "\"n5\":" << b->getBackward()->baseId_ << ",";
+                            out << "\"n3\":" << b->getBackward()->baseId_ << ",";
                         }
                     }
                     out << "\"cluster\":1,";

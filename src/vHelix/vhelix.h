@@ -56,7 +56,7 @@ private:
     void physX_relaxation_(const QVector<QVariant> args);
     void export_(const QVector<QVariant> &args);
     void convert_(const std::string& format);
-    int estimate_base_use_(const QVector<QVariant> &args);
+    std::pair<int,int> estimate_base_use_(const QVector<QVariant> &args);
     void openPLY();
 
 // Qt slots and signals shouldn't pass arguments as references

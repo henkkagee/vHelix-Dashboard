@@ -73,6 +73,7 @@ namespace Controller {
 
 
     /* Creates a DNA structure from an .rpoly file generated from the BSCOR-pipeline */
+    /* Note: You probably don't want to touch this function unless you really know what you're doing */
     std::vector<Model::Helix> &Handler::readRpoly(const char *filename, int nicking_min_length, int nicking_max_length) {
 
         //clear vectors if they have been in use from before
@@ -369,8 +370,6 @@ namespace Controller {
                                     }
                                 }
                                 for (int l = 0; l < minlen; l++) {
-                                    std::cout << "Moving current: " << current->baseId_ << " from strand " << nextstrid << " to " <<
-                                                 strand.id_ << "\n" << std::flush;
                                     strand.bases_.push_back(current);
                                     strand.length_++;
                                     current->strandId_ = strand.id_;
@@ -413,10 +412,7 @@ namespace Controller {
         Model::Strand* s;
         for (unsigned int i = 0; i < strands.size(); ++i) {
             s = &strands[i];
-            std::cout << "Strand: " << s->id_ << ", length: " << s->bases_.size() << std::flush << std::endl;
             if (s->bases_.size() <= MIN_NICK_VERTEX_DISTANCE) {
-                std::cout << "strandforward: " << s->bases_[s->bases_.size()-1]->baseId_
-                          << "\n" << std::flush;
                 unsigned int forwstrandid = s->bases_[s->bases_.size()-1]->strand_forward_->strandId_;
                 unsigned int prevstrandid = s->bases_[0]->strand_backward_->strandId_;
                 Model::Strand* prevstrand = nullptr;
@@ -430,8 +426,6 @@ namespace Controller {
                     }
                 }
                 while (s->bases_.size() <= MIN_NICK_VERTEX_DISTANCE*2) {
-                    std::cout << "Strandid: " << s->id_ << ", strandlen: " << s->bases_.size() << ", prevstrandid: " <<  prevstrand->id_ << ", prevstrandlen: " << prevstrand->bases_.size()
-                              << ", forwstrandid: " <<  forwstrand->id_ << ", forwstrandlen: " << forwstrand->bases_.size() << std::flush << std::endl;
                     s->bases_.push_back(forwstrand->bases_[0]);
                     s->bases_[s->bases_.size()-1]->strandId_ = s->id_;
                     forwstrand->bases_.erase(forwstrand->bases_.begin());
@@ -443,7 +437,6 @@ namespace Controller {
                     prevstrand->length_--;
                 }
             }
-            std::cout << " ------ \n" << std::flush;
         }
 
 
@@ -451,61 +444,34 @@ namespace Controller {
         for (unsigned int i = 0; i < strands.size(); ++i) {
             s = &strands[i];
 
-
-
-            std::cout << "Strand " << s->id_ << " has length: " << s->bases_.size() << ", bases:\n" << std::flush;
-            for (auto b : s->bases_) {
-                std::cout << b->baseId_ << ", offset: " << b->offset_ << " --- " << std::flush;
-            }
-            std::cout << "\n" << std::flush;
-
-
-
             // skip scaffold strand
             if (s->forward_) {
                 continue;
             }
+
             // due to direction of the staple strands, the first base in the vector is the one with the last base id
-            std::cout << "1\n" << std::flush;
             current = s->bases_[0];
             int helix_len = current->getParent()->bases_;
-            std::cout << "2\n" << std::flush;
             mnvd = helix_len > 2.5 * MIN_NICK_VERTEX_DISTANCE ? MIN_NICK_VERTEX_DISTANCE : helix_len / 2;
-            std::cout << "3\n" << std::flush;
             if (current->offset_ > (helix_len - mnvd - 1) ) {
                 // expand the next strand in the forward direction
-                std::cout << "4\n" << std::flush;
                 if (current->strand_backward_ && current->strand_forward_) {
-                    std::cout << "5\n" << std::flush;
                     unsigned int nextstrandid = current->strand_backward_->strandId_;
-                    std::cout << "6: " << nextstrandid << "\n" << std::flush;
                     Model::Strand* nextstrand = nullptr;
-                    std::cout << "7\n" << std::flush;
                     for (unsigned int ss = 0; ss < strands.size(); ++ss) {
                         if (strands[ss].id_ == nextstrandid) {
                             nextstrand = &strands[ss];
                         }
                     }
-                    std::cout << "8: " << nextstrand << "\n" << std::flush;
                     int offset = current->offset_;
-                    std::cout << "9\n" << std::flush;
                     while (offset > (helix_len - mnvd)) {
-                        std::cout << "9.5\n" << std::flush;
                         nextstrand->bases_.push_back(current);
-                        std::cout << "10\n" << std::flush;
                         current->strandId_ = nextstrandid;
-                        std::cout << "11\n" << std::flush;
                         nextstrand->length_++;
-                        std::cout << "12\n" << std::flush;
                         s->bases_.erase(s->bases_.begin());
-                        std::cout << "13\n" << std::flush;
                         s->length_--;
-                        std::cout << "14\n" << std::flush;
                         current = current->strand_forward_;
-                        std::cout << "15\n" << std::flush;
                         offset = current->offset_;
-                        std::cout << "Currentbase: " << current->baseId_ << " " << current->getParent()->name_ << ", forward: " << current->strand_forward_ << ", backward: " << current->strand_backward_ <<
-                                   ", strandid: " << s->id_ << ", strandlen: " << s->bases_.size() << ", nextstrandid: " <<  nextstrand->id_ << ", nextstrandlen: " << nextstrand->bases_.size() << std::flush << std::endl;
                     }
                 }
             }
@@ -529,79 +495,17 @@ namespace Controller {
                         s->length_--;
                         current = current->strand_backward_;
                         offset = current->offset_;
-                        std::cout << "Currentbase: " << current->baseId_ << " " << current->getParent()->name_ << ", forward: " << current->strand_forward_ << ", backward: " << current->strand_backward_ <<
-                                   ", strandid: " << s->id_ << ", strandlen: " << s->bases_.size() << ", prevstrandid: " <<  prevstrand->id_ << ", prevstrandlen: " << prevstrand->bases_.size() << std::flush << std::endl;
                     }
                 }
             }
         }
-        // finally, check that we did not add a nick too close to a vertex
-        /*
-        int mnvd;  // minimum distance between strand nick and vertex
-        for (unsigned int i = 0; i < strands.size(); ++i) {
-            s = &strands[i];
-            std::cout << "strand: " << s->id_ << "\n" << std::flush;
-            std::cout << "Strand " << s->id_ << " has length: " << s->bases_.size() << ", bases:\n" << std::flush;
-            for (auto b : s->bases_) {
-                std::cout << b->baseId_ << ", offset: " << b->offset_ << " --- " << std::flush;
-            }
-            std::cout << "\n" << std::flush;
-            if (s->forward_) {
-                continue;
-            }
-            current = s->bases_[0];
-            int helix_len = current->getParent()->Bbases_.size();
-            mnvd = helix_len > 2.5 * MIN_NICK_VERTEX_DISTANCE ? MIN_NICK_VERTEX_DISTANCE : helix_len / 2;
-            if (current->offset_ > (helix_len - mnvd) ) {
-                unsigned int nextstrandid = current->strand_forward_->strandId_;
-                Model::Strand* nextstrand;
-                for (unsigned int ss = 0; ss < strands.size(); ++ss) {
-                    if (strands[ss].id_ == nextstrandid) {
-                        nextstrand = &strands[ss];
-                    }
-                }
-                int offset = current->offset_;
-                while (offset > helix_len-1 - mnvd) {
-                    nextstrand->bases_.insert(nextstrand->bases_.begin(), current);
-                    current->strandId_ = nextstrandid;
-                    nextstrand->length_++;
-                    s->bases_.pop_back();
-                    s->length_--;
-                    current = current->strand_backward_;
-                    offset = current->offset_;
-                }
-            }
-            current = s->bases_[s->bases_.size()-1];
-            if (current->offset_ < mnvd) {
-                unsigned int prevstrandid = current->strand_backward_->strandId_;
-                Model::Strand* prevstrand = nullptr;
-                for (unsigned int ss = 0; ss < strands.size(); ++ss) {
-                    if (strands[ss].id_ == prevstrandid) {
-                        prevstrand = &strands[ss];
-                    }
-                }
-                int offset = current->offset_;
-                std::cout << "Current s: " << s->length_ << ", prev s:" << prevstrand->length_ << std::flush << std::endl;;
-
-                while (offset < mnvd) {
-                    prevstrand->bases_.push_back(current);
-                    current->strandId_ = prevstrandid;
-                    prevstrand->length_++;
-                    s->bases_.erase(s->bases_.begin());
-                    s->length_--;
-                    current = current->strand_forward_;
-                    std::cout << "Currentbase: " << current->baseId_ << " " << current->getParent()->name_ << ", forward: " << current->strand_forward_ << ", backward: " << current->strand_backward_ <<
-                               ", strandid: " << s->id_ << ", strandlen: " << s->bases_.size() << ", prevstrandid: " <<  prevstrand->id_ << ", prevstrandlen: " << prevstrand->bases_.size() << std::flush << std::endl;
-                    offset = current->offset_;
-                }
-            }
-        }*/
 
         for (unsigned int i = 0; i < strands.size(); ++i) {
             if (strands[i].bases_.empty()) {
                 strands.erase(strands.begin() + i);
             }
         }
+
         // finally, connect all bases inside strands and disconnect connections between strands
         for (auto s : strands) {
             for (unsigned long b = 0; b < s.bases_.size(); ++b) {
@@ -653,7 +557,7 @@ namespace Controller {
                 }
             }
         }
-        std::cout << "basecount: " << basecount << ", strandcount: " << strandcount << std::endl << std::flush;
+
         bases.reserve(basecount+1);
         strands.reserve(strandcount+1);
 
@@ -762,6 +666,7 @@ namespace Controller {
     }
 
 
+
     void Controller::Handler::autofillStrandGaps() {
         long baseid = 0;
         for (const auto &b : bases) {
@@ -783,12 +688,16 @@ namespace Controller {
         }
         baseid++;
         // iterate through each strand and check for gaps
-        long testcount = 0;
-        for (const auto &s : strands) {
-            Model::Base *base1 = s.bases_[0];
-            Model::Base *base2 = s.bases_[1];
+        Model::Strand* s;
+        std::vector<std::pair<int, int>> bases_ext_idx = std::vector<std::pair<int, int>>();
+        int added_bases;
+        for (unsigned int i = 0; i < strands.size(); ++i) {
+            s = &strands[i];
+            added_bases = 0;
+            Model::Base *base1 = s->bases_[0];
+            Model::Base *base2 = s->bases_[1];
             int idx = 1;
-            while (idx < s.length_) {
+            while (idx < s->length_) {
                 double dist = sqrt(pow(abs(base2->getPos().x() - base1->getPos().x()),2) +
                                    pow(abs(base2->getPos().y() - base1->getPos().y()),2) +
                                    pow(abs(base2->getPos().z() - base1->getPos().z()),2));
@@ -799,23 +708,31 @@ namespace Controller {
                     int c = 0;
                     while (c < count) {
                         std::string str = "";
-                        Model::Base b = Model::Base(s.id_, str, c == 0 ? base1->baseId_ : baseid-1, c == count-1 ? base2->baseId_ : baseid+1, baseid, -1);
-                        b.setPos(QVector3D(base1->getPos().x() + (base2->getPos().x() - base1->getPos().x())/count*(c+1),
-                                           base1->getPos().y() + (base2->getPos().y() - base1->getPos().y())/count*(c+1),
-                                           base1->getPos().z() + (base2->getPos().z() - base1->getPos().z())/count*(c+1)));
+                        Model::Base b = Model::Base(s->id_, str, c == 0 ? base1->baseId_ : baseid-1, c == count-1 ? base2->baseId_ : baseid+1, baseid, -1);
+                        b.setPos(QVector3D(base1->getPos().x() + (base2->getPos().x() - base1->getPos().x())/(count+1)*(c+1),
+                                           base1->getPos().y() + (base2->getPos().y() - base1->getPos().y())/(count+1)*(c+1),
+                                           base1->getPos().z() + (base2->getPos().z() - base1->getPos().z())/(count+1)*(c+1)));
                         bases_ext.push_back(b);
+                        bases_ext_idx.push_back(std::pair<int, int>(idx+added_bases, i));
                         c++;
+                        added_bases++;
                         baseid++;
-                        testcount++;
+                        // s->bases_.insert(s->bases_.begin()+idx+c, &b);
                     }
                 }
                 idx++;
                 base1 = base2;
-                base2 = s.bases_[idx];
+                base2 = s->bases_[idx];
             }
         }
+
+        // add the new bases to their correct positions in strands
+        for (unsigned int i = 0; i < bases_ext_idx.size(); ++i) {
+            strands[std::get<1>(bases_ext_idx[i])].bases_.insert(strands[std::get<1>(bases_ext_idx[i])].bases_.begin() + std::get<0>(bases_ext_idx[i]), &bases_ext[i]);
+        }
+
         // now connect the new bases
-        for (auto &b : bases_ext) {
+        /*for (auto &b : bases_ext) {
             Model::Base *forward = nullptr, *backward = nullptr;
             for (unsigned long i = 0; i < bases.size(); i++) {
                 if (bases[i].baseId_ == b.base3neigh_) {
@@ -866,7 +783,8 @@ namespace Controller {
                     break;
                 }
             }
-        }
+        }*/
+
         // again, make sure the connections are correct
         for (auto s : strands) {
             for (unsigned long b = 0; b < s.bases_.size(); ++b) {

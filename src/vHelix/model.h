@@ -64,9 +64,9 @@ namespace Model {
 
         // member variables
         bool in_strand_;
-        int offset_;
+        int offset_;        // offset from vertex i.e. helix end
         bool checked_;
-        QVector3D a3_;
+        QVector3D a3_;      // oxdna rotation vector
 
         // ID's
         // existing base ID's are always positive integers, but forward/backward/neighbouring ID's can be negative
@@ -92,6 +92,8 @@ namespace Model {
         Nucleobase nucleobase_;
     };
 
+    // This is an abstract container class for two vectors of bases
+    // useful for parsing .rpoly files based on helices
     struct Helix {
         Base *getBackwardFivePrime();
         Base *getBackwardThreePrime();
