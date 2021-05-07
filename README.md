@@ -45,7 +45,5 @@ Workflow/pipeline for generating a sequence and model from a .ply or .obj model:
 
 ## Todo
 
-- Strand nicking limit near vertices
-- Base estimation in relaxation including filled in strand gaps (separately)
 - Qt3D performance improvements
-- Linux port stability fixes
+- Linux & Mac stability fixes
