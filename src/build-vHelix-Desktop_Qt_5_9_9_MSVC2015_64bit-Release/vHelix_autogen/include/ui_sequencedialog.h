@@ -13,6 +13,7 @@
 #include <QtWidgets/QAction>
 #include <QtWidgets/QApplication>
 #include <QtWidgets/QButtonGroup>
+#include <QtWidgets/QComboBox>
 #include <QtWidgets/QDialog>
 #include <QtWidgets/QDialogButtonBox>
 #include <QtWidgets/QFrame>
@@ -31,6 +32,9 @@ public:
     QDialogButtonBox *buttonBox;
     QPlainTextEdit *plainTextEdit;
     QFrame *frame;
+    QComboBox *comboBox;
+    QLabel *label_2;
+    QLabel *label;
     QWidget *gridLayoutWidget;
     QGridLayout *gridLayout;
     QRadioButton *radioButton_4;
@@ -40,29 +44,37 @@ public:
     QRadioButton *radioButton_6;
     QRadioButton *radioButton_3;
     QRadioButton *radioButton_7;
-    QLabel *label;
 
-    void setupUi(QDialog *Dialog)
+    void setupUi(QDialog *SequenceDialog)
     {
-        if (Dialog->objectName().isEmpty())
-            Dialog->setObjectName(QStringLiteral("Dialog"));
-        Dialog->resize(400, 300);
-        buttonBox = new QDialogButtonBox(Dialog);
+        if (SequenceDialog->objectName().isEmpty())
+            SequenceDialog->setObjectName(QStringLiteral("SequenceDialog"));
+        SequenceDialog->resize(400, 376);
+        buttonBox = new QDialogButtonBox(SequenceDialog);
         buttonBox->setObjectName(QStringLiteral("buttonBox"));
-        buttonBox->setGeometry(QRect(30, 240, 341, 32));
+        buttonBox->setGeometry(QRect(40, 340, 341, 32));
         buttonBox->setOrientation(Qt::Horizontal);
         buttonBox->setStandardButtons(QDialogButtonBox::Cancel|QDialogButtonBox::Ok);
-        plainTextEdit = new QPlainTextEdit(Dialog);
+        plainTextEdit = new QPlainTextEdit(SequenceDialog);
         plainTextEdit->setObjectName(QStringLiteral("plainTextEdit"));
-        plainTextEdit->setGeometry(QRect(20, 170, 361, 61));
-        frame = new QFrame(Dialog);
+        plainTextEdit->setGeometry(QRect(20, 270, 361, 61));
+        frame = new QFrame(SequenceDialog);
         frame->setObjectName(QStringLiteral("frame"));
         frame->setGeometry(QRect(20, 10, 361, 131));
         frame->setFrameShape(QFrame::StyledPanel);
         frame->setFrameShadow(QFrame::Raised);
-        gridLayoutWidget = new QWidget(frame);
+        comboBox = new QComboBox(frame);
+        comboBox->setObjectName(QStringLiteral("comboBox"));
+        comboBox->setGeometry(QRect(10, 30, 331, 22));
+        label_2 = new QLabel(frame);
+        label_2->setObjectName(QStringLiteral("label_2"));
+        label_2->setGeometry(QRect(10, 10, 101, 16));
+        label = new QLabel(SequenceDialog);
+        label->setObjectName(QStringLiteral("label"));
+        label->setGeometry(QRect(20, 240, 141, 16));
+        gridLayoutWidget = new QWidget(SequenceDialog);
         gridLayoutWidget->setObjectName(QStringLiteral("gridLayoutWidget"));
-        gridLayoutWidget->setGeometry(QRect(9, -1, 341, 131));
+        gridLayoutWidget->setGeometry(QRect(30, 90, 341, 131));
         gridLayout = new QGridLayout(gridLayoutWidget);
         gridLayout->setObjectName(QStringLiteral("gridLayout"));
         gridLayout->setContentsMargins(0, 0, 0, 0);
@@ -101,28 +113,26 @@ public:
 
         gridLayout->addWidget(radioButton_7, 3, 0, 1, 1);
 
-        label = new QLabel(Dialog);
-        label->setObjectName(QStringLiteral("label"));
-        label->setGeometry(QRect(20, 150, 141, 16));
 
-        retranslateUi(Dialog);
-        QObject::connect(buttonBox, SIGNAL(accepted()), Dialog, SLOT(accept()));
-        QObject::connect(buttonBox, SIGNAL(rejected()), Dialog, SLOT(reject()));
+        retranslateUi(SequenceDialog);
+        QObject::connect(buttonBox, SIGNAL(accepted()), SequenceDialog, SLOT(accept()));
+        QObject::connect(buttonBox, SIGNAL(rejected()), SequenceDialog, SLOT(reject()));
 
-        QMetaObject::connectSlotsByName(Dialog);
+        QMetaObject::connectSlotsByName(SequenceDialog);
     } // setupUi
 
-    void retranslateUi(QDialog *Dialog)
+    void retranslateUi(QDialog *SequenceDialog)
     {
-        Dialog->setWindowTitle(QApplication::translate("Dialog", "Set scaffold base sequence", Q_NULLPTR));
-        radioButton_4->setText(QApplication::translate("Dialog", "p7308 (length: 7308)", Q_NULLPTR));
-        radioButton_2->setText(QApplication::translate("Dialog", "p7560 (length: 7560)", Q_NULLPTR));
-        radioButton_5->setText(QApplication::translate("Dialog", "p8064 (length: 8064)", Q_NULLPTR));
-        radioButton->setText(QApplication::translate("Dialog", "M13mp18 (length: 7249)", Q_NULLPTR));
-        radioButton_6->setText(QApplication::translate("Dialog", "p8100 (length: 8100)", Q_NULLPTR));
-        radioButton_3->setText(QApplication::translate("Dialog", "p7704 (length: 7704)", Q_NULLPTR));
-        radioButton_7->setText(QApplication::translate("Dialog", "p8634 (length: 8634)", Q_NULLPTR));
-        label->setText(QApplication::translate("Dialog", "Custom scaffold sequence:", Q_NULLPTR));
+        SequenceDialog->setWindowTitle(QApplication::translate("SequenceDialog", "Set scaffold base sequence", Q_NULLPTR));
+        label_2->setText(QApplication::translate("SequenceDialog", "Assign to strand:", Q_NULLPTR));
+        label->setText(QApplication::translate("SequenceDialog", "Custom scaffold sequence::", Q_NULLPTR));
+        radioButton_4->setText(QApplication::translate("SequenceDialog", "p7308 (length: 7308)", Q_NULLPTR));
+        radioButton_2->setText(QApplication::translate("SequenceDialog", "p7560 (length: 7560)", Q_NULLPTR));
+        radioButton_5->setText(QApplication::translate("SequenceDialog", "p8064 (length: 8064)", Q_NULLPTR));
+        radioButton->setText(QApplication::translate("SequenceDialog", "M13mp18 (length: 7249)", Q_NULLPTR));
+        radioButton_6->setText(QApplication::translate("SequenceDialog", "p8100 (length: 8100)", Q_NULLPTR));
+        radioButton_3->setText(QApplication::translate("SequenceDialog", "p7704 (length: 7704)", Q_NULLPTR));
+        radioButton_7->setText(QApplication::translate("SequenceDialog", "p8634 (length: 8634)", Q_NULLPTR));
     } // retranslateUi
 
 };

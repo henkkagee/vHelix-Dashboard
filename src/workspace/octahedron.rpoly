@@ -1,0 +1,42 @@
+# Relaxation of original C:\Users\Henkka\Projects\ncgit\code\vhelix\src\build-vHelix-Desktop_Qt_5_9_9_MSVC2015_64bit-Release/../workspace/octahedron.ply file. 12 helices.
+# Total separation: Initial: min: 0.211591, max: 8.69312, average: 3.35384, total: 80.4921 nm, final: min: 0.114023, max: 0.703038, average: 0.303281, total: 7.27874 nm
+hb helix_1 131 0.093205 -16.0251 16.0037 0.713024 0.58732 -0.233427 0.303585
+hb helix_2 131 -15.8768 -16.0508 -0.0849686 0.200753 -0.680248 -0.61879 0.337727
+hb helix_3 126 -16.1194 -0.0418805 -16.0937 0.895296 -0.23472 0.366534 -0.0948894
+hb helix_4 131 -0.0378126 -16.0805 -16.0673 0.283763 -0.249304 0.631966 0.676717
+hb helix_5 126 16.0828 -16.0565 0.0393059 -0.666858 0.236139 -0.295844 0.641883
+hb helix_6 131 15.8965 0.0222754 -16.0773 -0.92534 -0.0394138 0.376748 0.0159388
+hb helix_7 131 0.0917933 16.0071 -16.0022 -0.304042 -0.232811 -0.586549 0.713665
+hb helix_8 131 -15.8771 16.0228 0.0816972 -0.336854 -0.619171 0.680189 0.201244
+hb helix_9 126 -16.118 0.0144663 16.0916 0.0973294 0.366034 0.241065 0.893551
+hb helix_10 131 -0.0540984 16.0652 16.0601 -0.679961 0.628364 0.247861 0.285265
+hb helix_11 126 16.0848 16.0464 -0.0412798 0.640465 0.299081 0.232399 0.668091
+hb helix_12 131 15.9005 -0.0402328 16.0701 0.0113763 -0.376983 -0.0287615 0.925704
+
+c helix_1 f3' helix_2 f5'
+c helix_5 b3' helix_1 b5'
+c helix_2 f3' helix_3 f5'
+c helix_9 b3' helix_2 b5'
+c helix_3 f3' helix_4 f5'
+c helix_7 b3' helix_3 b5'
+c helix_4 f3' helix_5 f5'
+c helix_2 b3' helix_4 b5'
+c helix_5 f3' helix_6 f5'
+c helix_12 b3' helix_5 b5'
+c helix_6 f3' helix_7 f5'
+c helix_4 b3' helix_6 b5'
+c helix_7 f3' helix_8 f5'
+c helix_11 b3' helix_7 b5'
+c helix_8 f3' helix_9 f5'
+c helix_3 b3' helix_8 b5'
+c helix_9 f3' helix_10 f5'
+c helix_1 b3' helix_9 b5'
+c helix_10 f3' helix_11 f5'
+c helix_8 b3' helix_10 b5'
+c helix_11 f3' helix_12 f5'
+c helix_6 b3' helix_11 b5'
+c helix_12 f3' helix_1 f5'
+c helix_10 b3' helix_12 b5'
+
+autostaple
+ps helix_1 f3'

@@ -1,0 +1,196 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CodeBlocks_project_file>
+	<FileVersion major="1" minor="6"/>
+	<Project>
+		<Option title="nlohmann_json"/>
+		<Option makefile_is_custom="1"/>
+		<Option compiler="msvc8"/>
+		<Option virtualFolders="CMake Files\;CMake Files\include\;CMake Files\include\json\;CMake Files\include\json\cmake\;CMake Files\Programs\;CMake Files\Programs\Qt\;CMake Files\Programs\Qt\5.9.9\;CMake Files\Programs\Qt\5.9.9\msvc2015_64\;CMake Files\Programs\Qt\5.9.9\msvc2015_64\lib\;CMake Files\Programs\Qt\5.9.9\msvc2015_64\lib\cmake\;CMake Files\Programs\Qt\5.9.9\msvc2015_64\lib\cmake\Qt5\;CMake Files\Programs\Qt\5.9.9\msvc2015_64\lib\cmake\Qt5Core\;CMake Files\Programs\Qt\5.9.9\msvc2015_64\lib\cmake\Qt5Gui\;CMake Files\Programs\Qt\5.9.9\msvc2015_64\lib\cmake\Qt5Widgets\;CMake Files\Programs\Qt\5.9.9\msvc2015_64\lib\cmake\Qt53DCore\;CMake Files\Programs\Qt\5.9.9\msvc2015_64\lib\cmake\Qt5Network\;CMake Files\Programs\Qt\5.9.9\msvc2015_64\lib\cmake\Qt53DExtras\;CMake Files\Programs\Qt\5.9.9\msvc2015_64\lib\cmake\Qt53DRender\;CMake Files\Programs\Qt\5.9.9\msvc2015_64\lib\cmake\Qt53DInput\;CMake Files\Programs\Qt\5.9.9\msvc2015_64\lib\cmake\Qt5Gamepad\;CMake Files\Programs\Qt\5.9.9\msvc2015_64\lib\cmake\Qt53DLogic\;CMake Files\stylesheet\;CMake Files\scaffold_routing_rectification\;"/>
+		<Build>
+			<Target title="all">
+				<Option working_dir="C:/Users/Henkka/Projects/ncgit/code/vhelix/src/build-vHelix-Desktop_Qt_5_9_9_MSVC2015_64bit-Release/include/json"/>
+				<Option type="4"/>
+				<MakeCommands>
+					<Build command="C:/PROGRA~2/MICROS~1/2019/COMMUN~1/Common7/IDE/COMMON~1/MICROS~1/CMake/Ninja/ninja.exe -v all"/>
+					<CompileFile command="C:/PROGRA~2/MICROS~1/2019/COMMUN~1/Common7/IDE/COMMON~1/MICROS~1/CMake/Ninja/ninja.exe -v &quot;$file&quot;"/>
+					<Clean command="C:/PROGRA~2/MICROS~1/2019/COMMUN~1/Common7/IDE/COMMON~1/MICROS~1/CMake/Ninja/ninja.exe -v clean"/>
+					<DistClean command="C:/PROGRA~2/MICROS~1/2019/COMMUN~1/Common7/IDE/COMMON~1/MICROS~1/CMake/Ninja/ninja.exe -v clean"/>
+				</MakeCommands>
+			</Target>
+		</Build>
+		<Unit filename="C:/Users/Henkka/Projects/ncgit/code/vhelix/src/vHelix/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\"/>
+		</Unit>
+		<Unit filename="C:/Users/Henkka/Projects/ncgit/code/vhelix/src/vHelix/include/json/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\include\json\"/>
+		</Unit>
+		<Unit filename="C:/Users/Henkka/Projects/ncgit/code/vhelix/src/vHelix/include/json/cmake/config.cmake.in">
+			<Option virtualFolder="CMake Files\include\json\cmake\"/>
+		</Unit>
+		<Unit filename="C:/Users/Henkka/Projects/ncgit/code/vhelix/src/vHelix/include/json/cmake/nlohmann_jsonConfigVersion.cmake.in">
+			<Option virtualFolder="CMake Files\include\json\cmake\"/>
+		</Unit>
+		<Unit filename="C:/Users/Henkka/Projects/ncgit/code/vhelix/src/vHelix/include/json/cmake/pkg-config.pc.in">
+			<Option virtualFolder="CMake Files\include\json\cmake\"/>
+		</Unit>
+		<Unit filename="C:/Users/Henkka/Projects/ncgit/code/vhelix/src/vHelix/Programs/Qt/5.9.9/msvc2015_64/lib/cmake/Qt5/Qt5Config.cmake">
+			<Option virtualFolder="CMake Files\Programs\Qt\5.9.9\msvc2015_64\lib\cmake\Qt5\"/>
+		</Unit>
+		<Unit filename="C:/Users/Henkka/Projects/ncgit/code/vhelix/src/vHelix/Programs/Qt/5.9.9/msvc2015_64/lib/cmake/Qt5/Qt5ConfigVersion.cmake">
+			<Option virtualFolder="CMake Files\Programs\Qt\5.9.9\msvc2015_64\lib\cmake\Qt5\"/>
+		</Unit>
+		<Unit filename="C:/Users/Henkka/Projects/ncgit/code/vhelix/src/vHelix/Programs/Qt/5.9.9/msvc2015_64/lib/cmake/Qt5/Qt5ModuleLocation.cmake">
+			<Option virtualFolder="CMake Files\Programs\Qt\5.9.9\msvc2015_64\lib\cmake\Qt5\"/>
+		</Unit>
+		<Unit filename="C:/Users/Henkka/Projects/ncgit/code/vhelix/src/vHelix/Programs/Qt/5.9.9/msvc2015_64/lib/cmake/Qt5Core/Qt5CoreConfig.cmake">
+			<Option virtualFolder="CMake Files\Programs\Qt\5.9.9\msvc2015_64\lib\cmake\Qt5Core\"/>
+		</Unit>
+		<Unit filename="C:/Users/Henkka/Projects/ncgit/code/vhelix/src/vHelix/Programs/Qt/5.9.9/msvc2015_64/lib/cmake/Qt5Core/Qt5CoreConfigExtras.cmake">
+			<Option virtualFolder="CMake Files\Programs\Qt\5.9.9\msvc2015_64\lib\cmake\Qt5Core\"/>
+		</Unit>
+		<Unit filename="C:/Users/Henkka/Projects/ncgit/code/vhelix/src/vHelix/Programs/Qt/5.9.9/msvc2015_64/lib/cmake/Qt5Core/Qt5CoreConfigExtrasMkspecDir.cmake">
+			<Option virtualFolder="CMake Files\Programs\Qt\5.9.9\msvc2015_64\lib\cmake\Qt5Core\"/>
+		</Unit>
+		<Unit filename="C:/Users/Henkka/Projects/ncgit/code/vhelix/src/vHelix/Programs/Qt/5.9.9/msvc2015_64/lib/cmake/Qt5Core/Qt5CoreConfigVersion.cmake">
+			<Option virtualFolder="CMake Files\Programs\Qt\5.9.9\msvc2015_64\lib\cmake\Qt5Core\"/>
+		</Unit>
+		<Unit filename="C:/Users/Henkka/Projects/ncgit/code/vhelix/src/vHelix/Programs/Qt/5.9.9/msvc2015_64/lib/cmake/Qt5Core/Qt5CoreMacros.cmake">
+			<Option virtualFolder="CMake Files\Programs\Qt\5.9.9\msvc2015_64\lib\cmake\Qt5Core\"/>
+		</Unit>
+		<Unit filename="C:/Users/Henkka/Projects/ncgit/code/vhelix/src/vHelix/Programs/Qt/5.9.9/msvc2015_64/lib/cmake/Qt5Gui/Qt5GuiConfig.cmake">
+			<Option virtualFolder="CMake Files\Programs\Qt\5.9.9\msvc2015_64\lib\cmake\Qt5Gui\"/>
+		</Unit>
+		<Unit filename="C:/Users/Henkka/Projects/ncgit/code/vhelix/src/vHelix/Programs/Qt/5.9.9/msvc2015_64/lib/cmake/Qt5Gui/Qt5GuiConfigExtras.cmake">
+			<Option virtualFolder="CMake Files\Programs\Qt\5.9.9\msvc2015_64\lib\cmake\Qt5Gui\"/>
+		</Unit>
+		<Unit filename="C:/Users/Henkka/Projects/ncgit/code/vhelix/src/vHelix/Programs/Qt/5.9.9/msvc2015_64/lib/cmake/Qt5Gui/Qt5GuiConfigVersion.cmake">
+			<Option virtualFolder="CMake Files\Programs\Qt\5.9.9\msvc2015_64\lib\cmake\Qt5Gui\"/>
+		</Unit>
+		<Unit filename="C:/Users/Henkka/Projects/ncgit/code/vhelix/src/vHelix/Programs/Qt/5.9.9/msvc2015_64/lib/cmake/Qt5Gui/Qt5Gui_QGifPlugin.cmake">
+			<Option virtualFolder="CMake Files\Programs\Qt\5.9.9\msvc2015_64\lib\cmake\Qt5Gui\"/>
+		</Unit>
+		<Unit filename="C:/Users/Henkka/Projects/ncgit/code/vhelix/src/vHelix/Programs/Qt/5.9.9/msvc2015_64/lib/cmake/Qt5Gui/Qt5Gui_QICNSPlugin.cmake">
+			<Option virtualFolder="CMake Files\Programs\Qt\5.9.9\msvc2015_64\lib\cmake\Qt5Gui\"/>
+		</Unit>
+		<Unit filename="C:/Users/Henkka/Projects/ncgit/code/vhelix/src/vHelix/Programs/Qt/5.9.9/msvc2015_64/lib/cmake/Qt5Gui/Qt5Gui_QICOPlugin.cmake">
+			<Option virtualFolder="CMake Files\Programs\Qt\5.9.9\msvc2015_64\lib\cmake\Qt5Gui\"/>
+		</Unit>
+		<Unit filename="C:/Users/Henkka/Projects/ncgit/code/vhelix/src/vHelix/Programs/Qt/5.9.9/msvc2015_64/lib/cmake/Qt5Gui/Qt5Gui_QJpegPlugin.cmake">
+			<Option virtualFolder="CMake Files\Programs\Qt\5.9.9\msvc2015_64\lib\cmake\Qt5Gui\"/>
+		</Unit>
+		<Unit filename="C:/Users/Henkka/Projects/ncgit/code/vhelix/src/vHelix/Programs/Qt/5.9.9/msvc2015_64/lib/cmake/Qt5Gui/Qt5Gui_QMinimalIntegrationPlugin.cmake">
+			<Option virtualFolder="CMake Files\Programs\Qt\5.9.9\msvc2015_64\lib\cmake\Qt5Gui\"/>
+		</Unit>
+		<Unit filename="C:/Users/Henkka/Projects/ncgit/code/vhelix/src/vHelix/Programs/Qt/5.9.9/msvc2015_64/lib/cmake/Qt5Gui/Qt5Gui_QOffscreenIntegrationPlugin.cmake">
+			<Option virtualFolder="CMake Files\Programs\Qt\5.9.9\msvc2015_64\lib\cmake\Qt5Gui\"/>
+		</Unit>
+		<Unit filename="C:/Users/Henkka/Projects/ncgit/code/vhelix/src/vHelix/Programs/Qt/5.9.9/msvc2015_64/lib/cmake/Qt5Gui/Qt5Gui_QTgaPlugin.cmake">
+			<Option virtualFolder="CMake Files\Programs\Qt\5.9.9\msvc2015_64\lib\cmake\Qt5Gui\"/>
+		</Unit>
+		<Unit filename="C:/Users/Henkka/Projects/ncgit/code/vhelix/src/vHelix/Programs/Qt/5.9.9/msvc2015_64/lib/cmake/Qt5Gui/Qt5Gui_QTiffPlugin.cmake">
+			<Option virtualFolder="CMake Files\Programs\Qt\5.9.9\msvc2015_64\lib\cmake\Qt5Gui\"/>
+		</Unit>
+		<Unit filename="C:/Users/Henkka/Projects/ncgit/code/vhelix/src/vHelix/Programs/Qt/5.9.9/msvc2015_64/lib/cmake/Qt5Gui/Qt5Gui_QTuioTouchPlugin.cmake">
+			<Option virtualFolder="CMake Files\Programs\Qt\5.9.9\msvc2015_64\lib\cmake\Qt5Gui\"/>
+		</Unit>
+		<Unit filename="C:/Users/Henkka/Projects/ncgit/code/vhelix/src/vHelix/Programs/Qt/5.9.9/msvc2015_64/lib/cmake/Qt5Gui/Qt5Gui_QVirtualKeyboardPlugin.cmake">
+			<Option virtualFolder="CMake Files\Programs\Qt\5.9.9\msvc2015_64\lib\cmake\Qt5Gui\"/>
+		</Unit>
+		<Unit filename="C:/Users/Henkka/Projects/ncgit/code/vhelix/src/vHelix/Programs/Qt/5.9.9/msvc2015_64/lib/cmake/Qt5Gui/Qt5Gui_QWbmpPlugin.cmake">
+			<Option virtualFolder="CMake Files\Programs\Qt\5.9.9\msvc2015_64\lib\cmake\Qt5Gui\"/>
+		</Unit>
+		<Unit filename="C:/Users/Henkka/Projects/ncgit/code/vhelix/src/vHelix/Programs/Qt/5.9.9/msvc2015_64/lib/cmake/Qt5Gui/Qt5Gui_QWebpPlugin.cmake">
+			<Option virtualFolder="CMake Files\Programs\Qt\5.9.9\msvc2015_64\lib\cmake\Qt5Gui\"/>
+		</Unit>
+		<Unit filename="C:/Users/Henkka/Projects/ncgit/code/vhelix/src/vHelix/Programs/Qt/5.9.9/msvc2015_64/lib/cmake/Qt5Gui/Qt5Gui_QWindowsDirect2DIntegrationPlugin.cmake">
+			<Option virtualFolder="CMake Files\Programs\Qt\5.9.9\msvc2015_64\lib\cmake\Qt5Gui\"/>
+		</Unit>
+		<Unit filename="C:/Users/Henkka/Projects/ncgit/code/vhelix/src/vHelix/Programs/Qt/5.9.9/msvc2015_64/lib/cmake/Qt5Gui/Qt5Gui_QWindowsIntegrationPlugin.cmake">
+			<Option virtualFolder="CMake Files\Programs\Qt\5.9.9\msvc2015_64\lib\cmake\Qt5Gui\"/>
+		</Unit>
+		<Unit filename="C:/Users/Henkka/Projects/ncgit/code/vhelix/src/vHelix/Programs/Qt/5.9.9/msvc2015_64/lib/cmake/Qt5Widgets/Qt5WidgetsConfig.cmake">
+			<Option virtualFolder="CMake Files\Programs\Qt\5.9.9\msvc2015_64\lib\cmake\Qt5Widgets\"/>
+		</Unit>
+		<Unit filename="C:/Users/Henkka/Projects/ncgit/code/vhelix/src/vHelix/Programs/Qt/5.9.9/msvc2015_64/lib/cmake/Qt5Widgets/Qt5WidgetsConfigExtras.cmake">
+			<Option virtualFolder="CMake Files\Programs\Qt\5.9.9\msvc2015_64\lib\cmake\Qt5Widgets\"/>
+		</Unit>
+		<Unit filename="C:/Users/Henkka/Projects/ncgit/code/vhelix/src/vHelix/Programs/Qt/5.9.9/msvc2015_64/lib/cmake/Qt5Widgets/Qt5WidgetsConfigVersion.cmake">
+			<Option virtualFolder="CMake Files\Programs\Qt\5.9.9\msvc2015_64\lib\cmake\Qt5Widgets\"/>
+		</Unit>
+		<Unit filename="C:/Users/Henkka/Projects/ncgit/code/vhelix/src/vHelix/Programs/Qt/5.9.9/msvc2015_64/lib/cmake/Qt5Widgets/Qt5WidgetsMacros.cmake">
+			<Option virtualFolder="CMake Files\Programs\Qt\5.9.9\msvc2015_64\lib\cmake\Qt5Widgets\"/>
+		</Unit>
+		<Unit filename="C:/Users/Henkka/Projects/ncgit/code/vhelix/src/vHelix/Programs/Qt/5.9.9/msvc2015_64/lib/cmake/Qt53DCore/Qt53DCoreConfig.cmake">
+			<Option virtualFolder="CMake Files\Programs\Qt\5.9.9\msvc2015_64\lib\cmake\Qt53DCore\"/>
+		</Unit>
+		<Unit filename="C:/Users/Henkka/Projects/ncgit/code/vhelix/src/vHelix/Programs/Qt/5.9.9/msvc2015_64/lib/cmake/Qt53DCore/Qt53DCoreConfigVersion.cmake">
+			<Option virtualFolder="CMake Files\Programs\Qt\5.9.9\msvc2015_64\lib\cmake\Qt53DCore\"/>
+		</Unit>
+		<Unit filename="C:/Users/Henkka/Projects/ncgit/code/vhelix/src/vHelix/Programs/Qt/5.9.9/msvc2015_64/lib/cmake/Qt5Network/Qt5NetworkConfig.cmake">
+			<Option virtualFolder="CMake Files\Programs\Qt\5.9.9\msvc2015_64\lib\cmake\Qt5Network\"/>
+		</Unit>
+		<Unit filename="C:/Users/Henkka/Projects/ncgit/code/vhelix/src/vHelix/Programs/Qt/5.9.9/msvc2015_64/lib/cmake/Qt5Network/Qt5NetworkConfigVersion.cmake">
+			<Option virtualFolder="CMake Files\Programs\Qt\5.9.9\msvc2015_64\lib\cmake\Qt5Network\"/>
+		</Unit>
+		<Unit filename="C:/Users/Henkka/Projects/ncgit/code/vhelix/src/vHelix/Programs/Qt/5.9.9/msvc2015_64/lib/cmake/Qt5Network/Qt5Network_QGenericEnginePlugin.cmake">
+			<Option virtualFolder="CMake Files\Programs\Qt\5.9.9\msvc2015_64\lib\cmake\Qt5Network\"/>
+		</Unit>
+		<Unit filename="C:/Users/Henkka/Projects/ncgit/code/vhelix/src/vHelix/Programs/Qt/5.9.9/msvc2015_64/lib/cmake/Qt53DExtras/Qt53DExtrasConfig.cmake">
+			<Option virtualFolder="CMake Files\Programs\Qt\5.9.9\msvc2015_64\lib\cmake\Qt53DExtras\"/>
+		</Unit>
+		<Unit filename="C:/Users/Henkka/Projects/ncgit/code/vhelix/src/vHelix/Programs/Qt/5.9.9/msvc2015_64/lib/cmake/Qt53DExtras/Qt53DExtrasConfigVersion.cmake">
+			<Option virtualFolder="CMake Files\Programs\Qt\5.9.9\msvc2015_64\lib\cmake\Qt53DExtras\"/>
+		</Unit>
+		<Unit filename="C:/Users/Henkka/Projects/ncgit/code/vhelix/src/vHelix/Programs/Qt/5.9.9/msvc2015_64/lib/cmake/Qt53DRender/Qt53DRenderConfig.cmake">
+			<Option virtualFolder="CMake Files\Programs\Qt\5.9.9\msvc2015_64\lib\cmake\Qt53DRender\"/>
+		</Unit>
+		<Unit filename="C:/Users/Henkka/Projects/ncgit/code/vhelix/src/vHelix/Programs/Qt/5.9.9/msvc2015_64/lib/cmake/Qt53DRender/Qt53DRenderConfigVersion.cmake">
+			<Option virtualFolder="CMake Files\Programs\Qt\5.9.9\msvc2015_64\lib\cmake\Qt53DRender\"/>
+		</Unit>
+		<Unit filename="C:/Users/Henkka/Projects/ncgit/code/vhelix/src/vHelix/Programs/Qt/5.9.9/msvc2015_64/lib/cmake/Qt53DRender/Qt53DRender_AssimpSceneImportPlugin.cmake">
+			<Option virtualFolder="CMake Files\Programs\Qt\5.9.9\msvc2015_64\lib\cmake\Qt53DRender\"/>
+		</Unit>
+		<Unit filename="C:/Users/Henkka/Projects/ncgit/code/vhelix/src/vHelix/Programs/Qt/5.9.9/msvc2015_64/lib/cmake/Qt53DRender/Qt53DRender_DefaultGeometryLoaderPlugin.cmake">
+			<Option virtualFolder="CMake Files\Programs\Qt\5.9.9\msvc2015_64\lib\cmake\Qt53DRender\"/>
+		</Unit>
+		<Unit filename="C:/Users/Henkka/Projects/ncgit/code/vhelix/src/vHelix/Programs/Qt/5.9.9/msvc2015_64/lib/cmake/Qt53DRender/Qt53DRender_GLTFGeometryLoaderPlugin.cmake">
+			<Option virtualFolder="CMake Files\Programs\Qt\5.9.9\msvc2015_64\lib\cmake\Qt53DRender\"/>
+		</Unit>
+		<Unit filename="C:/Users/Henkka/Projects/ncgit/code/vhelix/src/vHelix/Programs/Qt/5.9.9/msvc2015_64/lib/cmake/Qt53DRender/Qt53DRender_GLTFSceneExportPlugin.cmake">
+			<Option virtualFolder="CMake Files\Programs\Qt\5.9.9\msvc2015_64\lib\cmake\Qt53DRender\"/>
+		</Unit>
+		<Unit filename="C:/Users/Henkka/Projects/ncgit/code/vhelix/src/vHelix/Programs/Qt/5.9.9/msvc2015_64/lib/cmake/Qt53DRender/Qt53DRender_GLTFSceneImportPlugin.cmake">
+			<Option virtualFolder="CMake Files\Programs\Qt\5.9.9\msvc2015_64\lib\cmake\Qt53DRender\"/>
+		</Unit>
+		<Unit filename="C:/Users/Henkka/Projects/ncgit/code/vhelix/src/vHelix/Programs/Qt/5.9.9/msvc2015_64/lib/cmake/Qt53DRender/Qt53DRender_Scene2DPlugin.cmake">
+			<Option virtualFolder="CMake Files\Programs\Qt\5.9.9\msvc2015_64\lib\cmake\Qt53DRender\"/>
+		</Unit>
+		<Unit filename="C:/Users/Henkka/Projects/ncgit/code/vhelix/src/vHelix/Programs/Qt/5.9.9/msvc2015_64/lib/cmake/Qt53DInput/Qt53DInputConfig.cmake">
+			<Option virtualFolder="CMake Files\Programs\Qt\5.9.9\msvc2015_64\lib\cmake\Qt53DInput\"/>
+		</Unit>
+		<Unit filename="C:/Users/Henkka/Projects/ncgit/code/vhelix/src/vHelix/Programs/Qt/5.9.9/msvc2015_64/lib/cmake/Qt53DInput/Qt53DInputConfigVersion.cmake">
+			<Option virtualFolder="CMake Files\Programs\Qt\5.9.9\msvc2015_64\lib\cmake\Qt53DInput\"/>
+		</Unit>
+		<Unit filename="C:/Users/Henkka/Projects/ncgit/code/vhelix/src/vHelix/Programs/Qt/5.9.9/msvc2015_64/lib/cmake/Qt5Gamepad/Qt5GamepadConfig.cmake">
+			<Option virtualFolder="CMake Files\Programs\Qt\5.9.9\msvc2015_64\lib\cmake\Qt5Gamepad\"/>
+		</Unit>
+		<Unit filename="C:/Users/Henkka/Projects/ncgit/code/vhelix/src/vHelix/Programs/Qt/5.9.9/msvc2015_64/lib/cmake/Qt5Gamepad/Qt5GamepadConfigVersion.cmake">
+			<Option virtualFolder="CMake Files\Programs\Qt\5.9.9\msvc2015_64\lib\cmake\Qt5Gamepad\"/>
+		</Unit>
+		<Unit filename="C:/Users/Henkka/Projects/ncgit/code/vhelix/src/vHelix/Programs/Qt/5.9.9/msvc2015_64/lib/cmake/Qt5Gamepad/Qt5Gamepad_QXInputGamepadBackendPlugin.cmake">
+			<Option virtualFolder="CMake Files\Programs\Qt\5.9.9\msvc2015_64\lib\cmake\Qt5Gamepad\"/>
+		</Unit>
+		<Unit filename="C:/Users/Henkka/Projects/ncgit/code/vhelix/src/vHelix/Programs/Qt/5.9.9/msvc2015_64/lib/cmake/Qt53DLogic/Qt53DLogicConfig.cmake">
+			<Option virtualFolder="CMake Files\Programs\Qt\5.9.9\msvc2015_64\lib\cmake\Qt53DLogic\"/>
+		</Unit>
+		<Unit filename="C:/Users/Henkka/Projects/ncgit/code/vhelix/src/vHelix/Programs/Qt/5.9.9/msvc2015_64/lib/cmake/Qt53DLogic/Qt53DLogicConfigVersion.cmake">
+			<Option virtualFolder="CMake Files\Programs\Qt\5.9.9\msvc2015_64\lib\cmake\Qt53DLogic\"/>
+		</Unit>
+		<Unit filename="C:/Users/Henkka/Projects/ncgit/code/vhelix/src/vHelix/stylesheet/breeze.qrc">
+			<Option virtualFolder="CMake Files\stylesheet\"/>
+		</Unit>
+		<Unit filename="C:/Users/Henkka/Projects/ncgit/code/vhelix/src/vHelix/scaffold_routing_rectification/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\scaffold_routing_rectification\"/>
+		</Unit>
+	</Project>
+</CodeBlocks_project_file>

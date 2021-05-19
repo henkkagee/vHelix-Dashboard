@@ -58,6 +58,7 @@ add_executable(vHelix
     sequencedialog.ui
     utils.cpp
     utils.h
+    instructions.ui
 
     # BSCOR
     ply_to_dimacs/ply_to_dimacs.hpp
@@ -93,6 +94,9 @@ add_executable(vHelix
     scaffold_routing_rectification/Scene.cpp
     scaffold_routing_rectification/Utility.h
     scaffold_routing_rectification/Utility.cpp
+
+    # Stylesheet by Alexander Huszagh
+    stylesheet/breeze.qrc
 
     # Modified vHelix maya plugin source code
     # Not used

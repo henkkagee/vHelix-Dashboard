@@ -29,6 +29,7 @@
 #include <QVector>
 #include <QVariant>
 #include <QString>
+#include <QDir>
 
 #include <console.h>
 #include <dirview.h>
@@ -41,6 +42,7 @@
 #include "./ui_dialog.h"
 #include "./ui_rpolydialog.h"
 #include "./ui_sequencedialog.h"
+#include "./ui_instructions.h"
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
@@ -88,7 +90,6 @@ signals:
     void action_(std::string str, QVector<QVariant> args);
 
 private slots:
-    void on_actionConvert_triggered();
     void on_actionExport_selection_triggered();
     void on_actionOpen_selection_in_viewer_triggered();
     void on_treeView_clicked(const QModelIndex &index);
@@ -97,6 +98,8 @@ private slots:
     void on_actionExport_strand_sequences_triggered();
     void on_actionSave_current_model_triggered();
     void on_actionAutofill_strands_triggered();
+    void on_actionInstructions_triggered();
+    void on_actionLicense_triggered();
 };
 
 
@@ -144,5 +147,17 @@ public:
     std::string getTargetStrand();
 private:
     Ui::SequenceDialog ui_;
+    MainWindow *parent_;
+};
+
+class DocWindow : public QWidget
+{
+    Q_OBJECT
+
+public:
+    explicit DocWindow(MainWindow *parent, const int &type);
+
+private:
+    Ui::DocWindow ui_;
     MainWindow *parent_;
 };

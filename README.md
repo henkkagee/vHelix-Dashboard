@@ -1,4 +1,7 @@
 # vHelix Dashboard
+
+![Dashboard view](doc/dashboard.jpg)
+
 This program is a tool for quickly creating DNA origami nanostructures from polyhedral 3D meshes based on the vHelix Autodesk Maya plugin by Björn Högberg and Johan Gardell at the lab of [Björn Högberg](http://www.hogberglab.net/) at Karolinska Insitutet.
 Developed by Henrik Granö, [Natural computation](https://research.cs.aalto.fi/nc/) at Aalto University.
 
@@ -23,12 +26,13 @@ Included modules and source code:
 - [objToPly by Nabeel Hussain](https://github.com/nabeel3133/file-converter-.obj-to-.ply)
 - [oxDNAviewer](https://github.com/sulcgroup/oxdna-viewer)
 - [json by Niels Lohmann](https://github.com/nlohmann/json)
+- [BreezeStyleSheets by Alexander Huszagh](https://github.com/Alexhuszagh/BreezeStyleSheets)
 
 If you use another platform than Win64 you need to recompile PhysXSDK 3.3 and Lemon for your system. You also need to compile the libraries on your own if you need a debug build.
 
 For convenience, it is recommended to use Qt Creator for building: https://www.qt.io/download. If you use other tools, note that the directory structure may be slightly different: Qt Creator places the binary in a separate build folder beside src/.
 
-The software is built using CMake to make cross-platform compilation possible. Configure the CMakeLists.txt file to find the specified Qt modules as well as Python.h and Python38.lib files for the Python/C API. To build, run the CMakeLists.txt file with CMake or open it in Qt Creator. In runtime, all the Python files (as seen in /src or the win64_beta_release for reference) and PhysX .dlls should be beside the vHelix Dashboard executable.
+The software is built using CMake to make cross-platform compilation possible. Configure the CMakeLists.txt file to find the specified Qt modules as well as Python.h and Python38.lib files for the Python/C API. To build, run the CMakeLists.txt file with CMake or open it in Qt Creator. In runtime, all the Python files (as seen in one of the provided src/builds build-vHelix-Desktop_Qt_5_9_9_MSVC2015_64bit-Release for reference) and PhysX .dlls should be beside the vHelix Dashboard executable. The .dlls should also be in src/vHelix/scaffold_routing_rectification directory.
 
 ## Quick start
 
@@ -41,9 +45,12 @@ Workflow/pipeline for generating a sequence and model from a .ply or .obj model:
 - The .rpoly file can be converted to oxDNA file format from Export->Export selection to oxDNA, or double clicked to generate and view the full model in the 3D graphics pane on the right. This can take a while depending on your hardware.
 - If you want to view the model in oxDNA format, there is a shortcut to a local oxDNAviewer from oxDNA->Open oxDNA viewer. You can drag and drop .conf and .top files or an .oxview file directly in the oxDNAviewer window to load them. However, it is recommended to use the most recent version online instead: https://github.com/sulcgroup/oxdna-viewer
 - Once the 3D model appears on the right (3D performance not yet optimized), you can do the following actions: add a sequence to the scaffold strand from Edit->Add sequence, automatically fill strand gaps, and export the strands as a .csv file from Export->Export strand sequences.
+- You can rotate the model using the right mouse button and translate the camera using the left mouse button. Use shift+arrow keys or the scroll wheel for zooming.
+- A rare bug sometimes causes some incorrect connections among staple strands around the ends of the scaffold strand. These can easily be connected/disconnected manually in oxview. Check the last strand ids and make sure their lengths are sufficient.
 - To export the generated model, click File->Save current model to save it in .oxview format usable in oxView
 
 ## Todo
 
 - Qt3D performance improvements
+- Loading progress bars for computations that take longer: physical relaxation and strand generation
 - Linux & Mac stability fixes

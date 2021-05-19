@@ -75,6 +75,9 @@ public:
         sizePolicy.setVerticalStretch(0);
         sizePolicy.setHeightForWidth(MainWindow->sizePolicy().hasHeightForWidth());
         MainWindow->setSizePolicy(sizePolicy);
+        QIcon icon;
+        icon.addFile(QStringLiteral("resources/icon.png"), QSize(), QIcon::Normal, QIcon::Off);
+        MainWindow->setWindowIcon(icon);
         actionOpen = new QAction(MainWindow);
         actionOpen->setObjectName(QStringLiteral("actionOpen"));
         actionExit = new QAction(MainWindow);
@@ -216,7 +219,7 @@ public:
         actionPhysX->setText(QApplication::translate("MainWindow", "PhysX", Q_NULLPTR));
         actionConvert->setText(QApplication::translate("MainWindow", "Convert...", Q_NULLPTR));
         actionAtrail->setText(QApplication::translate("MainWindow", "Atrail", Q_NULLPTR));
-        actionExport_selection->setText(QApplication::translate("MainWindow", "Export selection to oxDNA", Q_NULLPTR));
+        actionExport_selection->setText(QApplication::translate("MainWindow", "Export selection to oxDNA (old format)", Q_NULLPTR));
         actionInstructions->setText(QApplication::translate("MainWindow", "Instructions", Q_NULLPTR));
         actionEstimate_nucleotide_use->setText(QApplication::translate("MainWindow", "Estimate nucleotide use", Q_NULLPTR));
         actionOpen_selection_in_viewer->setText(QApplication::translate("MainWindow", "Open OxDNA viewer", Q_NULLPTR));

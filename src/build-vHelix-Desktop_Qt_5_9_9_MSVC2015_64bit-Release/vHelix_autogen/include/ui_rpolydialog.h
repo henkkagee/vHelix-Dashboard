@@ -18,7 +18,6 @@
 #include <QtWidgets/QFormLayout>
 #include <QtWidgets/QHeaderView>
 #include <QtWidgets/QLabel>
-#include <QtWidgets/QSpacerItem>
 #include <QtWidgets/QSpinBox>
 #include <QtWidgets/QWidget>
 
@@ -29,76 +28,77 @@ class Ui_RpolyDialog
 public:
     QWidget *formLayoutWidget;
     QFormLayout *formLayout;
+    QLabel *label_3;
     QLabel *label;
     QSpinBox *spinBox;
     QLabel *label_2;
     QSpinBox *spinBox_2;
     QDialogButtonBox *buttonBox;
-    QLabel *label_3;
-    QSpacerItem *verticalSpacer;
 
-    void setupUi(QDialog *Dialog)
+    void setupUi(QDialog *RpolyDialog)
     {
-        if (Dialog->objectName().isEmpty())
-            Dialog->setObjectName(QStringLiteral("Dialog"));
-        Dialog->resize(300, 134);
-        formLayoutWidget = new QWidget(Dialog);
+        if (RpolyDialog->objectName().isEmpty())
+            RpolyDialog->setObjectName(QStringLiteral("RpolyDialog"));
+        RpolyDialog->resize(300, 112);
+        formLayoutWidget = new QWidget(RpolyDialog);
         formLayoutWidget->setObjectName(QStringLiteral("formLayoutWidget"));
-        formLayoutWidget->setGeometry(QRect(9, 9, 276, 111));
+        formLayoutWidget->setGeometry(QRect(10, 0, 281, 131));
         formLayout = new QFormLayout(formLayoutWidget);
         formLayout->setObjectName(QStringLiteral("formLayout"));
         formLayout->setContentsMargins(0, 0, 0, 0);
+        label_3 = new QLabel(formLayoutWidget);
+        label_3->setObjectName(QStringLiteral("label_3"));
+        label_3->setLayoutDirection(Qt::LeftToRight);
+        label_3->setWordWrap(true);
+
+        formLayout->setWidget(0, QFormLayout::SpanningRole, label_3);
+
         label = new QLabel(formLayoutWidget);
         label->setObjectName(QStringLiteral("label"));
 
-        formLayout->setWidget(2, QFormLayout::LabelRole, label);
+        formLayout->setWidget(1, QFormLayout::LabelRole, label);
 
         spinBox = new QSpinBox(formLayoutWidget);
         spinBox->setObjectName(QStringLiteral("spinBox"));
+        spinBox->setMinimum(10);
+        spinBox->setValue(20);
 
-        formLayout->setWidget(2, QFormLayout::FieldRole, spinBox);
+        formLayout->setWidget(1, QFormLayout::FieldRole, spinBox);
 
         label_2 = new QLabel(formLayoutWidget);
         label_2->setObjectName(QStringLiteral("label_2"));
 
-        formLayout->setWidget(3, QFormLayout::LabelRole, label_2);
+        formLayout->setWidget(2, QFormLayout::LabelRole, label_2);
 
         spinBox_2 = new QSpinBox(formLayoutWidget);
         spinBox_2->setObjectName(QStringLiteral("spinBox_2"));
+        spinBox_2->setMinimum(20);
+        spinBox_2->setValue(40);
 
-        formLayout->setWidget(3, QFormLayout::FieldRole, spinBox_2);
+        formLayout->setWidget(2, QFormLayout::FieldRole, spinBox_2);
 
         buttonBox = new QDialogButtonBox(formLayoutWidget);
         buttonBox->setObjectName(QStringLiteral("buttonBox"));
         buttonBox->setOrientation(Qt::Horizontal);
         buttonBox->setStandardButtons(QDialogButtonBox::Cancel|QDialogButtonBox::Ok);
 
-        formLayout->setWidget(4, QFormLayout::FieldRole, buttonBox);
-
-        label_3 = new QLabel(formLayoutWidget);
-        label_3->setObjectName(QStringLiteral("label_3"));
-        label_3->setLayoutDirection(Qt::LeftToRight);
-
-        formLayout->setWidget(0, QFormLayout::SpanningRole, label_3);
-
-        verticalSpacer = new QSpacerItem(20, 40, QSizePolicy::Minimum, QSizePolicy::Expanding);
-
-        formLayout->setItem(1, QFormLayout::LabelRole, verticalSpacer);
+        formLayout->setWidget(3, QFormLayout::FieldRole, buttonBox);
 
 
-        retranslateUi(Dialog);
-        QObject::connect(buttonBox, SIGNAL(accepted()), Dialog, SLOT(accept()));
-        QObject::connect(buttonBox, SIGNAL(rejected()), Dialog, SLOT(reject()));
+        retranslateUi(RpolyDialog);
+        QObject::connect(buttonBox, SIGNAL(accepted()), RpolyDialog, SLOT(accept()));
+        QObject::connect(buttonBox, SIGNAL(rejected()), RpolyDialog, SLOT(reject()));
 
-        QMetaObject::connectSlotsByName(Dialog);
+        QMetaObject::connectSlotsByName(RpolyDialog);
     } // setupUi
 
-    void retranslateUi(QDialog *Dialog)
+    void retranslateUi(QDialog *RpolyDialog)
     {
-        Dialog->setWindowTitle(QApplication::translate("Dialog", "Routed mesh import options", Q_NULLPTR));
-        label->setText(QApplication::translate("Dialog", "Minimum nicking length", Q_NULLPTR));
-        label_2->setText(QApplication::translate("Dialog", "Maximum nicking length", Q_NULLPTR));
-        label_3->setText(QApplication::translate("Dialog", "For default strand lengths, leave these as 0.", Q_NULLPTR));
+        RpolyDialog->setWindowTitle(QApplication::translate("RpolyDialog", "Routed mesh import options", Q_NULLPTR));
+        label_3->setText(QApplication::translate("RpolyDialog", "Desired staple strand length in bases\n"
+" (use an interval of at least 10-20 bases):", Q_NULLPTR));
+        label->setText(QApplication::translate("RpolyDialog", "Minimum length", Q_NULLPTR));
+        label_2->setText(QApplication::translate("RpolyDialog", "Maximum length", Q_NULLPTR));
     } // retranslateUi
 
 };

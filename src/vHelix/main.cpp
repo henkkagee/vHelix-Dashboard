@@ -21,12 +21,21 @@
 #include "vhelix.h"
 
 #include <QApplication>
+#include <QFile>
+#include <QTextStream>
 #include <QObject>
 
 
 int main(int argc, char *argv[])
 {
     QApplication a(argc, argv);
+
+    // set stylesheet
+    QFile file(":/dark.qss");
+    file.open(QFile::ReadOnly | QFile::Text);
+    QTextStream stream(&file);
+    a.setStyleSheet(stream.readAll());
+
     MainWindow w;
     vHelix vh;
     // connect signals and slots between the main window and most of the program logic

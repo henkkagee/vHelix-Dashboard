@@ -25,7 +25,7 @@ MainWindow::MainWindow(QWidget *parent)
     dirview_ = ui_->treeView;
     graphicsview_ = ui_ ->widget;
     setWindowTitle("vHelix Dashboard");
-    printToConsole_("Ready!\nSee readme or Help-section for instructions.\n\n");
+    printToConsole_("vHelix Dashboard, Copyright 2021, Henrik Granö\nThis program comes with ABSOLUTELY NO WARRANTY.\nThis is free software, and you are welcome to redistribute it\nunder certain conditions; see licensing and warranty details under the \"help\"-tab.\n\nReady!\nSee readme or Help-section for instructions.\n\n");
 }
 
 MainWindow::~MainWindow()
@@ -126,11 +126,6 @@ void MainWindow::on_actionPhysX_triggered()
         args.append(iterations);
         action_("PhysX", args);
     }
-
-}
-
-void MainWindow::on_actionConvert_triggered()
-{
 
 }
 
@@ -263,6 +258,10 @@ void MainWindow::on_treeView_doubleClicked(const QModelIndex &index)
 
 void MainWindow::on_actionAdd_sequence_triggered()
 {
+    if (handler_ && handler_->strands.empty()) {
+        printToConsole_("\nNo model opened\n");
+        return;
+    }
     SequenceDialog dialog(this, handler_->strands);
     dialog.exec();
     std::string seq;
@@ -371,7 +370,7 @@ void MainWindow::on_actionAdd_sequence_triggered()
 
 void MainWindow::on_actionExport_strand_sequences_triggered()
 {
-    if (!(handler_->strands.empty())) {
+    if (handler_ && !(handler_->strands.empty())) {
         QString fileName = QFileDialog::getSaveFileName(this, tr("Export strand sequences to .csv"), "", "Comma-Separated Values file (*.csv)");
         if (fileName.isEmpty()) {
             return;
@@ -522,11 +521,6 @@ void MainWindow::on_actionSave_current_model_triggered()
                         a1.setZ(b->getPos().z() - b->getOpposite()->getPos().z());
                         a1 = a1.normalized();
                         a3 = b->a3_.normalized();
-                        //QMatrix4x4 rot;
-                        //QVector3D offset = QVector3D::crossProduct(a1, a3);
-                        //rot.setToIdentity();
-                        //rot.rotate(-25, a3);
-                        //a1 = rot * a1;
                     }
 
                     out << "\"p\":[" << (b->getPos().x() * 1.104) - a1.x() * 0.35 << ","
@@ -579,10 +573,10 @@ void MainWindow::on_actionSave_current_model_triggered()
 
 void MainWindow::on_actionAutofill_strands_triggered()
 {
-    /*QMessageBox::information(
-        this,
-        tr("vHelix Dashboard"),
-        tr("Autofilling strand gaps...") );*/
+    if (handler_ && handler_->strands.empty()) {
+        printToConsole_("\nNo model opened\n");
+        return;
+    }
     handler_->autofillStrandGaps();
     // get the new structures
     // draw them
@@ -609,7 +603,7 @@ void MainWindow::on_actionAutofill_strands_triggered()
 // ------------ Physical relaxation dialog -------------------
 
 RelaxDialog::RelaxDialog(MainWindow *parent)
-    : QDialog(nullptr)
+    : QDialog(parent)
 {
     ui.setupUi(this);
     parent_ = parent;
@@ -676,7 +670,7 @@ void RelaxDialog::setBaseEstimate(const std::string &estimate)
 // ---------- Rpoly open dialog ---------
 
 RpolyDialog::RpolyDialog(MainWindow *parent)
-   : QDialog(nullptr)
+   : QDialog(parent)
 {
     ui_.setupUi(this);
     parent_ = parent;
@@ -690,7 +684,7 @@ void RpolyDialog::getOpts(int &min, int &max)
 // -------------Add sequence dialog ---------------------
 
 SequenceDialog::SequenceDialog(MainWindow *parent, const std::vector<Model::Strand>& strands)
-    : QDialog(nullptr)
+    : QDialog(parent)
 {
     ui_.setupUi(this);
     parent_ = parent;
@@ -701,6 +695,66 @@ SequenceDialog::SequenceDialog(MainWindow *parent, const std::vector<Model::Stra
         ui_.comboBox->addItem(QString(item.c_str()));
     }
 }
+
+// Show instructions
+DocWindow::DocWindow(MainWindow *parent, const int &type) : QWidget(parent){
+    ui_.setupUi(this);
+    parent_ = parent;
+
+    QPalette p = palette();
+    p.setColor(QPalette::Base, Qt::black);
+    p.setColor(QPalette::Text, Qt::white);
+    ui_.plainTextEdit->setPalette(p);
+    ui_.plainTextEdit->setReadOnly(true);
+    std::string filename;
+    switch(type) {
+        // instructions
+        case(0):
+            filename = "instructions.txt";
+            setWindowTitle("Instructions");
+            break;
+
+        // license
+        case(1):
+            filename = "license.txt";
+            setWindowTitle("License");
+            ui_.plainTextEdit->insertPlainText("");
+            break;
+    }
+
+
+    QFile file(QString(filename.c_str()).prepend(QDir::currentPath().append("/")));
+    std::cout << QString(filename.c_str()).prepend(QDir::currentPath()).toLocal8Bit().constData() << std::endl;
+    QString line;
+    if (file.open(QIODevice::ReadOnly | QIODevice::Text)){
+        QTextStream stream(&file);
+        while (!stream.atEnd()){
+
+            line.append(stream.readLine()+"\n");
+        }
+        ui_.plainTextEdit->insertPlainText(line);
+    }
+    file.close();
+
+
+    setWindowFlags(Qt::Window
+       | Qt::WindowMinimizeButtonHint
+       | Qt::WindowMaximizeButtonHint
+       | Qt::WindowCloseButtonHint);
+}
+
+void MainWindow::on_actionInstructions_triggered()
+{
+    DocWindow *window = new DocWindow(this, 0);
+    window->show();
+}
+
+void MainWindow::on_actionLicense_triggered()
+{
+    DocWindow *window = new DocWindow(this, 1);
+    window->show();
+}
+
 
 std::string SequenceDialog::getSequence()
 {

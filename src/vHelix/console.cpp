@@ -15,6 +15,7 @@ Console::Console(QWidget *parent)
     p.setColor(QPalette::Base, Qt::black);
     p.setColor(QPalette::Text, Qt::white);
     setPalette(p);
+    setReadOnly(true);
 }
 
 void Console::write_(std::string str)

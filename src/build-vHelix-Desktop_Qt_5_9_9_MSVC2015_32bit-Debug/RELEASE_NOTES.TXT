@@ -1,1 +1,0 @@
-Modified the pipeline so it works for 2D wireframes 

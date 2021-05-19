@@ -1,4 +1,0 @@
-C:/Users/granoh1/projects/ncgit/code/vhelix/src/build-vHelix-Desktop_Qt_5_9_9_MSVC2017_64bit-Debug/CMakeFiles/vHelix.dir
-C:/Users/granoh1/projects/ncgit/code/vhelix/src/build-vHelix-Desktop_Qt_5_9_9_MSVC2017_64bit-Debug/CMakeFiles/edit_cache.dir
-C:/Users/granoh1/projects/ncgit/code/vhelix/src/build-vHelix-Desktop_Qt_5_9_9_MSVC2017_64bit-Debug/CMakeFiles/rebuild_cache.dir
-C:/Users/granoh1/projects/ncgit/code/vhelix/src/build-vHelix-Desktop_Qt_5_9_9_MSVC2017_64bit-Debug/CMakeFiles/vHelix_autogen.dir

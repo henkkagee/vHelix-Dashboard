@@ -72,8 +72,8 @@ namespace Controller {
     }
 
 
-    /* Creates a DNA structure from an .rpoly file generated from the BSCOR-pipeline */
-    /* Note: You probably don't want to touch this function unless you really know what you're doing */
+    /* Creates a DNA structure from an .rpoly file generated from the BSCOR-pipeline assuming a scaffold- and staple strand configuration*/
+    /* You probably don't want to touch this function unless you know what you're doing */
     std::vector<Model::Helix> &Handler::readRpoly(const char *filename, int nicking_min_length, int nicking_max_length) {
 
         //clear vectors if they have been in use from before
@@ -336,6 +336,31 @@ namespace Controller {
                 current = current->strand_forward_;
             }
         }
+
+        // bug: in some rare cases two strands have the same id near the last staple strand
+        // and strands mess up connections
+        /*
+        unsigned long largest = 0;
+        for (unsigned long i = 0; i < strands.size(); ++i) {
+            if (strands[i].id_ > largest) {
+                largest = strands[i].id_;
+            }
+        }
+        std::vector<unsigned long> sids;
+        for (unsigned long i = 0; i < strands.size(); ++i) {
+            for (unsigned long j = 0; j < sids.size(); ++j) {
+                if (strands[i].id_ == sids[j]) {
+                    // strands.erase(strands.begin()+i);
+                    strands[i].id_ = largest + 1;
+                    for (unsigned long b = 0; b < strands[i].bases_.size(); ++b) {
+                        strands[i].bases_[b]->strandId_ = strands[i].id_;
+                    }
+                    largest++;
+                }
+            }
+            sids.push_back(strands[i].id_);
+        }*/
+
         // loop through all helices and look for staple loops that weren't added to strands
         sId++;
         strand = Model::Strand(0, sId);
@@ -407,9 +432,12 @@ namespace Controller {
             }
         }
 
+
+        Model::Strand* s;
         // the next step fails if really short strands remain at vertices
         // therefore make sure no strands are too short, and even them out if that's the case
-        Model::Strand* s;
+        /*
+
         for (unsigned int i = 0; i < strands.size(); ++i) {
             s = &strands[i];
             if (s->bases_.size() <= MIN_NICK_VERTEX_DISTANCE) {
@@ -425,6 +453,9 @@ namespace Controller {
                         forwstrand = &strands[ss];
                     }
                 }
+                if (!prevstrand || !forwstrand || prevstrand == forwstrand) {
+                    continue;
+                }
                 while (s->bases_.size() <= MIN_NICK_VERTEX_DISTANCE*2) {
                     s->bases_.push_back(forwstrand->bases_[0]);
                     s->bases_[s->bases_.size()-1]->strandId_ = s->id_;
@@ -437,8 +468,7 @@ namespace Controller {
                     prevstrand->length_--;
                 }
             }
-        }
-
+        }*/
 
         int mnvd;
         for (unsigned int i = 0; i < strands.size(); ++i) {
@@ -500,9 +530,59 @@ namespace Controller {
             }
         }
 
+
         for (unsigned int i = 0; i < strands.size(); ++i) {
             if (strands[i].bases_.empty()) {
                 strands.erase(strands.begin() + i);
+            }
+        }
+
+        // remove strands with identical ids that connect strangely
+        // can't find a solution to this rare bug but these can easily be connected/disconneced manually in oxview
+        std::vector<unsigned long> sids;
+        bool removed = false;
+        for (unsigned long i = 0; i < strands.size(); ++i) {
+            for (unsigned long j = 0; j < sids.size(); ++j) {
+                if (strands[i].id_ == sids[j]) {
+                    for (unsigned int b = 0; b < strands[i].bases_.size(); ++b) {
+                        strands[i].bases_[b]->in_strand_ = false;
+                    }
+                    strands.erase(strands.begin()+i);
+                    removed = true;
+                }
+            }
+            if (removed) {
+                removed = false;
+
+                continue;
+            }
+            sids.push_back(strands[i].id_);
+        }
+
+        unsigned long largest = 0;
+        for (unsigned long i = 0; i < strands.size(); ++i) {
+            if (strands[i].id_ > largest) {
+                largest = strands[i].id_;
+            }
+        }
+        largest++;
+        Model::Strand newstrand = Model::Strand(0, largest);
+        bool found_unassigned = false;
+        for (unsigned int h = 0; h < helices.size(); ++h) {
+            for (unsigned int b = 0; b < helices[h].Bbases_.size(); ++b) {
+                if (!helices[h].Bbases_[b].in_strand_) {
+                    found_unassigned = true;
+                    helices[h].Bbases_[b].in_strand_ = true;
+                    helices[h].Bbases_[b].strandId_ = newstrand.id_;
+                    newstrand.length_++;
+                    newstrand.bases_.push_back(&helices[h].Bbases_[b]);
+                }
+            }
+            if (found_unassigned) {
+                found_unassigned = false;
+                strands.push_back(newstrand);
+                largest++;
+                newstrand = Model::Strand(0, largest);
             }
         }
 
@@ -523,7 +603,6 @@ namespace Controller {
                 }
             }
         }
-
         return helices;
     }
 
@@ -703,15 +782,15 @@ namespace Controller {
                                    pow(abs(base2->getPos().z() - base1->getPos().z()),2));
                 if (dist > DNA::STEP*2) {
                     // how many bases should be inserted
-                    int count = dist/(DNA::STEP*1.774);
+                    int count = dist/(DNA::STEP*1.574) - 1;
                     // initialize the bases, connect their pointers directly later
                     int c = 0;
                     while (c < count) {
                         std::string str = "";
                         Model::Base b = Model::Base(s->id_, str, c == 0 ? base1->baseId_ : baseid-1, c == count-1 ? base2->baseId_ : baseid+1, baseid, -1);
-                        b.setPos(QVector3D(base1->getPos().x() + (base2->getPos().x() - base1->getPos().x())/(count+1)*(c+1),
-                                           base1->getPos().y() + (base2->getPos().y() - base1->getPos().y())/(count+1)*(c+1),
-                                           base1->getPos().z() + (base2->getPos().z() - base1->getPos().z())/(count+1)*(c+1)));
+                        b.setPos(QVector3D(base1->getPos().x() + (base2->getPos().x() - base1->getPos().x())/(count+1)*(c+1)*0.75,
+                                           base1->getPos().y() + (base2->getPos().y() - base1->getPos().y())/(count+1)*(c+1)*0.75,
+                                           base1->getPos().z() + (base2->getPos().z() - base1->getPos().z())/(count+1)*(c+1)*0.75));
                         bases_ext.push_back(b);
                         bases_ext_idx.push_back(std::pair<int, int>(idx+added_bases, i));
                         c++;
@@ -730,60 +809,6 @@ namespace Controller {
         for (unsigned int i = 0; i < bases_ext_idx.size(); ++i) {
             strands[std::get<1>(bases_ext_idx[i])].bases_.insert(strands[std::get<1>(bases_ext_idx[i])].bases_.begin() + std::get<0>(bases_ext_idx[i]), &bases_ext[i]);
         }
-
-        // now connect the new bases
-        /*for (auto &b : bases_ext) {
-            Model::Base *forward = nullptr, *backward = nullptr;
-            for (unsigned long i = 0; i < bases.size(); i++) {
-                if (bases[i].baseId_ == b.base3neigh_) {
-                    backward = &bases[i];
-                }
-                else if (bases[i].baseId_ == b.base5neigh_) {
-                    forward = &bases[i];
-                }
-            }
-            for (auto &h : helices) {
-                for (auto &fb : h.Fbases_) {
-                    if (fb.baseId_ == b.base3neigh_) {
-                        backward = &fb;
-                    }
-                    else if (fb.baseId_ == b.base5neigh_) {
-                        forward = &fb;
-                    }
-                }
-                for (auto &bb : h.Bbases_) {
-                    if (bb.baseId_ == b.base3neigh_) {
-                        backward = &bb;
-                    }
-                    else if (bb.baseId_ == b.base5neigh_) {
-                        forward = &bb;
-                    }
-                }
-            }
-            for (unsigned long i = 0; i < bases_ext.size(); i++) {
-                if (bases_ext[i].baseId_ == b.base3neigh_) {
-                    backward = &bases_ext[i];
-                }
-                else if (bases_ext[i].baseId_ == b.base5neigh_) {
-                    forward = &bases_ext[i];
-                }
-            }
-            if (forward==nullptr || backward==nullptr) {
-                std::cerr << "Connection error in automated strand gap filling.\n";
-                return;
-            }
-            b.setForward(forward);
-            b.setBackward(backward);
-            forward->setBackward(&b);
-            backward->setForward(&b);
-            for (unsigned long i = 0; i < strands.size(); i++) {
-                if (strands[i].id_ == b.strandId_) {
-                    strands[i].bases_.push_back(&b);
-                    strands[i].length_ += 1;
-                    break;
-                }
-            }
-        }*/
 
         // again, make sure the connections are correct
         for (auto s : strands) {

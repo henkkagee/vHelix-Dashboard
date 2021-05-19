@@ -65,6 +65,11 @@
 			"EWIEGA46WW/moc_model.cpp"
 		],
 		[
+			"C:/Users/Henkka/Projects/ncgit/code/vhelix/src/vHelix/modelhandler.h",
+			"MU",
+			"EWIEGA46WW/moc_modelhandler.cpp"
+		],
+		[
 			"C:/Users/Henkka/Projects/ncgit/code/vhelix/src/vHelix/ply_to_dimacs/boost_graph_helper.hpp",
 			"MU",
 			"LHBTXRTBNF/moc_boost_graph_helper.cpp"
@@ -88,11 +93,6 @@
 			"C:/Users/Henkka/Projects/ncgit/code/vhelix/src/vHelix/processio.h",
 			"MU",
 			"EWIEGA46WW/moc_processio.cpp"
-		],
-		[
-			"C:/Users/Henkka/Projects/ncgit/code/vhelix/src/vHelix/rpolyparser.h",
-			"MU",
-			"EWIEGA46WW/moc_rpolyparser.cpp"
 		],
 		[
 			"C:/Users/Henkka/Projects/ncgit/code/vhelix/src/vHelix/scaffold_routing_rectification/DNA.h",
@@ -145,6 +145,11 @@
 			"74KQ6UK7O4/moc_Utility.cpp"
 		],
 		[
+			"C:/Users/Henkka/Projects/ncgit/code/vhelix/src/vHelix/utils.h",
+			"MU",
+			"EWIEGA46WW/moc_utils.cpp"
+		],
+		[
 			"C:/Users/Henkka/Projects/ncgit/code/vhelix/src/vHelix/vhelix.h",
 			"MU",
 			"EWIEGA46WW/moc_vhelix.cpp"
@@ -155,6 +160,8 @@
 	"MOC_COMPILATION_FILE" : "C:/Users/Henkka/Projects/ncgit/code/vhelix/src/build-vHelix-Desktop_Qt_5_9_9_MSVC2015_64bit-Release/vHelix_autogen/mocs_compilation.cpp",
 	"MOC_DEFINITIONS" : 
 	[
+		"JSON_DIAGNOSTICS=0",
+		"JSON_USE_IMPLICIT_CONVERSIONS=1",
 		"QT_3DCORE_LIB",
 		"QT_3DEXTRAS_LIB",
 		"QT_3DINPUT_LIB",
@@ -181,6 +188,7 @@
 		"C:/Users/Henkka/Projects/ncgit/code/vhelix/src/vHelix",
 		"C:/Users/Henkka/Projects/ncgit/code/vhelix/src/vHelix/include",
 		"C:/Users/Henkka/AppData/Local/Programs/Python/Python38/include",
+		"C:/Users/Henkka/Projects/ncgit/code/vhelix/src/vHelix/include/json/single_include",
 		"F:/Programs/Qt/5.9.9/msvc2015_64/include",
 		"F:/Programs/Qt/5.9.9/msvc2015_64/include/QtWidgets",
 		"F:/Programs/Qt/5.9.9/msvc2015_64/include/QtGui",
@@ -254,6 +262,10 @@
 			"MU"
 		],
 		[
+			"C:/Users/Henkka/Projects/ncgit/code/vhelix/src/vHelix/modelhandler.cpp",
+			"MU"
+		],
+		[
 			"C:/Users/Henkka/Projects/ncgit/code/vhelix/src/vHelix/ply_to_dimacs/boost_graph_helper.cpp",
 			"MU"
 		],
@@ -271,10 +283,6 @@
 		],
 		[
 			"C:/Users/Henkka/Projects/ncgit/code/vhelix/src/vHelix/processio.cpp",
-			"MU"
-		],
-		[
-			"C:/Users/Henkka/Projects/ncgit/code/vhelix/src/vHelix/rpolyparser.cpp",
 			"MU"
 		],
 		[
@@ -299,6 +307,10 @@
 		],
 		[
 			"C:/Users/Henkka/Projects/ncgit/code/vhelix/src/vHelix/scaffold_routing_rectification/Utility.cpp",
+			"MU"
+		],
+		[
+			"C:/Users/Henkka/Projects/ncgit/code/vhelix/src/vHelix/utils.cpp",
 			"MU"
 		],
 		[
