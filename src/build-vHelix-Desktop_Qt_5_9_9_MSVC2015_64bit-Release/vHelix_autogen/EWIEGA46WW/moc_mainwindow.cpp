@@ -46,17 +46,17 @@ QT_MOC_LITERAL(10, 89, 23), // "on_actionExit_triggered"
 QT_MOC_LITERAL(11, 113, 23), // "on_actionOpen_triggered"
 QT_MOC_LITERAL(12, 137, 25), // "on_actionAtrail_triggered"
 QT_MOC_LITERAL(13, 163, 24), // "on_actionPhysX_triggered"
-QT_MOC_LITERAL(14, 188, 26), // "on_actionConvert_triggered"
-QT_MOC_LITERAL(15, 215, 35), // "on_actionExport_selection_tri..."
-QT_MOC_LITERAL(16, 251, 43), // "on_actionOpen_selection_in_vi..."
-QT_MOC_LITERAL(17, 295, 19), // "on_treeView_clicked"
-QT_MOC_LITERAL(18, 315, 5), // "index"
-QT_MOC_LITERAL(19, 321, 25), // "on_treeView_doubleClicked"
-QT_MOC_LITERAL(20, 347, 31), // "on_actionAdd_sequence_triggered"
-QT_MOC_LITERAL(21, 379, 42), // "on_actionExport_strand_sequen..."
-QT_MOC_LITERAL(22, 422, 37), // "on_actionSave_current_model_t..."
-QT_MOC_LITERAL(23, 460, 35), // "on_actionAutofill_strands_tri..."
-QT_MOC_LITERAL(24, 496, 31) // "on_actionInstructions_triggered"
+QT_MOC_LITERAL(14, 188, 35), // "on_actionExport_selection_tri..."
+QT_MOC_LITERAL(15, 224, 43), // "on_actionOpen_selection_in_vi..."
+QT_MOC_LITERAL(16, 268, 19), // "on_treeView_clicked"
+QT_MOC_LITERAL(17, 288, 5), // "index"
+QT_MOC_LITERAL(18, 294, 25), // "on_treeView_doubleClicked"
+QT_MOC_LITERAL(19, 320, 31), // "on_actionAdd_sequence_triggered"
+QT_MOC_LITERAL(20, 352, 42), // "on_actionExport_strand_sequen..."
+QT_MOC_LITERAL(21, 395, 37), // "on_actionSave_current_model_t..."
+QT_MOC_LITERAL(22, 433, 35), // "on_actionAutofill_strands_tri..."
+QT_MOC_LITERAL(23, 469, 31), // "on_actionInstructions_triggered"
+QT_MOC_LITERAL(24, 501, 26) // "on_actionLicense_triggered"
 
     },
     "MainWindow\0sendMesh_\0\0std::string\0str\0"
@@ -65,7 +65,6 @@ QT_MOC_LITERAL(24, 496, 31) // "on_actionInstructions_triggered"
     "on_actionOpen_triggered\0"
     "on_actionAtrail_triggered\0"
     "on_actionPhysX_triggered\0"
-    "on_actionConvert_triggered\0"
     "on_actionExport_selection_triggered\0"
     "on_actionOpen_selection_in_viewer_triggered\0"
     "on_treeView_clicked\0index\0"
@@ -74,7 +73,8 @@ QT_MOC_LITERAL(24, 496, 31) // "on_actionInstructions_triggered"
     "on_actionExport_strand_sequences_triggered\0"
     "on_actionSave_current_model_triggered\0"
     "on_actionAutofill_strands_triggered\0"
-    "on_actionInstructions_triggered"
+    "on_actionInstructions_triggered\0"
+    "on_actionLicense_triggered"
 };
 #undef QT_MOC_LITERAL
 
@@ -103,9 +103,9 @@ static const uint qt_meta_data_MainWindow[] = {
       13,    0,  113,    2, 0x0a /* Public */,
       14,    0,  114,    2, 0x08 /* Private */,
       15,    0,  115,    2, 0x08 /* Private */,
-      16,    0,  116,    2, 0x08 /* Private */,
-      17,    1,  117,    2, 0x08 /* Private */,
-      19,    1,  120,    2, 0x08 /* Private */,
+      16,    1,  116,    2, 0x08 /* Private */,
+      18,    1,  119,    2, 0x08 /* Private */,
+      19,    0,  122,    2, 0x08 /* Private */,
       20,    0,  123,    2, 0x08 /* Private */,
       21,    0,  124,    2, 0x08 /* Private */,
       22,    0,  125,    2, 0x08 /* Private */,
@@ -124,9 +124,9 @@ static const uint qt_meta_data_MainWindow[] = {
     QMetaType::Void,
     QMetaType::Void,
     QMetaType::Void,
+    QMetaType::Void, QMetaType::QModelIndex,   17,
+    QMetaType::Void, QMetaType::QModelIndex,   17,
     QMetaType::Void,
-    QMetaType::Void, QMetaType::QModelIndex,   18,
-    QMetaType::Void, QMetaType::QModelIndex,   18,
     QMetaType::Void,
     QMetaType::Void,
     QMetaType::Void,
@@ -149,16 +149,16 @@ void MainWindow::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int _id, 
         case 4: _t->on_actionOpen_triggered(); break;
         case 5: _t->on_actionAtrail_triggered(); break;
         case 6: _t->on_actionPhysX_triggered(); break;
-        case 7: _t->on_actionConvert_triggered(); break;
-        case 8: _t->on_actionExport_selection_triggered(); break;
-        case 9: _t->on_actionOpen_selection_in_viewer_triggered(); break;
-        case 10: _t->on_treeView_clicked((*reinterpret_cast< const QModelIndex(*)>(_a[1]))); break;
-        case 11: _t->on_treeView_doubleClicked((*reinterpret_cast< const QModelIndex(*)>(_a[1]))); break;
-        case 12: _t->on_actionAdd_sequence_triggered(); break;
-        case 13: _t->on_actionExport_strand_sequences_triggered(); break;
-        case 14: _t->on_actionSave_current_model_triggered(); break;
-        case 15: _t->on_actionAutofill_strands_triggered(); break;
-        case 16: _t->on_actionInstructions_triggered(); break;
+        case 7: _t->on_actionExport_selection_triggered(); break;
+        case 8: _t->on_actionOpen_selection_in_viewer_triggered(); break;
+        case 9: _t->on_treeView_clicked((*reinterpret_cast< const QModelIndex(*)>(_a[1]))); break;
+        case 10: _t->on_treeView_doubleClicked((*reinterpret_cast< const QModelIndex(*)>(_a[1]))); break;
+        case 11: _t->on_actionAdd_sequence_triggered(); break;
+        case 12: _t->on_actionExport_strand_sequences_triggered(); break;
+        case 13: _t->on_actionSave_current_model_triggered(); break;
+        case 14: _t->on_actionAutofill_strands_triggered(); break;
+        case 15: _t->on_actionInstructions_triggered(); break;
+        case 16: _t->on_actionLicense_triggered(); break;
         default: ;
         }
     } else if (_c == QMetaObject::RegisterMethodArgumentMetaType) {
@@ -460,6 +460,72 @@ void *SequenceDialog::qt_metacast(const char *_clname)
 int SequenceDialog::qt_metacall(QMetaObject::Call _c, int _id, void **_a)
 {
     _id = QDialog::qt_metacall(_c, _id, _a);
+    return _id;
+}
+struct qt_meta_stringdata_DocWindow_t {
+    QByteArrayData data[1];
+    char stringdata0[10];
+};
+#define QT_MOC_LITERAL(idx, ofs, len) \
+    Q_STATIC_BYTE_ARRAY_DATA_HEADER_INITIALIZER_WITH_OFFSET(len, \
+    qptrdiff(offsetof(qt_meta_stringdata_DocWindow_t, stringdata0) + ofs \
+        - idx * sizeof(QByteArrayData)) \
+    )
+static const qt_meta_stringdata_DocWindow_t qt_meta_stringdata_DocWindow = {
+    {
+QT_MOC_LITERAL(0, 0, 9) // "DocWindow"
+
+    },
+    "DocWindow"
+};
+#undef QT_MOC_LITERAL
+
+static const uint qt_meta_data_DocWindow[] = {
+
+ // content:
+       7,       // revision
+       0,       // classname
+       0,    0, // classinfo
+       0,    0, // methods
+       0,    0, // properties
+       0,    0, // enums/sets
+       0,    0, // constructors
+       0,       // flags
+       0,       // signalCount
+
+       0        // eod
+};
+
+void DocWindow::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int _id, void **_a)
+{
+    Q_UNUSED(_o);
+    Q_UNUSED(_id);
+    Q_UNUSED(_c);
+    Q_UNUSED(_a);
+}
+
+const QMetaObject DocWindow::staticMetaObject = {
+    { &QWidget::staticMetaObject, qt_meta_stringdata_DocWindow.data,
+      qt_meta_data_DocWindow,  qt_static_metacall, nullptr, nullptr}
+};
+
+
+const QMetaObject *DocWindow::metaObject() const
+{
+    return QObject::d_ptr->metaObject ? QObject::d_ptr->dynamicMetaObject() : &staticMetaObject;
+}
+
+void *DocWindow::qt_metacast(const char *_clname)
+{
+    if (!_clname) return nullptr;
+    if (!strcmp(_clname, qt_meta_stringdata_DocWindow.stringdata0))
+        return static_cast<void*>(this);
+    return QWidget::qt_metacast(_clname);
+}
+
+int DocWindow::qt_metacall(QMetaObject::Call _c, int _id, void **_a)
+{
+    _id = QWidget::qt_metacall(_c, _id, _a);
     return _id;
 }
 QT_WARNING_POP

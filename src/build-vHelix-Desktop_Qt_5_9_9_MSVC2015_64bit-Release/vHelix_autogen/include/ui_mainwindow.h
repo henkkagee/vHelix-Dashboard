@@ -47,6 +47,7 @@ public:
     QAction *actionOpen_selection_in_viewer;
     QAction *actionExport_strand_sequences;
     QAction *actionSave_current_model;
+    QAction *actionLicense;
     QWidget *centralwidget;
     QGridLayout *gridLayout;
     QHBoxLayout *horizontalLayout;
@@ -108,6 +109,8 @@ public:
         actionExport_strand_sequences->setObjectName(QStringLiteral("actionExport_strand_sequences"));
         actionSave_current_model = new QAction(MainWindow);
         actionSave_current_model->setObjectName(QStringLiteral("actionSave_current_model"));
+        actionLicense = new QAction(MainWindow);
+        actionLicense->setObjectName(QStringLiteral("actionLicense"));
         centralwidget = new QWidget(MainWindow);
         centralwidget->setObjectName(QStringLiteral("centralwidget"));
         QSizePolicy sizePolicy1(QSizePolicy::Expanding, QSizePolicy::Expanding);
@@ -200,6 +203,7 @@ public:
         menuExport->addAction(actionExport_selection);
         menuExport->addAction(actionExport_strand_sequences);
         menuHelp->addAction(actionInstructions);
+        menuHelp->addAction(actionLicense);
         menuoxDNA->addAction(actionOpen_selection_in_viewer);
 
         retranslateUi(MainWindow);
@@ -225,6 +229,7 @@ public:
         actionOpen_selection_in_viewer->setText(QApplication::translate("MainWindow", "Open OxDNA viewer", Q_NULLPTR));
         actionExport_strand_sequences->setText(QApplication::translate("MainWindow", "Export strand sequences", Q_NULLPTR));
         actionSave_current_model->setText(QApplication::translate("MainWindow", "Save current model", Q_NULLPTR));
+        actionLicense->setText(QApplication::translate("MainWindow", "License", Q_NULLPTR));
         label->setText(QString());
         menuvHelix->setTitle(QApplication::translate("MainWindow", "File", Q_NULLPTR));
         menuRoute->setTitle(QApplication::translate("MainWindow", "Route", Q_NULLPTR));

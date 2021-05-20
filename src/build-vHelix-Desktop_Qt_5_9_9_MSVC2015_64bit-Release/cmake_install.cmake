@@ -35,6 +35,7 @@ endif()
 if(NOT CMAKE_INSTALL_LOCAL_ONLY)
   # Include the install script for each subdirectory.
   include("C:/Users/Henkka/Projects/ncgit/code/vhelix/src/build-vHelix-Desktop_Qt_5_9_9_MSVC2015_64bit-Release/scaffold_routing_rectification/cmake_install.cmake")
+  include("C:/Users/Henkka/Projects/ncgit/code/vhelix/src/build-vHelix-Desktop_Qt_5_9_9_MSVC2015_64bit-Release/include/json/cmake_install.cmake")
 
 endif()
 
