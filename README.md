@@ -32,7 +32,11 @@ If you use another platform than Win64 you need to recompile PhysXSDK 3.3 and Le
 
 For convenience, it is recommended to use Qt Creator for building: https://www.qt.io/download. If you use other tools, note that the directory structure may be slightly different: Qt Creator places the binary in a separate build folder beside src/.
 
-The software is built using CMake to make cross-platform compilation possible. Configure the CMakeLists.txt file to find the specified Qt modules as well as Python.h and Python38.lib files for the Python/C API. To build, run the CMakeLists.txt file with CMake or open it in Qt Creator. In runtime, all the Python files (as seen in one of the provided src/builds build-vHelix-Desktop_Qt_5_9_9_MSVC2015_64bit-Release for reference) and PhysX .dlls should be beside the vHelix Dashboard executable. The .dlls should also be in src/vHelix/scaffold_routing_rectification directory.
+The software is built using CMake to make cross-platform compilation possible. Configure the CMakeLists.txt file to find the specified Qt modules as well as Python.h and Python38.lib files for the Python/C API. To build, run the CMakeLists.txt file with CMake or open it in Qt Creator.
+
+*Note!:* In runtime, all the Python files (as seen in one of the provided src/builds build-vHelix-Desktop_Qt_5_9_9_MSVC2015_64bit-Release for reference) and PhysX .dlls should be beside the vHelix Dashboard executable. The .dlls should also be in src/vHelix/scaffold_routing_rectification directory. 
+Qt Creator only copies the necessary Qt .dlls beside the executable, you need to copy the PhysX .dlls and Python scripts to your build directory yourself. Additionally, the files instructions.txt and license.txt should also be beside the built executable. If the program compiles but crashes immediately you are probably missing a .dll from your build directory - if you do not see
+ a clear error message, see the provided build directory for reference on what should be copied.
 
 ## Quick start
 
