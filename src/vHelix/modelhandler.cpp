@@ -337,30 +337,6 @@ namespace Controller {
             }
         }
 
-        // bug: in some rare cases two strands have the same id near the last staple strand
-        // and strands mess up connections
-        /*
-        unsigned long largest = 0;
-        for (unsigned long i = 0; i < strands.size(); ++i) {
-            if (strands[i].id_ > largest) {
-                largest = strands[i].id_;
-            }
-        }
-        std::vector<unsigned long> sids;
-        for (unsigned long i = 0; i < strands.size(); ++i) {
-            for (unsigned long j = 0; j < sids.size(); ++j) {
-                if (strands[i].id_ == sids[j]) {
-                    // strands.erase(strands.begin()+i);
-                    strands[i].id_ = largest + 1;
-                    for (unsigned long b = 0; b < strands[i].bases_.size(); ++b) {
-                        strands[i].bases_[b]->strandId_ = strands[i].id_;
-                    }
-                    largest++;
-                }
-            }
-            sids.push_back(strands[i].id_);
-        }*/
-
         // loop through all helices and look for staple loops that weren't added to strands
         sId++;
         strand = Model::Strand(0, sId);
@@ -434,41 +410,6 @@ namespace Controller {
 
 
         Model::Strand* s;
-        // the next step fails if really short strands remain at vertices
-        // therefore make sure no strands are too short, and even them out if that's the case
-        /*
-
-        for (unsigned int i = 0; i < strands.size(); ++i) {
-            s = &strands[i];
-            if (s->bases_.size() <= MIN_NICK_VERTEX_DISTANCE) {
-                unsigned int forwstrandid = s->bases_[s->bases_.size()-1]->strand_forward_->strandId_;
-                unsigned int prevstrandid = s->bases_[0]->strand_backward_->strandId_;
-                Model::Strand* prevstrand = nullptr;
-                Model::Strand* forwstrand = nullptr;
-                for (unsigned int ss = 0; ss < strands.size(); ++ss) {
-                    if (strands[ss].id_ == prevstrandid) {
-                        prevstrand = &strands[ss];
-                    }
-                    if (strands[ss].id_ == forwstrandid) {
-                        forwstrand = &strands[ss];
-                    }
-                }
-                if (!prevstrand || !forwstrand || prevstrand == forwstrand) {
-                    continue;
-                }
-                while (s->bases_.size() <= MIN_NICK_VERTEX_DISTANCE*2) {
-                    s->bases_.push_back(forwstrand->bases_[0]);
-                    s->bases_[s->bases_.size()-1]->strandId_ = s->id_;
-                    forwstrand->bases_.erase(forwstrand->bases_.begin());
-                    s->bases_.insert(s->bases_.begin(), prevstrand->bases_[prevstrand->bases_.size()-1]);
-                    s->bases_[0]->strandId_ = s->id_;
-                    prevstrand->bases_.pop_back();
-                    s->length_ += 2;
-                    forwstrand->length_--;
-                    prevstrand->length_--;
-                }
-            }
-        }*/
 
         int mnvd;
         for (unsigned int i = 0; i < strands.size(); ++i) {
@@ -583,6 +524,63 @@ namespace Controller {
                 strands.push_back(newstrand);
                 largest++;
                 newstrand = Model::Strand(0, largest);
+            }
+        }
+
+        // make sure no strands are too short, and even them out if that's the case
+        for (unsigned int i = 0; i < strands.size(); ++i) {
+            s = &strands[i];
+            if (s->bases_.size() < MIN_NICK_VERTEX_DISTANCE + 1) {
+                std::cout << "Strand id: " << s->id_ << " is too short with length " << s->bases_.size() << std::endl << std::flush;
+                unsigned int forwstrandid = s->bases_[s->bases_.size()-1]->strand_backward_->strandId_;
+                unsigned int prevstrandid = s->bases_[0]->strand_forward_->strandId_;
+                std::cout << "forwstrandid: " << forwstrandid << " prevstrandid: " << prevstrandid << std::endl << std::flush;
+                Model::Strand* prevstrand = nullptr;
+                Model::Strand* forwstrand = nullptr;
+                for (unsigned int ss = 0; ss < strands.size(); ++ss) {
+                    if (strands[ss].id_ == prevstrandid) {
+                        prevstrand = &strands[ss];
+                    }
+                    if (strands[ss].id_ == forwstrandid) {
+                        forwstrand = &strands[ss];
+                    }
+                }
+                if (!prevstrand || !forwstrand || prevstrand == forwstrand) {
+                    std::cout << "Skipped strand id: " << s->id_  << std::endl << std::flush;
+                    continue;
+                }
+
+                Model::Strand* receiver = prevstrand->bases_.size() > forwstrand->bases_.size() ? forwstrand : prevstrand;
+                bool forw = prevstrand->bases_.size() > forwstrand->bases_.size() ? true : false;
+
+                while (s->bases_.size() > 0) {
+                    if (forw) {
+                        receiver->bases_.insert(receiver->bases_.begin(), s->bases_[s->bases_.size()-1]);
+                        s->bases_.pop_back();
+                        receiver->bases_[0]->strandId_ = receiver->id_;
+                        receiver->length_++;
+                    }
+                    else {
+                        receiver->bases_.push_back(s->bases_[0]);
+                        s->bases_.erase(s->bases_.begin());
+                        receiver->bases_[receiver->bases_.size()-1]->strandId_ = receiver->id_;
+                        receiver->length_++;
+                    }
+                }
+                strands.erase(strands.begin()+i);
+                i--;
+
+                /*while (s->bases_.size() <= MIN_NICK_VERTEX_DISTANCE*2) {
+                    s->bases_.push_back(forwstrand->bases_[forwstrand->bases_.size()-1]);
+                    s->bases_[s->bases_.size()-1]->strandId_ = s->id_;
+                    forwstrand->bases_.pop_back();
+                    s->bases_.insert(s->bases_.begin(), prevstrand->bases_[0]);
+                    s->bases_[0]->strandId_ = s->id_;
+                    prevstrand->bases_.erase(prevstrand->bases_.begin());
+                    s->length_ += 2;
+                    forwstrand->length_--;
+                    prevstrand->length_--;
+                }*/
             }
         }
 

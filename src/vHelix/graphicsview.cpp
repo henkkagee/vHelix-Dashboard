@@ -3,8 +3,6 @@
  *  See the license in the root directory for the full notice
  *
  *  Qt3D view for 3D graphics.
- *
- *  Currently old entities are apparently not completely unloaded when loading a new model, resulting in even poorer performance.
 */
 
 #include "graphicsview.h"

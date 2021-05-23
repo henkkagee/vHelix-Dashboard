@@ -50,7 +50,7 @@ Workflow/pipeline for generating a sequence and model from a .ply or .obj model:
 - If you want to view the model in oxDNA format, there is a shortcut to a local oxDNAviewer from oxDNA->Open oxDNA viewer. You can drag and drop .conf and .top files or an .oxview file directly in the oxDNAviewer window to load them. However, it is recommended to use the most recent version online instead: https://github.com/sulcgroup/oxdna-viewer
 - Once the 3D model appears on the right (3D performance not yet optimized), you can do the following actions: add a sequence to the scaffold strand from Edit->Add sequence, automatically fill strand gaps, and export the strands as a .csv file from Export->Export strand sequences.
 - You can rotate the model using the right mouse button and translate the camera using the left mouse button. Use shift+arrow keys or the scroll wheel for zooming.
-- A rare bug sometimes causes some incorrect connections among staple strands around the ends of the scaffold strand. These can easily be connected/disconnected manually in oxview. Check the last strand ids and make sure their lengths are sufficient.
+- It's a good idea to a) check that all strands are long enough and b) they are connected properly and in the right way, you can easily do this in oxView
 - To export the generated model, click File->Save current model to save it in .oxview format usable in oxView
 
 ## Todo
