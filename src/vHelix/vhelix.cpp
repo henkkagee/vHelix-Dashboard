@@ -21,7 +21,13 @@
 #pragma push_macro("slots")
 #undef slots
 #define MS_NO_COREDLL
-#include "Python.h"
+#ifdef _DEBUG
+    #undef _DEBUG
+    #include "Python.h"
+    #define _DEBUG
+#else
+    #include "Python.h"
+#endif
 #pragma pop_macro("slots")
 
 std::string vHelixFunc::ExePath() {
@@ -33,6 +39,9 @@ std::string vHelixFunc::ExePath() {
 
 vHelix::vHelix() : meshdir_(""), mesh_(""), workspace_dir_(""), plydata_(nullptr)
 {
+    //Initialize Python interpreter
+    Py_Initialize();
+    qDebug() << "Python initialized";
     // Set workspace directory
     std::stringstream path(vHelixFunc::ExePath());
     std::string segment;
@@ -55,6 +64,8 @@ vHelix::~vHelix()
     if (plydata_) {
         delete plydata_;
     }
+    qDebug() << "Python finalized";
+    Py_Finalize();
 }
 
 // Read meshfile and copy it to the workspace directory. Because Bscor-modules
@@ -280,6 +291,13 @@ void vHelix::action_(std::string cmd, QVector<QVariant> arg)
         std::string ret = retsstr.str();
         sendToConsole_(ret);
     }
+    else if (cmd.find("import oxDNA") != std::string::npos) {
+        std::stringstream msg;
+        msg << "Importing selected oxDNA files to rpoly... \n";
+        // files selected from dialog in mainwindow.cpp
+        // arg should be: arg[0]: .oxDNA file, [1]: .top file
+        import_oxDNA_(arg);
+    }
     else if (cmd.find("oxdna_view") != std::string::npos) {
         unsigned char top = 255; unsigned char conf = 255;
         for (unsigned char i = 0; i < fileSelection_.size(); i++) {
@@ -488,47 +506,114 @@ void vHelix::export_(const QVector<QVariant> &args)
         std::string filename = seglist.back();
 
         sendToConsole_("Converting .PLY to .oxDNA...\n");
-        Py_Initialize();
+        //Py_Initialize();
 
-        PyObject *pName = PyUnicode_FromString("rpoly_oxDNA");
-        PyObject *pModule = PyImport_Import(pName);
+        qDebug() << "In the event handler\n";
+
+        PyObject *pName = NULL;
+        pName = PyUnicode_FromString("rpoly_oxDNA");
+
+        qDebug() << "Before module import: " <<
+                    "\n pName:" << Py_REFCNT(pName) << "\n";
+
+        PyObject *pModule = NULL;
+        pModule = PyImport_Import(pName);
+        qDebug() << "After module import: "
+                    "\n pModule:" << Py_REFCNT(pModule) <<
+                    "\n pName:" << Py_REFCNT(pName) << "\n";
         if (pModule == NULL) {
             sendToConsole_("--- Something went wrong when importing rpoly_oxDNA.py ---\n");
-            Py_DECREF(pName);
             PyErr_PrintEx(1);
-            Py_Finalize();
+            Py_DECREF(pName);
             return;
         }
+        qDebug() <<"Module imported successfully\n";
         PyObject *pFunc = PyObject_GetAttrString(pModule, "main");
+
         if (pFunc && PyCallable_Check(pFunc)) {
+            qDebug() << "Callable function recognized\n";
             PyObject *pArgs = PyTuple_New(1);
             std::stringstream sstr;
             sstr << file;
             std::string input_file = sstr.str();
+            qDebug() << "BEFORE pValue set call: "
+                        "\n pModule:" << Py_REFCNT(pModule) <<
+                        "\n pArgs:" << Py_REFCNT(pArgs) <<
+                        "\n pName:" << Py_REFCNT(pName) <<
+                        "\n pFunc:" << Py_REFCNT(pFunc) << "\n";
             PyObject *pValue = PyUnicode_FromString(input_file.c_str());
-            PyTuple_SetItem(pArgs, 0, pValue);
-            PyObject_CallObject(pFunc, pArgs);
-            Py_DECREF(pArgs);
-            Py_DECREF(pModule);
-            Py_DECREF(pName);
-            Py_DECREF(pValue);
+            qDebug() << "BEFORE args set call: "
+                        "\n pModule:" << Py_REFCNT(pModule) <<
+                        "\n pArgs:" << Py_REFCNT(pArgs) <<
+                        "\n pValue:" << Py_REFCNT(pValue) <<
+                        "\n pName:" << Py_REFCNT(pName) <<
+                        "\n pFunc:" << Py_REFCNT(pFunc) << "\n";
+            //Py_INCREF(pValue);
+            PyTuple_SetItem(pArgs, 0, pValue); //pArgs steals the reference to pValue - pValue is a borrows reference
+
+            qDebug() << "Function args set\n";
+
+            qDebug() << "BEFORE func call: "
+                        "\n pModule:" << Py_REFCNT(pModule) <<
+                        "\n pArgs:" << Py_REFCNT(pArgs) <<
+                        "\n pValue:" << Py_REFCNT(pValue) <<
+                        "\n pName:" << Py_REFCNT(pName) <<
+                        //"\n pRet:" << Py_REFCNT(pRet) <<
+                        "\n pFunc:" << Py_REFCNT(pFunc) << "\n";
+            PyObject *pRet = PyObject_CallObject(pFunc, pArgs);
+            //PyObject_CallObject(pFunc, pArgs);
+            qDebug() << "Python function called successfully\n";
+            qDebug() << "BEFORE DECREF: "
+                        "\n pModule:" << Py_REFCNT(pModule) <<
+                        "\n pArgs:" << Py_REFCNT(pArgs) <<
+                        "\n pValue:" << Py_REFCNT(pValue) <<
+                        "\n pName:" << Py_REFCNT(pName) <<
+                        "\n pRet:" << Py_REFCNT(pRet) <<
+                        "\n pFunc:" << Py_REFCNT(pFunc) << "\n";
             Py_DECREF(pFunc);
+            Py_DECREF(pArgs);
+            Py_DECREF(pRet);
+            Py_DECREF(pModule);
+            // Py_DECREF(pValue); pArgs stole the reference and frees it
+            Py_DECREF(pName);
+
+            qDebug() << "AFTER DECREF: "
+                        "\n pModule:" << Py_REFCNT(pModule) <<
+                        "\n pArgs:" << Py_REFCNT(pArgs) <<
+                        "\n pValue:" << Py_REFCNT(pValue) <<
+                        "\n pName:" << Py_REFCNT(pName) <<
+                        "\n pRet:" << Py_REFCNT(pRet) <<
+                        "\n pFunc:" << Py_REFCNT(pFunc) << "\n";
+
+
+
+            //Py_DECREF(pModule);
+
+
+
+            qDebug() << "Values dereferenced\n";
             // copy files from executable directory to workspace
-            std::stringstream workspace_file;
-            workspace_file << workspace_dir_ << "\\" << filename << ".oxdna";
-            std::string temp(workspace_file.str());
-            std::stringstream oxDnadir;
+            std::stringstream workspace_oxDNA_file, workspace_top_file;
+
+            workspace_oxDNA_file << workspace_dir_ << "\\" << filename << ".oxdna";
+            workspace_top_file << workspace_dir_ << "\\" << filename << ".top";
+            std::string oxDNA_temp(workspace_oxDNA_file.str());
+            std::string top_temp(workspace_top_file.str());
+            //qDebug() << oxDNA_temp.c_str() << ": temp\n";
+            std::stringstream oxDnadir, topdir;
             oxDnadir << path << "\\" << filename << ".oxdna";
-            std::string copydir = oxDnadir.str();
-            QFile::copy(copydir.c_str(), temp.c_str());
-            oxDnadir.str(std::string());
-            oxDnadir << path << "\\" << filename << ".top";
-            copydir = oxDnadir.str();
-            workspace_file.str(std::string());
-            workspace_file << workspace_dir_ << "\\" << filename << ".top";
-            temp = workspace_file.str();
-            QFile::copy(copydir.c_str(), temp.c_str());
-            sendToConsole_("Wrote .oxDNA and .top file to workspace\n");
+            topdir << path << "\\" << filename << ".top";
+            std::string oxDNA_copydir = oxDnadir.str();
+            std::string top_copydir = topdir.str();
+            qDebug() << oxDNA_copydir.c_str() << ": copydir\n";
+            if (QFile::rename(oxDNA_copydir.c_str(), oxDNA_temp.c_str())
+            &&  QFile::rename(top_copydir.c_str(), top_temp.c_str())) {
+                sendToConsole_("Wrote .oxDNA and .top file to workspace\n");
+            }
+            else {
+                sendToConsole_("Failed to write files to workspace. "
+                "Delete the existing files with same file names and try again.\n");
+            }
         }
         else {
             sendToConsole_("Conversion failed, check your Python version or .rpoly file");
@@ -537,12 +622,13 @@ void vHelix::export_(const QVector<QVariant> &args)
             }
             Py_DECREF(pFunc);
             Py_DECREF(pModule);
-            Py_Finalize();
+            //Py_Finalize();
             return;
         }
-        Py_Finalize();
+        //Py_Finalize();
     }
 }
+
 
 // convert obj to ply
 void vHelix::convert_(const std::string& format)
@@ -557,13 +643,13 @@ void vHelix::convert_(const std::string& format)
     std::string file(mesh_);
     if (format == "obj_to_ply") {
         sendToConsole_("Converting .obj to .ply...\n");
-        Py_Initialize();
+        //Py_Initialize();
         PyObject *pName = PyUnicode_FromString("convert");
         PyObject *pModule = PyImport_Import(pName);
         if (pModule == NULL) {
             sendToConsole_("--- Something went wrong when importing convert.py ---\n");
             PyErr_PrintEx(1);
-            Py_Finalize();
+            //Py_Finalize();
             return;
         }
         PyObject *pFunc = PyObject_GetAttrString(pModule, "main");
@@ -604,12 +690,12 @@ void vHelix::convert_(const std::string& format)
         }
         else {
             sendToConsole_("Conversion failed, check your Python version or .obj file");
-            Py_Finalize();
+            //Py_Finalize();
             return;
         }
         PyErr_Print();
         PyErr_Clear();
-        Py_Finalize();
+        //Py_Finalize();
     }
 
 }

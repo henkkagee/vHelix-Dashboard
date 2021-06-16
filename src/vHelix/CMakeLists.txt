@@ -11,15 +11,26 @@ set(CMAKE_AUTORCC ON)
 set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
+set( LIBRARIES
+       python38
+       debug PhysX3DEBUG_x64 optimized PhysX3_x64
+       debug PhysX3CommonDEBUG_x64 optimized PhysX3Common_x64
+       debug PhysX3ExtensionsDEBUG optimized PhysX3Extensions
+       debug PhysXProfileSDKDEBUG optimized PhysXProfileSDK
+       debug PhysX3CharacterKinematicDEBUG_x64 optimized PhysX3CharacterKinematic_x64
+       debug PhysX3CookingDEBUG_x64 optimized PhysX3Cooking_x64
+       debug PhysXVisualDebuggerSDKDEBUG
+       #debug lemond
+       )
 # ----------------- You need to config this for your own setup so the linker can  --------------------
 # ------------------------------ find your Python38 installation ------------------------------------
 project(root)
 include_directories(${root_SOURCE_DIR}/include)
 # Here:
-include_directories(C:/Users/Henkka/AppData/Local/Programs/Python/Python38/include)
+include_directories(C:/Python38/include)
 link_directories(${root_SOURCE_DIR}/lib)
 # And here
-link_directories(C:/Users/Henkka/AppData/Local/Programs/Python/Python38/libs)
+link_directories(C:/Python38/libs)
 link_directories(${root_SOURCE_DIR}/scaffold_routing_rectification)
 add_subdirectory(scaffold_routing_rectification/)
 add_subdirectory(include/json)
@@ -121,9 +132,50 @@ set_property(TARGET vHelix PROPERTY
              MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Release>:Release>")
 
 target_link_libraries(vHelix PRIVATE Qt5::Widgets Qt5::3DCore Qt5::3DExtras
-    Qt5::3DRender Qt5::3DInput  python38
-    PhysX3_x64 PhysX3Common_x64 PhysX3Extensions PhysXProfileSDK
-    PhysX3_x64 PhysX3Common_x64
-    PhysX3CharacterKinematic_x64 PhysX3Cooking_x64
+    Qt5::3DRender Qt5::3DInput
+    ${LIBRARIES}
     nlohmann_json::nlohmann_json
+    #lemon
 )
+# Automatically copy resources to build directory.
+#[[add_custom_command(TARGET vHelix POST_BUILD
+                   # Directories
+
+                   COMMAND ${CMAKE_COMMAND} -E copy_directory ${root_SOURCE_DIR}/d3/ $<TARGET_FILE_DIR:vHelix>/d3
+                   #COMMAND ${CMAKE_COMMAND} -E copy_directory ${CMAKE_SOURCE_DIR}/gamepads/ $<TARGET_FILE_DIR:vHelix>/gamepads
+                   #COMMAND ${CMAKE_COMMAND} -E copy_directory ${CMAKE_SOURCE_DIR}/geometryloaders/ $<TARGET_FILE_DIR:vHelix>/geometryloaders/
+                   #COMMAND ${CMAKE_COMMAND} -E copy_directory ${CMAKE_SOURCE_DIR}/iconengines/ $<TARGET_FILE_DIR:vHelix>/iconengines/
+                   #COMMAND ${CMAKE_COMMAND} -E copy_directory ${CMAKE_SOURCE_DIR}/imageformats/ $<TARGET_FILE_DIR:vHelix>/imageformats/
+                   COMMAND ${CMAKE_COMMAND} -E copy_directory ${root_SOURCE_DIR}/libs/ $<TARGET_FILE_DIR:vHelix>/libs/
+                   COMMAND ${CMAKE_COMMAND} -E copy_directory ${root_SOURCE_DIR}/objToPly/ $<TARGET_FILE_DIR:vHelix>/objToPly/
+                   # COMMAND ${CMAKE_COMMAND} -E copy_directory ${root_SOURCE_DIR}/sceneparsers/ $<TARGET_FILE_DIR:vHelix>/sceneparsers/
+                   # COMMAND ${CMAKE_COMMAND} -E copy_directory ${root_SOURCE_DIR}/translations/ $<TARGET_FILE_DIR:vHelix>/translations/
+                   # Python files
+                   COMMAND ${CMAKE_COMMAND} -E copy ${root_SOURCE_DIR}/base.py $<TARGET_FILE_DIR:vHelix>
+                   COMMAND ${CMAKE_COMMAND} -E copy ${root_SOURCE_DIR}/cadnano_utils.py $<TARGET_FILE_DIR:vHelix>
+                   COMMAND ${CMAKE_COMMAND} -E copy ${root_SOURCE_DIR}/constants.py $<TARGET_FILE_DIR:vHelix>
+                   COMMAND ${CMAKE_COMMAND} -E copy ${root_SOURCE_DIR}/convert.py $<TARGET_FILE_DIR:vHelix>
+                   COMMAND ${CMAKE_COMMAND} -E copy ${root_SOURCE_DIR}/pdb.py $<TARGET_FILE_DIR:vHelix>
+                   COMMAND ${CMAKE_COMMAND} -E copy ${root_SOURCE_DIR}/quaternion.py $<TARGET_FILE_DIR:vHelix>
+                   COMMAND ${CMAKE_COMMAND} -E copy ${root_SOURCE_DIR}/reader_lammps_init.py $<TARGET_FILE_DIR:vHelix>
+                   COMMAND ${CMAKE_COMMAND} -E copy ${root_SOURCE_DIR}/readers.py $<TARGET_FILE_DIR:vHelix>
+                   COMMAND ${CMAKE_COMMAND} -E copy ${root_SOURCE_DIR}/rpoly_oxDNA.py $<TARGET_FILE_DIR:vHelix>
+                   COMMAND ${CMAKE_COMMAND} -E copy ${root_SOURCE_DIR}/topology.py $<TARGET_FILE_DIR:vHelix>
+                   COMMAND ${CMAKE_COMMAND} -E copy ${root_SOURCE_DIR}/utils.py $<TARGET_FILE_DIR:vHelix>
+                   COMMAND ${CMAKE_COMMAND} -E copy ${root_SOURCE_DIR}/base.py $<TARGET_FILE_DIR:vHelix>
+                   # Library files
+                   # COMMAND ${CMAKE_COMMAND} -E copy ${root_SOURCE_DIR}/D3DCompiler.dll $<TARGET_FILE_DIR:vHelix>
+                   COMMAND ${CMAKE_COMMAND} -E copy ${root_SOURCE_DIR}/lib/glut32.dll $<TARGET_FILE_DIR:vHelix>
+                   # COMMAND ${CMAKE_COMMAND} -E copy ${root_SOURCE_DIR}/libEGLd.dll $<TARGET_FILE_DIR:vHelix>
+                   # COMMAND ${CMAKE_COMMAND} -E copy ${root_SOURCE_DIR}/libGLESV2d.dll $<TARGET_FILE_DIR:vHelix>
+                   COMMAND ${CMAKE_COMMAND} -E copy ${root_SOURCE_DIR}/lib/PhysX3_x64.dll $<TARGET_FILE_DIR:vHelix>
+                   COMMAND ${CMAKE_COMMAND} -E copy ${root_SOURCE_DIR}/lib/PhysX3CharacterKinematic_x64.dll $<TARGET_FILE_DIR:vHelix>
+                   COMMAND ${CMAKE_COMMAND} -E copy ${root_SOURCE_DIR}/lib/PhysX3Common_x64.dll $<TARGET_FILE_DIR:vHelix>
+                   COMMAND ${CMAKE_COMMAND} -E copy ${root_SOURCE_DIR}/lib/PhysX3CommonDEBUG_x64.dll $<TARGET_FILE_DIR:vHelix>
+                   COMMAND ${CMAKE_COMMAND} -E copy ${root_SOURCE_DIR}/lib/PhysX3Cooking_x64.dll $<TARGET_FILE_DIR:vHelix>
+                   # Text files
+                   COMMAND ${CMAKE_COMMAND} -E copy ${root_SOURCE_DIR}/LICENSE.txt $<TARGET_FILE_DIR:vHelix>
+                   COMMAND ${CMAKE_COMMAND} -E copy ${root_SOURCE_DIR}/instructions.txt $<TARGET_FILE_DIR:vHelix>
+
+)
+]]
