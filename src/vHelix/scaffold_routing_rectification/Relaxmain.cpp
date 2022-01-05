@@ -169,7 +169,7 @@ int relaxation::relax_main(std::string input_file, std::string output_file, cons
             str.insert(0, "POPUP_ERR");
             parent.sendToConsole_(str.c_str());
             info.str(std::string());
-			return 1;
+            return 1;
 		}
     }
 	catch (const std::runtime_error & e) {
@@ -178,7 +178,7 @@ int relaxation::relax_main(std::string input_file, std::string output_file, cons
         str.insert(0, "POPUP_ERR");
         parent.sendToConsole_(str.c_str());
         info.str(std::string());
-		return 1;
+        return 1;
     }
 
 	physics::real_type initialmin, initialmax, initialaverage, initialtotal, min, max, average, total;

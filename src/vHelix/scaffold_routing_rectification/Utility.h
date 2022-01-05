@@ -98,7 +98,7 @@ inline auto signedAngle(physx::PxVec3 from, physx::PxVec3 to, const physx::PxVec
 	}
 }
 
-physx::PxQuat rotationFromTo(physx::PxVec3 from, physx::PxVec3 to);
+//physx::PxQuat rotationFromTo(physx::PxVec3 from, physx::PxVec3 to);
 
 template<typename U, typename V>
 V circular_index(U index, V length) {

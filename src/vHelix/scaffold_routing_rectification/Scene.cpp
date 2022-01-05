@@ -277,11 +277,12 @@ bool scene::setupHelices(physics & phys) {
 				length = DNA::HALF_TURN_LENGTH * (cross ? std::ceil(num_half_turns) : std::floor(num_half_turns));
 		}
 
-		helices.emplace_back(
+        /*helices.emplace_back(
 			helix_settings,
 			phys, DNA::DistanceToBaseCount(length),
 			physics::transform_type((origo +  tangent * physics::real_type((duplicates[edge] - 1) * (DNA::RADIUS + DNA::SPHERE_RADIUS))), rotationFromTo(kPosZAxis, direction)));
-	}
+    */
+    }
 
 	// Connect the scaffold.
 	for (HelixContainer::iterator it(helices.begin()); it != helices.end(); ++it)

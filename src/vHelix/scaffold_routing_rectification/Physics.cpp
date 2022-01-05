@@ -9,14 +9,16 @@ physics::physics(const settings_type & settings) : settings(settings) {
 	pxphysics = PxCreatePhysics(PX_PHYSICS_VERSION, *foundation, physx::PxTolerancesScale(), true, profileZoneManager);
 
 	if (pxphysics->getPvdConnectionManager()) {
+        std::cout << "Got pvd connection manager" << std::endl;
 		pxphysics->getVisualDebugger()->setVisualizeConstraints(true);
 		pxphysics->getVisualDebugger()->setVisualDebuggerFlag(physx::PxVisualDebuggerFlag::eTRANSMIT_CONTACTS, true);
 		pxphysics->getVisualDebugger()->setVisualDebuggerFlag(physx::PxVisualDebuggerFlag::eTRANSMIT_SCENEQUERIES, true);
 		pxphysics->getVisualDebugger()->updateCamera("default", physx::PxVec3(0, 0, -60), physx::PxVec3(0, 1, 0), physx::PxVec3(0, 0, 0));
 		connection = physx::PxVisualDebuggerExt::createConnection(pxphysics->getPvdConnectionManager(), PVD_HOST, PVD_PORT, physx::PxVisualDebuggerConnectionFlag::eDEBUG);
-	} else
+    } else {
+        PRINT("Did not get pvd connection manager\n");
 		connection = nullptr;
-
+    }
 	physx::PxSceneDesc sceneDesc(pxphysics->getTolerancesScale());
 	PRINT("This CPU has %u cores.", numcpucores());
 	dispatcher = physx::PxDefaultCpuDispatcherCreate(numcpucores());

@@ -6,16 +6,7 @@
 */
 
 #include "vhelix.h"
-#include <sstream>
-#include <fstream>
-#include "ply_to_dimacs/ply_to_dimacs.hpp"
-#include "ply_to_embedding/ply_to_embedding.hpp"
-#include "make_embedding_eulerian/make_embedding_eulerian.hpp"
-#include "atrail_search/Atrail_search.hpp"
-#include "atrail_verify/Atrail_verify.hpp"
-#include "postman_tour/postman_tour.hpp"
-#include "scaffold_routing_rectification/Relaxmain.h"
-#include "boost/lexical_cast.hpp"
+
 
 // Python.h includes "slots" as well, resulting in a conflict. This fixes the issue.
 #pragma push_macro("slots")
@@ -41,7 +32,7 @@ vHelix::vHelix() : meshdir_(""), mesh_(""), workspace_dir_(""), plydata_(nullptr
 {
     //Initialize Python interpreter
     Py_Initialize();
-    qDebug() << "Python initialized";
+    std::cerr << "Python initialized"<< std::endl;
     // Set workspace directory
     std::stringstream path(vHelixFunc::ExePath());
     std::string segment;
@@ -64,7 +55,8 @@ vHelix::~vHelix()
     if (plydata_) {
         delete plydata_;
     }
-    qDebug() << "Python finalized";
+    delete design;
+    std::cerr << "Python finalized"<< std::endl;
     Py_Finalize();
 }
 
@@ -157,7 +149,7 @@ void vHelix::openPLY() {
             try {
                 doublevec.push_back(std::make_pair(std::stof(seglist[2]), std::stof(seglist[3])));
             } catch (const std::bad_cast &e) {
-                sendToConsole_("POPUP_ERRBad vector coordinates (failed cast to float) in .ply");
+                sendToConsole_("POPUP_ERRBad vector coordinates (failed cast to float) in .ply\nPOPUP_END");
                 return;
             }
             continue;
@@ -169,7 +161,7 @@ void vHelix::openPLY() {
                     y.push_back(std::stof(seglist[1]));
                     z.push_back(std::stof(seglist[2]));
                 } catch (const std::bad_cast &e) {
-                    sendToConsole_("POPUP_ERRBad vertex coordinates (failed cast to float) in .ply");
+                    sendToConsole_("POPUP_ERRBad vertex coordinates (failed cast to float) in .ply\nPOPUP_END");
                 }
                 vertices++;
                 continue;
@@ -183,7 +175,7 @@ void vHelix::openPLY() {
                         }
                         facevec.push_back(vec);
                     } catch (const std::bad_cast &e) {
-                        sendToConsole_("POPUP_ERRBad face vertex data (failed cast to int) in .ply");
+                        sendToConsole_("POPUP_ERRBad face vertex data (failed cast to int) in .plyPOPUP_END");
                     }
                     faces++;
                     continue;
@@ -245,6 +237,19 @@ void vHelix::action_(std::string cmd, QVector<QVariant> arg)
         sendToConsole_(str);
         atrail_();
     }
+    else if (cmd.find("Scaffold-free") != std::string::npos) {
+        if (mesh_ == "") {
+            sendToConsole_(std::string("No mesh loaded.\n"));
+        }
+        std::stringstream msg;
+        msg << "Running scaffold-free design on " << mesh_ << "..." << std::endl;
+        std::string str = msg.str();
+        sendToConsole_(str);
+        scaffold_free_();
+    }
+    else if (cmd.find("Spanning tree") != std::string::npos) {
+        sendToConsole_("Spanning tree routing is not yet implemented");
+    }
     else if (cmd.find("setselection") != std::string::npos) {
         std::vector<std::string> strvec;
         for (auto qstr : arg) {
@@ -290,13 +295,6 @@ void vHelix::action_(std::string cmd, QVector<QVariant> arg)
         retsstr << "relaxmenu " << std::get<0>(estimate) << " + " << std::get<1>(estimate) << "(filled strand gaps)";
         std::string ret = retsstr.str();
         sendToConsole_(ret);
-    }
-    else if (cmd.find("import oxDNA") != std::string::npos) {
-        std::stringstream msg;
-        msg << "Importing selected oxDNA files to rpoly... \n";
-        // files selected from dialog in mainwindow.cpp
-        // arg should be: arg[0]: .oxDNA file, [1]: .top file
-        import_oxDNA_(arg);
     }
     else if (cmd.find("oxdna_view") != std::string::npos) {
         unsigned char top = 255; unsigned char conf = 255;
@@ -344,6 +342,46 @@ void vHelix::action_(std::string cmd, QVector<QVariant> arg)
     }
 }
 
+void vHelix::atrail_() {
+    std::cerr << "In atrail_ function\n";
+    if (fileSelection_.size() != 1 ||
+            fileSelection_.at(0).find(".ply") == std::string::npos) {
+        sendToConsole_("POPUP_ERRSelect a single valid .ply mesh file!\nPOPUP_END");
+        return;
+    }
+    std::stringstream sstr;
+    std::string dir("../workspace/");
+    sstr << dir << mesh_;
+    std::string name(sstr.str());
+    name.resize(name.size() - 4);
+    std::cerr << name.c_str() << "\n" << sstr.str().c_str() << "\n";
+    design = new Atrail(sstr.str(),name);
+    //Atrail atrail(sstr.str(),name);
+    std::cerr << "Created atrail object\n";
+    design->main();
+    sendToConsole_(design->getoutstream());
+}
+
+void vHelix::scaffold_free_() {
+    std::cerr << "In scaffold_free_ function\n";
+    if (fileSelection_.size() != 1 ||
+            fileSelection_.at(0).find(".ply") == std::string::npos) {
+        sendToConsole_("POPUP_ERRSelect a single valid .ply mesh file!\nPOPUP_END");
+        return;
+    }
+    std::stringstream sstr;
+    std::string dir("../workspace/");
+    sstr << dir << mesh_;
+    std::string name(sstr.str());
+    name.resize(name.size() - 4);
+    std::cerr << name.c_str() << "\n" << sstr.str().c_str() << "\n";
+    design = new Scaffold_free(sstr.str(),name);
+    //Atrail atrail(sstr.str(),name);
+    std::cerr << "Created scaffoldfree object\n";
+    design->main();
+    sendToConsole_(design->getoutstream());
+}
+/*
 void vHelix::atrail_()
 {
     // Run ply_to_dimacs
@@ -351,7 +389,7 @@ void vHelix::atrail_()
     *  Takes the graph information of a 3D object's mesh (ply file) and creates a graph (dimacs file).
     *  Argument 1: filename of ply document (ply ascii format http://paulbourke.net/dataformats/ply).
     *  Argument 2 (Optional): output graph filename in dimacs format, uses the ply file basename + dimacs if not given (dimacs format mat.gsia.cmu.edu/COLOR/general/ccformat.ps).
-    */
+
     if (fileSelection_.size() != 1 ||
             fileSelection_.at(0).find(".ply") == std::string::npos) {
         sendToConsole_("POPUP_ERRSelect a single valid .ply mesh file!\n");
@@ -372,7 +410,7 @@ void vHelix::atrail_()
     *  Argument 1: filename of ply document (ply ascii format http://paulbourke.net/dataformats/ply).
     *  Argument 2 (Optional): output embedding filename in vcode format, uses the ply file basename + vcode if not given (vcode is simply list of adjacent vertices according to their clockwise order).
     *  Preconditions: TODO: mesh is 2-vertex-connected
-    */
+
     sendToConsole_("\n\nRunning ply_to_embedding\n");
     sstr.str(std::string());
     sstr << dir << mesh_;
@@ -388,7 +426,7 @@ void vHelix::atrail_()
     *  Creates a multigraph from a simple graph such that the graph is Eulerian
     *  Argument 1: filename of input graph in dimacs format.
     *  Argument 2: filename of output multigraph in dimacs format.
-    */
+
     sendToConsole_("\n\nRunning postman_tour\n");
     sstr.str(std::string());
     std::string dimacs(mesh_);
@@ -413,7 +451,7 @@ void vHelix::atrail_()
     *  Argument 1: filename of input embedding in vcode format.
     *  Argument 2: filename of input multigraph in dimacs format.
     *  Argument 3 (optional): filename of output edge code, if not given the input vcode filename with an extension .ecode is used.
-    */
+    *
     sendToConsole_("\n\nRunning Make_embedding_eulerian\n");
     sstr.str(std::string());
     dimacs.resize(dimacs.size() - 6);
@@ -437,7 +475,7 @@ void vHelix::atrail_()
     * Argument 1: the edge code file.
     * Argument 2 (Optional): a trail file as a sequence of edge indices. This has an extension '.trail'.
     * Argument 3 (Optional): a trail file as a sequence of node indices(zero based). The trail ends with the vertice it began. The output file has extension `.ntrail'.
-    */
+    *
     sendToConsole_("\n\nRunning Atrail_search\n");
     sstr.str(std::string());
     sstr << dir << mesh_;
@@ -454,7 +492,7 @@ void vHelix::atrail_()
     *  Verifies that an edge trail generated by an Atrail_search is in fact an A-trail with respect to the embedding given as an edge code.
     *  Argument 1: the edge code file.
     *  Argument 2: the edge trail file.
-    */
+    *
     sendToConsole_("\n\nRunning Atrail_verify\n");
     sstr.str(std::string());
     std::string trail(temp);
@@ -465,6 +503,7 @@ void vHelix::atrail_()
     const char* argv6[] = {name.c_str(), temp.c_str(), trail.c_str()};
     atrail_verify::main(3, argv6, *this);
 }
+*/
 
 // convert rpoly to oxdna
 void vHelix::export_(const QVector<QVariant> &args)
@@ -508,17 +547,17 @@ void vHelix::export_(const QVector<QVariant> &args)
         sendToConsole_("Converting .PLY to .oxDNA...\n");
         //Py_Initialize();
 
-        qDebug() << "In the event handler\n";
+        std::cerr << "In the event handler\n";
 
         PyObject *pName = NULL;
         pName = PyUnicode_FromString("rpoly_oxDNA");
 
-        qDebug() << "Before module import: " <<
+        std::cerr << "Before module import: " <<
                     "\n pName:" << Py_REFCNT(pName) << "\n";
 
         PyObject *pModule = NULL;
         pModule = PyImport_Import(pName);
-        qDebug() << "After module import: "
+        std::cerr << "After module import: "
                     "\n pModule:" << Py_REFCNT(pModule) <<
                     "\n pName:" << Py_REFCNT(pName) << "\n";
         if (pModule == NULL) {
@@ -527,22 +566,22 @@ void vHelix::export_(const QVector<QVariant> &args)
             Py_DECREF(pName);
             return;
         }
-        qDebug() <<"Module imported successfully\n";
+        std::cerr <<"Module imported successfully\n";
         PyObject *pFunc = PyObject_GetAttrString(pModule, "main");
 
         if (pFunc && PyCallable_Check(pFunc)) {
-            qDebug() << "Callable function recognized\n";
+            std::cerr << "Callable function recognized\n";
             PyObject *pArgs = PyTuple_New(1);
             std::stringstream sstr;
             sstr << file;
             std::string input_file = sstr.str();
-            qDebug() << "BEFORE pValue set call: "
+            std::cerr << "BEFORE pValue set call: "
                         "\n pModule:" << Py_REFCNT(pModule) <<
                         "\n pArgs:" << Py_REFCNT(pArgs) <<
                         "\n pName:" << Py_REFCNT(pName) <<
                         "\n pFunc:" << Py_REFCNT(pFunc) << "\n";
             PyObject *pValue = PyUnicode_FromString(input_file.c_str());
-            qDebug() << "BEFORE args set call: "
+            std::cerr << "BEFORE args set call: "
                         "\n pModule:" << Py_REFCNT(pModule) <<
                         "\n pArgs:" << Py_REFCNT(pArgs) <<
                         "\n pValue:" << Py_REFCNT(pValue) <<
@@ -551,9 +590,9 @@ void vHelix::export_(const QVector<QVariant> &args)
             //Py_INCREF(pValue);
             PyTuple_SetItem(pArgs, 0, pValue); //pArgs steals the reference to pValue - pValue is a borrows reference
 
-            qDebug() << "Function args set\n";
+            std::cerr << "Function args set\n";
 
-            qDebug() << "BEFORE func call: "
+            std::cerr << "BEFORE func call: "
                         "\n pModule:" << Py_REFCNT(pModule) <<
                         "\n pArgs:" << Py_REFCNT(pArgs) <<
                         "\n pValue:" << Py_REFCNT(pValue) <<
@@ -562,8 +601,8 @@ void vHelix::export_(const QVector<QVariant> &args)
                         "\n pFunc:" << Py_REFCNT(pFunc) << "\n";
             PyObject *pRet = PyObject_CallObject(pFunc, pArgs);
             //PyObject_CallObject(pFunc, pArgs);
-            qDebug() << "Python function called successfully\n";
-            qDebug() << "BEFORE DECREF: "
+            std::cerr << "Python function called successfully\n";
+            std::cerr << "BEFORE DECREF: "
                         "\n pModule:" << Py_REFCNT(pModule) <<
                         "\n pArgs:" << Py_REFCNT(pArgs) <<
                         "\n pValue:" << Py_REFCNT(pValue) <<
@@ -577,7 +616,7 @@ void vHelix::export_(const QVector<QVariant> &args)
             // Py_DECREF(pValue); pArgs stole the reference and frees it
             Py_DECREF(pName);
 
-            qDebug() << "AFTER DECREF: "
+            std::cerr << "AFTER DECREF: "
                         "\n pModule:" << Py_REFCNT(pModule) <<
                         "\n pArgs:" << Py_REFCNT(pArgs) <<
                         "\n pValue:" << Py_REFCNT(pValue) <<
@@ -591,7 +630,7 @@ void vHelix::export_(const QVector<QVariant> &args)
 
 
 
-            qDebug() << "Values dereferenced\n";
+            std::cerr << "Values dereferenced\n";
             // copy files from executable directory to workspace
             std::stringstream workspace_oxDNA_file, workspace_top_file;
 
@@ -599,13 +638,13 @@ void vHelix::export_(const QVector<QVariant> &args)
             workspace_top_file << workspace_dir_ << "\\" << filename << ".top";
             std::string oxDNA_temp(workspace_oxDNA_file.str());
             std::string top_temp(workspace_top_file.str());
-            //qDebug() << oxDNA_temp.c_str() << ": temp\n";
+            //std::cerr << oxDNA_temp.c_str() << ": temp\n";
             std::stringstream oxDnadir, topdir;
             oxDnadir << path << "\\" << filename << ".oxdna";
             topdir << path << "\\" << filename << ".top";
             std::string oxDNA_copydir = oxDnadir.str();
             std::string top_copydir = topdir.str();
-            qDebug() << oxDNA_copydir.c_str() << ": copydir\n";
+            std::cerr << oxDNA_copydir.c_str() << ": copydir\n";
             if (QFile::rename(oxDNA_copydir.c_str(), oxDNA_temp.c_str())
             &&  QFile::rename(top_copydir.c_str(), top_temp.c_str())) {
                 sendToConsole_("Wrote .oxDNA and .top file to workspace\n");
@@ -716,16 +755,16 @@ std::pair<int,int> vHelix::estimate_base_use_(const QVector<QVariant> &args)
     return std::make_pair(estimated_use/2, plydata_->vertexnr*4);
 }
 
-void vHelix::physX_relaxation_(const QVector<QVariant> args)
+/*void vHelix::physX_relaxation_(const QVector<QVariant> args)
 {
-    /*
-     (double &scaling, bool &discretize_lengths, double &density,
+
+     /(double &scaling, bool &discretize_lengths, double &density,
                       double &spring_stiffness, double &fixed_spring_stiffness,
                       double &spring_damping, bool &attach_fixed,
                       double &static_friction, double &dynamic_friction,
                       double &restitution, double &rigid_body_sleep_threshold,
                       std::string &visual_debugger)
-    */
+    /
     std::stringstream sstr;
     sstr << vHelixFunc::ExePath() << "/../workspace/" << mesh_;
     std::string input = sstr.str();
@@ -764,4 +803,24 @@ void vHelix::physX_relaxation_(const QVector<QVariant> args)
     }
     const int iterations = args[12].toInt();
     relaxation::relax_main(input, output, dblArgs, iterations, boolArgs, *this);
+}*/
+void vHelix::physX_relaxation_(const QVector<QVariant> args)
+{
+
+     /*(double &scaling, bool &discretize_lengths, double &density,
+                      double &spring_stiffness, double &fixed_spring_stiffness,
+                      double &spring_damping, bool &attach_fixed,
+                      double &static_friction, double &dynamic_friction,
+                      double &restitution, double &rigid_body_sleep_threshold,
+                      std::string &visual_debugger)
+    */
+    std::stringstream sstr;
+    sstr << vHelixFunc::ExePath() << "/../workspace/" << mesh_;
+    std::string input = sstr.str();
+    std::string output = input;
+    output.resize(output.size() - 3);
+    output.append("rpoly");
+    std::cerr << "Running relaxation to " << output.c_str()<< std::endl;
+    design->relax(args);
+    sendToConsole_(design->getoutstream());
 }

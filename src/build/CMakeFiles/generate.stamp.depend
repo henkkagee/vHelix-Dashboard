@@ -1,0 +1,76 @@
+# CMake generation dependency list for this directory.
+C:/Program Files/CMake/share/cmake-3.20/Modules/CMakeCInformation.cmake
+C:/Program Files/CMake/share/cmake-3.20/Modules/CMakeCXXInformation.cmake
+C:/Program Files/CMake/share/cmake-3.20/Modules/CMakeCommonLanguageInclude.cmake
+C:/Program Files/CMake/share/cmake-3.20/Modules/CMakeGenericSystem.cmake
+C:/Program Files/CMake/share/cmake-3.20/Modules/CMakeInitializeConfigs.cmake
+C:/Program Files/CMake/share/cmake-3.20/Modules/CMakeLanguageInformation.cmake
+C:/Program Files/CMake/share/cmake-3.20/Modules/CMakeParseArguments.cmake
+C:/Program Files/CMake/share/cmake-3.20/Modules/CMakeRCInformation.cmake
+C:/Program Files/CMake/share/cmake-3.20/Modules/CMakeSystemSpecificInformation.cmake
+C:/Program Files/CMake/share/cmake-3.20/Modules/CMakeSystemSpecificInitialize.cmake
+C:/Program Files/CMake/share/cmake-3.20/Modules/Compiler/CMakeCommonCompilerMacros.cmake
+C:/Program Files/CMake/share/cmake-3.20/Modules/Compiler/MSVC-C.cmake
+C:/Program Files/CMake/share/cmake-3.20/Modules/Compiler/MSVC-CXX.cmake
+C:/Program Files/CMake/share/cmake-3.20/Modules/Platform/Windows-MSVC-C.cmake
+C:/Program Files/CMake/share/cmake-3.20/Modules/Platform/Windows-MSVC-CXX.cmake
+C:/Program Files/CMake/share/cmake-3.20/Modules/Platform/Windows-MSVC.cmake
+C:/Program Files/CMake/share/cmake-3.20/Modules/Platform/Windows.cmake
+C:/Program Files/CMake/share/cmake-3.20/Modules/Platform/WindowsPaths.cmake
+C:/Qt/5.9.9/msvc2017_64/lib/cmake/Qt5/Qt5Config.cmake
+C:/Qt/5.9.9/msvc2017_64/lib/cmake/Qt5/Qt5ConfigVersion.cmake
+C:/Qt/5.9.9/msvc2017_64/lib/cmake/Qt5/Qt5ModuleLocation.cmake
+C:/Qt/5.9.9/msvc2017_64/lib/cmake/Qt53DCore/Qt53DCoreConfig.cmake
+C:/Qt/5.9.9/msvc2017_64/lib/cmake/Qt53DCore/Qt53DCoreConfigVersion.cmake
+C:/Qt/5.9.9/msvc2017_64/lib/cmake/Qt53DExtras/Qt53DExtrasConfig.cmake
+C:/Qt/5.9.9/msvc2017_64/lib/cmake/Qt53DExtras/Qt53DExtrasConfigVersion.cmake
+C:/Qt/5.9.9/msvc2017_64/lib/cmake/Qt53DInput/Qt53DInputConfig.cmake
+C:/Qt/5.9.9/msvc2017_64/lib/cmake/Qt53DInput/Qt53DInputConfigVersion.cmake
+C:/Qt/5.9.9/msvc2017_64/lib/cmake/Qt53DLogic/Qt53DLogicConfig.cmake
+C:/Qt/5.9.9/msvc2017_64/lib/cmake/Qt53DLogic/Qt53DLogicConfigVersion.cmake
+C:/Qt/5.9.9/msvc2017_64/lib/cmake/Qt53DRender/Qt53DRenderConfig.cmake
+C:/Qt/5.9.9/msvc2017_64/lib/cmake/Qt53DRender/Qt53DRenderConfigVersion.cmake
+C:/Qt/5.9.9/msvc2017_64/lib/cmake/Qt53DRender/Qt53DRender_AssimpSceneImportPlugin.cmake
+C:/Qt/5.9.9/msvc2017_64/lib/cmake/Qt53DRender/Qt53DRender_DefaultGeometryLoaderPlugin.cmake
+C:/Qt/5.9.9/msvc2017_64/lib/cmake/Qt53DRender/Qt53DRender_GLTFGeometryLoaderPlugin.cmake
+C:/Qt/5.9.9/msvc2017_64/lib/cmake/Qt53DRender/Qt53DRender_GLTFSceneExportPlugin.cmake
+C:/Qt/5.9.9/msvc2017_64/lib/cmake/Qt53DRender/Qt53DRender_GLTFSceneImportPlugin.cmake
+C:/Qt/5.9.9/msvc2017_64/lib/cmake/Qt53DRender/Qt53DRender_Scene2DPlugin.cmake
+C:/Qt/5.9.9/msvc2017_64/lib/cmake/Qt5Core/Qt5CoreConfig.cmake
+C:/Qt/5.9.9/msvc2017_64/lib/cmake/Qt5Core/Qt5CoreConfigExtras.cmake
+C:/Qt/5.9.9/msvc2017_64/lib/cmake/Qt5Core/Qt5CoreConfigExtrasMkspecDir.cmake
+C:/Qt/5.9.9/msvc2017_64/lib/cmake/Qt5Core/Qt5CoreConfigVersion.cmake
+C:/Qt/5.9.9/msvc2017_64/lib/cmake/Qt5Core/Qt5CoreMacros.cmake
+C:/Qt/5.9.9/msvc2017_64/lib/cmake/Qt5Gamepad/Qt5GamepadConfig.cmake
+C:/Qt/5.9.9/msvc2017_64/lib/cmake/Qt5Gamepad/Qt5GamepadConfigVersion.cmake
+C:/Qt/5.9.9/msvc2017_64/lib/cmake/Qt5Gamepad/Qt5Gamepad_QXInputGamepadBackendPlugin.cmake
+C:/Qt/5.9.9/msvc2017_64/lib/cmake/Qt5Gui/Qt5GuiConfig.cmake
+C:/Qt/5.9.9/msvc2017_64/lib/cmake/Qt5Gui/Qt5GuiConfigExtras.cmake
+C:/Qt/5.9.9/msvc2017_64/lib/cmake/Qt5Gui/Qt5GuiConfigVersion.cmake
+C:/Qt/5.9.9/msvc2017_64/lib/cmake/Qt5Gui/Qt5Gui_QGifPlugin.cmake
+C:/Qt/5.9.9/msvc2017_64/lib/cmake/Qt5Gui/Qt5Gui_QICNSPlugin.cmake
+C:/Qt/5.9.9/msvc2017_64/lib/cmake/Qt5Gui/Qt5Gui_QICOPlugin.cmake
+C:/Qt/5.9.9/msvc2017_64/lib/cmake/Qt5Gui/Qt5Gui_QJpegPlugin.cmake
+C:/Qt/5.9.9/msvc2017_64/lib/cmake/Qt5Gui/Qt5Gui_QMinimalIntegrationPlugin.cmake
+C:/Qt/5.9.9/msvc2017_64/lib/cmake/Qt5Gui/Qt5Gui_QOffscreenIntegrationPlugin.cmake
+C:/Qt/5.9.9/msvc2017_64/lib/cmake/Qt5Gui/Qt5Gui_QTgaPlugin.cmake
+C:/Qt/5.9.9/msvc2017_64/lib/cmake/Qt5Gui/Qt5Gui_QTiffPlugin.cmake
+C:/Qt/5.9.9/msvc2017_64/lib/cmake/Qt5Gui/Qt5Gui_QTuioTouchPlugin.cmake
+C:/Qt/5.9.9/msvc2017_64/lib/cmake/Qt5Gui/Qt5Gui_QVirtualKeyboardPlugin.cmake
+C:/Qt/5.9.9/msvc2017_64/lib/cmake/Qt5Gui/Qt5Gui_QWbmpPlugin.cmake
+C:/Qt/5.9.9/msvc2017_64/lib/cmake/Qt5Gui/Qt5Gui_QWebpPlugin.cmake
+C:/Qt/5.9.9/msvc2017_64/lib/cmake/Qt5Gui/Qt5Gui_QWindowsDirect2DIntegrationPlugin.cmake
+C:/Qt/5.9.9/msvc2017_64/lib/cmake/Qt5Gui/Qt5Gui_QWindowsIntegrationPlugin.cmake
+C:/Qt/5.9.9/msvc2017_64/lib/cmake/Qt5Network/Qt5NetworkConfig.cmake
+C:/Qt/5.9.9/msvc2017_64/lib/cmake/Qt5Network/Qt5NetworkConfigVersion.cmake
+C:/Qt/5.9.9/msvc2017_64/lib/cmake/Qt5Network/Qt5Network_QGenericEnginePlugin.cmake
+C:/Qt/5.9.9/msvc2017_64/lib/cmake/Qt5Widgets/Qt5WidgetsConfig.cmake
+C:/Qt/5.9.9/msvc2017_64/lib/cmake/Qt5Widgets/Qt5WidgetsConfigExtras.cmake
+C:/Qt/5.9.9/msvc2017_64/lib/cmake/Qt5Widgets/Qt5WidgetsConfigVersion.cmake
+C:/Qt/5.9.9/msvc2017_64/lib/cmake/Qt5Widgets/Qt5WidgetsMacros.cmake
+C:/Users/emilh/Documents/Tyot/vHelix-Dashboard/src/build/CMakeFiles/3.20.3/CMakeCCompiler.cmake
+C:/Users/emilh/Documents/Tyot/vHelix-Dashboard/src/build/CMakeFiles/3.20.3/CMakeCXXCompiler.cmake
+C:/Users/emilh/Documents/Tyot/vHelix-Dashboard/src/build/CMakeFiles/3.20.3/CMakeRCCompiler.cmake
+C:/Users/emilh/Documents/Tyot/vHelix-Dashboard/src/build/CMakeFiles/3.20.3/CMakeSystem.cmake
+C:/Users/emilh/Documents/Tyot/vHelix-Dashboard/src/vHelix/CMakeLists.txt
+C:/Users/emilh/Documents/Tyot/vHelix-Dashboard/src/vHelix/stylesheet/breeze.qrc

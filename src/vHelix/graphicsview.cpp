@@ -241,6 +241,7 @@ void GraphicsView::drawStrands(std::vector<Model::Strand> strands)
     QColor colour;
     unsigned long long int num = 0;
     unsigned int col = 0;
+    #pragma omp parallel for
     for (auto &s : strands) {
         if (s.scaffold_) {
             colour = scaffold_colour;

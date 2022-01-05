@@ -241,7 +241,7 @@ bool ply_to_embedding::ply_to_embedding(std::string input_filename, embedding_t 
 						while (face_neigh_list[i][k].forw != embedding[i].front())
 						{
 							k++;
-							if (k == face_neigh_list[i].size())
+                            if (k == face_neigh_list[i].size()-1)
 							{
 								break;
 							}

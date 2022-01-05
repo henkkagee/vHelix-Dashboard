@@ -1,0 +1,449 @@
+{
+	"BUILD_DIR" : "C:/Users/emilh/Documents/Tyot/vHelix-Dashboard/src/build/vHelix_autogen",
+	"CMAKE_BINARY_DIR" : "C:/Users/emilh/Documents/Tyot/vHelix-Dashboard/src/build",
+	"CMAKE_CURRENT_BINARY_DIR" : "C:/Users/emilh/Documents/Tyot/vHelix-Dashboard/src/build",
+	"CMAKE_CURRENT_SOURCE_DIR" : "C:/Users/emilh/Documents/Tyot/vHelix-Dashboard/src/vHelix",
+	"CMAKE_EXECUTABLE" : "C:/Program Files/CMake/bin/cmake.exe",
+	"CMAKE_LIST_FILES" : 
+	[
+		"C:/Users/emilh/Documents/Tyot/vHelix-Dashboard/src/vHelix/CMakeLists.txt",
+		"C:/Users/emilh/Documents/Tyot/vHelix-Dashboard/src/build/CMakeFiles/3.20.3/CMakeSystem.cmake",
+		"C:/Program Files/CMake/share/cmake-3.20/Modules/CMakeSystemSpecificInitialize.cmake",
+		"C:/Users/emilh/Documents/Tyot/vHelix-Dashboard/src/build/CMakeFiles/3.20.3/CMakeCXXCompiler.cmake",
+		"C:/Program Files/CMake/share/cmake-3.20/Modules/CMakeSystemSpecificInformation.cmake",
+		"C:/Program Files/CMake/share/cmake-3.20/Modules/CMakeGenericSystem.cmake",
+		"C:/Program Files/CMake/share/cmake-3.20/Modules/CMakeInitializeConfigs.cmake",
+		"C:/Program Files/CMake/share/cmake-3.20/Modules/Platform/Windows.cmake",
+		"C:/Program Files/CMake/share/cmake-3.20/Modules/Platform/WindowsPaths.cmake",
+		"C:/Program Files/CMake/share/cmake-3.20/Modules/CMakeCXXInformation.cmake",
+		"C:/Program Files/CMake/share/cmake-3.20/Modules/CMakeLanguageInformation.cmake",
+		"C:/Program Files/CMake/share/cmake-3.20/Modules/Compiler/MSVC-CXX.cmake",
+		"C:/Program Files/CMake/share/cmake-3.20/Modules/Compiler/CMakeCommonCompilerMacros.cmake",
+		"C:/Program Files/CMake/share/cmake-3.20/Modules/Platform/Windows-MSVC-CXX.cmake",
+		"C:/Program Files/CMake/share/cmake-3.20/Modules/Platform/Windows-MSVC.cmake",
+		"C:/Users/emilh/Documents/Tyot/vHelix-Dashboard/src/build/CMakeFiles/3.20.3/CMakeRCCompiler.cmake",
+		"C:/Program Files/CMake/share/cmake-3.20/Modules/CMakeRCInformation.cmake",
+		"C:/Program Files/CMake/share/cmake-3.20/Modules/CMakeCommonLanguageInclude.cmake",
+		"C:/Users/emilh/Documents/Tyot/vHelix-Dashboard/src/build/CMakeFiles/3.20.3/CMakeCCompiler.cmake",
+		"C:/Program Files/CMake/share/cmake-3.20/Modules/CMakeCInformation.cmake",
+		"C:/Program Files/CMake/share/cmake-3.20/Modules/CMakeLanguageInformation.cmake",
+		"C:/Program Files/CMake/share/cmake-3.20/Modules/Compiler/MSVC-C.cmake",
+		"C:/Program Files/CMake/share/cmake-3.20/Modules/Compiler/CMakeCommonCompilerMacros.cmake",
+		"C:/Program Files/CMake/share/cmake-3.20/Modules/Platform/Windows-MSVC-C.cmake",
+		"C:/Program Files/CMake/share/cmake-3.20/Modules/Platform/Windows-MSVC.cmake",
+		"C:/Program Files/CMake/share/cmake-3.20/Modules/CMakeCommonLanguageInclude.cmake",
+		"C:/Qt/5.9.9/msvc2017_64/lib/cmake/Qt5/Qt5ConfigVersion.cmake",
+		"C:/Qt/5.9.9/msvc2017_64/lib/cmake/Qt5/Qt5Config.cmake",
+		"C:/Qt/5.9.9/msvc2017_64/lib/cmake/Qt5/Qt5ModuleLocation.cmake",
+		"C:/Qt/5.9.9/msvc2017_64/lib/cmake/Qt5Core/Qt5CoreConfigVersion.cmake",
+		"C:/Qt/5.9.9/msvc2017_64/lib/cmake/Qt5Core/Qt5CoreConfig.cmake",
+		"C:/Qt/5.9.9/msvc2017_64/lib/cmake/Qt5Core/Qt5CoreConfigExtras.cmake",
+		"C:/Qt/5.9.9/msvc2017_64/lib/cmake/Qt5Core/Qt5CoreConfigExtrasMkspecDir.cmake",
+		"C:/Qt/5.9.9/msvc2017_64/lib/cmake/Qt5Core/Qt5CoreMacros.cmake",
+		"C:/Program Files/CMake/share/cmake-3.20/Modules/CMakeParseArguments.cmake",
+		"C:/Qt/5.9.9/msvc2017_64/lib/cmake/Qt5Gui/Qt5GuiConfigVersion.cmake",
+		"C:/Qt/5.9.9/msvc2017_64/lib/cmake/Qt5Gui/Qt5GuiConfig.cmake",
+		"C:/Qt/5.9.9/msvc2017_64/lib/cmake/Qt5Gui/Qt5Gui_QGifPlugin.cmake",
+		"C:/Qt/5.9.9/msvc2017_64/lib/cmake/Qt5Gui/Qt5Gui_QICNSPlugin.cmake",
+		"C:/Qt/5.9.9/msvc2017_64/lib/cmake/Qt5Gui/Qt5Gui_QICOPlugin.cmake",
+		"C:/Qt/5.9.9/msvc2017_64/lib/cmake/Qt5Gui/Qt5Gui_QJpegPlugin.cmake",
+		"C:/Qt/5.9.9/msvc2017_64/lib/cmake/Qt5Gui/Qt5Gui_QMinimalIntegrationPlugin.cmake",
+		"C:/Qt/5.9.9/msvc2017_64/lib/cmake/Qt5Gui/Qt5Gui_QOffscreenIntegrationPlugin.cmake",
+		"C:/Qt/5.9.9/msvc2017_64/lib/cmake/Qt5Gui/Qt5Gui_QTgaPlugin.cmake",
+		"C:/Qt/5.9.9/msvc2017_64/lib/cmake/Qt5Gui/Qt5Gui_QTiffPlugin.cmake",
+		"C:/Qt/5.9.9/msvc2017_64/lib/cmake/Qt5Gui/Qt5Gui_QTuioTouchPlugin.cmake",
+		"C:/Qt/5.9.9/msvc2017_64/lib/cmake/Qt5Gui/Qt5Gui_QVirtualKeyboardPlugin.cmake",
+		"C:/Qt/5.9.9/msvc2017_64/lib/cmake/Qt5Gui/Qt5Gui_QWbmpPlugin.cmake",
+		"C:/Qt/5.9.9/msvc2017_64/lib/cmake/Qt5Gui/Qt5Gui_QWebpPlugin.cmake",
+		"C:/Qt/5.9.9/msvc2017_64/lib/cmake/Qt5Gui/Qt5Gui_QWindowsDirect2DIntegrationPlugin.cmake",
+		"C:/Qt/5.9.9/msvc2017_64/lib/cmake/Qt5Gui/Qt5Gui_QWindowsIntegrationPlugin.cmake",
+		"C:/Qt/5.9.9/msvc2017_64/lib/cmake/Qt5Gui/Qt5GuiConfigExtras.cmake",
+		"C:/Qt/5.9.9/msvc2017_64/lib/cmake/Qt5Widgets/Qt5WidgetsConfigVersion.cmake",
+		"C:/Qt/5.9.9/msvc2017_64/lib/cmake/Qt5Widgets/Qt5WidgetsConfig.cmake",
+		"C:/Qt/5.9.9/msvc2017_64/lib/cmake/Qt5Widgets/Qt5WidgetsConfigExtras.cmake",
+		"C:/Qt/5.9.9/msvc2017_64/lib/cmake/Qt5Widgets/Qt5WidgetsMacros.cmake",
+		"C:/Program Files/CMake/share/cmake-3.20/Modules/CMakeParseArguments.cmake",
+		"C:/Qt/5.9.9/msvc2017_64/lib/cmake/Qt53DCore/Qt53DCoreConfigVersion.cmake",
+		"C:/Qt/5.9.9/msvc2017_64/lib/cmake/Qt53DCore/Qt53DCoreConfig.cmake",
+		"C:/Qt/5.9.9/msvc2017_64/lib/cmake/Qt5Network/Qt5NetworkConfigVersion.cmake",
+		"C:/Qt/5.9.9/msvc2017_64/lib/cmake/Qt5Network/Qt5NetworkConfig.cmake",
+		"C:/Qt/5.9.9/msvc2017_64/lib/cmake/Qt5Network/Qt5Network_QGenericEnginePlugin.cmake",
+		"C:/Qt/5.9.9/msvc2017_64/lib/cmake/Qt53DExtras/Qt53DExtrasConfigVersion.cmake",
+		"C:/Qt/5.9.9/msvc2017_64/lib/cmake/Qt53DExtras/Qt53DExtrasConfig.cmake",
+		"C:/Qt/5.9.9/msvc2017_64/lib/cmake/Qt53DRender/Qt53DRenderConfigVersion.cmake",
+		"C:/Qt/5.9.9/msvc2017_64/lib/cmake/Qt53DRender/Qt53DRenderConfig.cmake",
+		"C:/Qt/5.9.9/msvc2017_64/lib/cmake/Qt53DRender/Qt53DRender_AssimpSceneImportPlugin.cmake",
+		"C:/Qt/5.9.9/msvc2017_64/lib/cmake/Qt53DRender/Qt53DRender_DefaultGeometryLoaderPlugin.cmake",
+		"C:/Qt/5.9.9/msvc2017_64/lib/cmake/Qt53DRender/Qt53DRender_GLTFGeometryLoaderPlugin.cmake",
+		"C:/Qt/5.9.9/msvc2017_64/lib/cmake/Qt53DRender/Qt53DRender_GLTFSceneExportPlugin.cmake",
+		"C:/Qt/5.9.9/msvc2017_64/lib/cmake/Qt53DRender/Qt53DRender_GLTFSceneImportPlugin.cmake",
+		"C:/Qt/5.9.9/msvc2017_64/lib/cmake/Qt53DRender/Qt53DRender_Scene2DPlugin.cmake",
+		"C:/Qt/5.9.9/msvc2017_64/lib/cmake/Qt53DInput/Qt53DInputConfigVersion.cmake",
+		"C:/Qt/5.9.9/msvc2017_64/lib/cmake/Qt53DInput/Qt53DInputConfig.cmake",
+		"C:/Qt/5.9.9/msvc2017_64/lib/cmake/Qt5Gamepad/Qt5GamepadConfigVersion.cmake",
+		"C:/Qt/5.9.9/msvc2017_64/lib/cmake/Qt5Gamepad/Qt5GamepadConfig.cmake",
+		"C:/Qt/5.9.9/msvc2017_64/lib/cmake/Qt5Gamepad/Qt5Gamepad_QXInputGamepadBackendPlugin.cmake",
+		"C:/Qt/5.9.9/msvc2017_64/lib/cmake/Qt53DLogic/Qt53DLogicConfigVersion.cmake",
+		"C:/Qt/5.9.9/msvc2017_64/lib/cmake/Qt53DLogic/Qt53DLogicConfig.cmake",
+		"C:/Qt/5.9.9/msvc2017_64/lib/cmake/Qt53DRender/Qt53DRenderConfigVersion.cmake",
+		"C:/Qt/5.9.9/msvc2017_64/lib/cmake/Qt53DRender/Qt53DRenderConfig.cmake",
+		"C:/Qt/5.9.9/msvc2017_64/lib/cmake/Qt53DInput/Qt53DInputConfigVersion.cmake",
+		"C:/Qt/5.9.9/msvc2017_64/lib/cmake/Qt53DInput/Qt53DInputConfig.cmake",
+		"C:/Users/emilh/Documents/Tyot/vHelix-Dashboard/src/vHelix/stylesheet/breeze.qrc"
+	],
+	"CMAKE_SOURCE_DIR" : "C:/Users/emilh/Documents/Tyot/vHelix-Dashboard/src/vHelix",
+	"DEP_FILE" : "",
+	"DEP_FILE_RULE_NAME" : "",
+	"HEADERS" : 
+	[
+		[
+			"C:/Users/emilh/Documents/Tyot/vHelix-Dashboard/src/vHelix/OBJ-Loader-master/Source/OBJ_Loader.h",
+			"MU",
+			"X5SBO7CMBE/moc_OBJ_Loader.cpp",
+			null
+		],
+		[
+			"C:/Users/emilh/Documents/Tyot/vHelix-Dashboard/src/vHelix/atrail.h",
+			"MU",
+			"EWIEGA46WW/moc_atrail.cpp",
+			null
+		],
+		[
+			"C:/Users/emilh/Documents/Tyot/vHelix-Dashboard/src/vHelix/console.h",
+			"MU",
+			"EWIEGA46WW/moc_console.cpp",
+			null
+		],
+		[
+			"C:/Users/emilh/Documents/Tyot/vHelix-Dashboard/src/vHelix/design.h",
+			"MU",
+			"EWIEGA46WW/moc_design.cpp",
+			null
+		],
+		[
+			"C:/Users/emilh/Documents/Tyot/vHelix-Dashboard/src/vHelix/dirview.h",
+			"MU",
+			"EWIEGA46WW/moc_dirview.cpp",
+			null
+		],
+		[
+			"C:/Users/emilh/Documents/Tyot/vHelix-Dashboard/src/vHelix/dna.h",
+			"MU",
+			"EWIEGA46WW/moc_dna.cpp",
+			null
+		],
+		[
+			"C:/Users/emilh/Documents/Tyot/vHelix-Dashboard/src/vHelix/graphicsview.h",
+			"MU",
+			"EWIEGA46WW/moc_graphicsview.cpp",
+			null
+		],
+		[
+			"C:/Users/emilh/Documents/Tyot/vHelix-Dashboard/src/vHelix/happly-master/happly.h",
+			"MU",
+			"AZHZ2S4A3N/moc_happly.cpp",
+			null
+		],
+		[
+			"C:/Users/emilh/Documents/Tyot/vHelix-Dashboard/src/vHelix/include/mayahelix/Definition.h",
+			"MU",
+			"Z6QOXPXPZA/moc_Definition.cpp",
+			null
+		],
+		[
+			"C:/Users/emilh/Documents/Tyot/vHelix-Dashboard/src/vHelix/mainwindow.h",
+			"MU",
+			"EWIEGA46WW/moc_mainwindow.cpp",
+			null
+		],
+		[
+			"C:/Users/emilh/Documents/Tyot/vHelix-Dashboard/src/vHelix/model.h",
+			"MU",
+			"EWIEGA46WW/moc_model.cpp",
+			null
+		],
+		[
+			"C:/Users/emilh/Documents/Tyot/vHelix-Dashboard/src/vHelix/modelhandler.h",
+			"MU",
+			"EWIEGA46WW/moc_modelhandler.cpp",
+			null
+		],
+		[
+			"C:/Users/emilh/Documents/Tyot/vHelix-Dashboard/src/vHelix/physxrelaxation.h",
+			"MU",
+			"EWIEGA46WW/moc_physxrelaxation.cpp",
+			null
+		],
+		[
+			"C:/Users/emilh/Documents/Tyot/vHelix-Dashboard/src/vHelix/processio.h",
+			"MU",
+			"EWIEGA46WW/moc_processio.cpp",
+			null
+		],
+		[
+			"C:/Users/emilh/Documents/Tyot/vHelix-Dashboard/src/vHelix/relaxation.h",
+			"MU",
+			"EWIEGA46WW/moc_relaxation.cpp",
+			null
+		],
+		[
+			"C:/Users/emilh/Documents/Tyot/vHelix-Dashboard/src/vHelix/scaffold_free.h",
+			"MU",
+			"EWIEGA46WW/moc_scaffold_free.cpp",
+			null
+		],
+		[
+			"C:/Users/emilh/Documents/Tyot/vHelix-Dashboard/src/vHelix/scaffold_routing_rectification/DNA.h",
+			"MU",
+			"74KQ6UK7O4/moc_DNA.cpp",
+			null
+		],
+		[
+			"C:/Users/emilh/Documents/Tyot/vHelix-Dashboard/src/vHelix/scaffold_routing_rectification/Definition.h",
+			"MU",
+			"74KQ6UK7O4/moc_Definition.cpp",
+			null
+		],
+		[
+			"C:/Users/emilh/Documents/Tyot/vHelix-Dashboard/src/vHelix/scaffold_routing_rectification/Helix.h",
+			"MU",
+			"74KQ6UK7O4/moc_Helix.cpp",
+			null
+		],
+		[
+			"C:/Users/emilh/Documents/Tyot/vHelix-Dashboard/src/vHelix/scaffold_routing_rectification/ParseSettings.h",
+			"MU",
+			"74KQ6UK7O4/moc_ParseSettings.cpp",
+			null
+		],
+		[
+			"C:/Users/emilh/Documents/Tyot/vHelix-Dashboard/src/vHelix/scaffold_routing_rectification/Physics.h",
+			"MU",
+			"74KQ6UK7O4/moc_Physics.cpp",
+			null
+		],
+		[
+			"C:/Users/emilh/Documents/Tyot/vHelix-Dashboard/src/vHelix/scaffold_routing_rectification/Relaxmain.h",
+			"MU",
+			"74KQ6UK7O4/moc_Relaxmain.cpp",
+			null
+		],
+		[
+			"C:/Users/emilh/Documents/Tyot/vHelix-Dashboard/src/vHelix/scaffold_routing_rectification/Relaxmain.hpp",
+			"MU",
+			"74KQ6UK7O4/moc_Relaxmain_hpp.cpp",
+			null
+		],
+		[
+			"C:/Users/emilh/Documents/Tyot/vHelix-Dashboard/src/vHelix/scaffold_routing_rectification/Scene.h",
+			"MU",
+			"74KQ6UK7O4/moc_Scene.cpp",
+			null
+		],
+		[
+			"C:/Users/emilh/Documents/Tyot/vHelix-Dashboard/src/vHelix/scaffold_routing_rectification/SimulatedAnnealing.h",
+			"MU",
+			"74KQ6UK7O4/moc_SimulatedAnnealing.cpp",
+			null
+		],
+		[
+			"C:/Users/emilh/Documents/Tyot/vHelix-Dashboard/src/vHelix/scaffold_routing_rectification/Utility.h",
+			"MU",
+			"74KQ6UK7O4/moc_Utility.cpp",
+			null
+		],
+		[
+			"C:/Users/emilh/Documents/Tyot/vHelix-Dashboard/src/vHelix/utils.h",
+			"MU",
+			"EWIEGA46WW/moc_utils.cpp",
+			null
+		],
+		[
+			"C:/Users/emilh/Documents/Tyot/vHelix-Dashboard/src/vHelix/vhelix.h",
+			"MU",
+			"EWIEGA46WW/moc_vhelix.cpp",
+			null
+		]
+	],
+	"HEADER_EXTENSIONS" : [ "h", "hh", "h++", "hm", "hpp", "hxx", "in", "txx" ],
+	"INCLUDE_DIR" : "C:/Users/emilh/Documents/Tyot/vHelix-Dashboard/src/build/vHelix_autogen/include",
+	"MOC_COMPILATION_FILE" : "C:/Users/emilh/Documents/Tyot/vHelix-Dashboard/src/build/vHelix_autogen/mocs_compilation.cpp",
+	"MOC_DEFINITIONS" : 
+	[
+		"JSON_DIAGNOSTICS=0",
+		"JSON_USE_IMPLICIT_CONVERSIONS=1",
+		"QT_3DCORE_LIB",
+		"QT_3DEXTRAS_LIB",
+		"QT_3DINPUT_LIB",
+		"QT_3DLOGIC_LIB",
+		"QT_3DRENDER_LIB",
+		"QT_CORE_LIB",
+		"QT_GAMEPAD_LIB",
+		"QT_GUI_LIB",
+		"QT_NETWORK_LIB",
+		"QT_NO_DEBUG",
+		"QT_WIDGETS_LIB",
+		"WIN32"
+	],
+	"MOC_DEPEND_FILTERS" : 
+	[
+		[
+			"Q_PLUGIN_METADATA",
+			"[\n][ \t]*Q_PLUGIN_METADATA[ \t]*\\([^\\)]*FILE[ \t]*\"([^\"]+)\""
+		]
+	],
+	"MOC_INCLUDES" : 
+	[
+		"C:/Users/emilh/Documents/Tyot/vHelix-Dashboard/src/build",
+		"C:/Users/emilh/Documents/Tyot/vHelix-Dashboard/src/vHelix",
+		"C:/Users/emilh/Documents/Tyot/vHelix-Dashboard/src/vHelix/include",
+		"C:/Python38/include",
+		"C:/Users/emilh/Documents/Tyot/vHelix-Dashboard/src/vHelix/include/json/single_include",
+		"C:/Qt/5.9.9/msvc2017_64/include",
+		"C:/Qt/5.9.9/msvc2017_64/include/QtWidgets",
+		"C:/Qt/5.9.9/msvc2017_64/include/QtGui",
+		"C:/Qt/5.9.9/msvc2017_64/include/QtANGLE",
+		"C:/Qt/5.9.9/msvc2017_64/include/QtCore",
+		"C:/Qt/5.9.9/msvc2017_64/mkspecs/win32-msvc",
+		"C:/Qt/5.9.9/msvc2017_64/include/Qt3DCore",
+		"C:/Qt/5.9.9/msvc2017_64/include/QtNetwork",
+		"C:/Qt/5.9.9/msvc2017_64/include/Qt3DExtras",
+		"C:/Qt/5.9.9/msvc2017_64/include/Qt3DRender",
+		"C:/Qt/5.9.9/msvc2017_64/include/Qt3DInput",
+		"C:/Qt/5.9.9/msvc2017_64/include/QtGamepad",
+		"C:/Qt/5.9.9/msvc2017_64/include/Qt3DLogic"
+	],
+	"MOC_MACRO_NAMES" : [ "Q_OBJECT", "Q_GADGET", "Q_NAMESPACE", "Q_NAMESPACE_EXPORT" ],
+	"MOC_OPTIONS" : [],
+	"MOC_PATH_PREFIX" : false,
+	"MOC_PREDEFS_CMD" : [],
+	"MOC_PREDEFS_FILE" : "",
+	"MOC_RELAXED_MODE" : false,
+	"MOC_SKIP" : [],
+	"MULTI_CONFIG" : false,
+	"PARALLEL" : 4,
+	"PARSE_CACHE_FILE" : "C:/Users/emilh/Documents/Tyot/vHelix-Dashboard/src/build/CMakeFiles/vHelix_autogen.dir/ParseCache.txt",
+	"QT_MOC_EXECUTABLE" : "C:/Qt/5.9.9/msvc2017_64/bin/moc.exe",
+	"QT_UIC_EXECUTABLE" : "C:/Qt/5.9.9/msvc2017_64/bin/uic.exe",
+	"QT_VERSION_MAJOR" : 5,
+	"QT_VERSION_MINOR" : 9,
+	"SETTINGS_FILE" : "C:/Users/emilh/Documents/Tyot/vHelix-Dashboard/src/build/CMakeFiles/vHelix_autogen.dir/AutogenUsed.txt",
+	"SOURCES" : 
+	[
+		[
+			"C:/Users/emilh/Documents/Tyot/vHelix-Dashboard/src/vHelix/atrail.cpp",
+			"MU",
+			null
+		],
+		[
+			"C:/Users/emilh/Documents/Tyot/vHelix-Dashboard/src/vHelix/console.cpp",
+			"MU",
+			null
+		],
+		[
+			"C:/Users/emilh/Documents/Tyot/vHelix-Dashboard/src/vHelix/design.cpp",
+			"MU",
+			null
+		],
+		[
+			"C:/Users/emilh/Documents/Tyot/vHelix-Dashboard/src/vHelix/dirview.cpp",
+			"MU",
+			null
+		],
+		[
+			"C:/Users/emilh/Documents/Tyot/vHelix-Dashboard/src/vHelix/dna.cpp",
+			"MU",
+			null
+		],
+		[
+			"C:/Users/emilh/Documents/Tyot/vHelix-Dashboard/src/vHelix/graphicsview.cpp",
+			"MU",
+			null
+		],
+		[
+			"C:/Users/emilh/Documents/Tyot/vHelix-Dashboard/src/vHelix/main.cpp",
+			"MU",
+			null
+		],
+		[
+			"C:/Users/emilh/Documents/Tyot/vHelix-Dashboard/src/vHelix/mainwindow.cpp",
+			"MU",
+			null
+		],
+		[
+			"C:/Users/emilh/Documents/Tyot/vHelix-Dashboard/src/vHelix/model.cpp",
+			"MU",
+			null
+		],
+		[
+			"C:/Users/emilh/Documents/Tyot/vHelix-Dashboard/src/vHelix/modelhandler.cpp",
+			"MU",
+			null
+		],
+		[
+			"C:/Users/emilh/Documents/Tyot/vHelix-Dashboard/src/vHelix/physxrelaxation.cpp",
+			"MU",
+			null
+		],
+		[
+			"C:/Users/emilh/Documents/Tyot/vHelix-Dashboard/src/vHelix/processio.cpp",
+			"MU",
+			null
+		],
+		[
+			"C:/Users/emilh/Documents/Tyot/vHelix-Dashboard/src/vHelix/relaxation.cpp",
+			"MU",
+			null
+		],
+		[
+			"C:/Users/emilh/Documents/Tyot/vHelix-Dashboard/src/vHelix/scaffold_free.cpp",
+			"MU",
+			null
+		],
+		[
+			"C:/Users/emilh/Documents/Tyot/vHelix-Dashboard/src/vHelix/scaffold_routing_rectification/Definition.cpp",
+			"MU",
+			null
+		],
+		[
+			"C:/Users/emilh/Documents/Tyot/vHelix-Dashboard/src/vHelix/scaffold_routing_rectification/Helix.cpp",
+			"MU",
+			null
+		],
+		[
+			"C:/Users/emilh/Documents/Tyot/vHelix-Dashboard/src/vHelix/scaffold_routing_rectification/Physics.cpp",
+			"MU",
+			null
+		],
+		[
+			"C:/Users/emilh/Documents/Tyot/vHelix-Dashboard/src/vHelix/scaffold_routing_rectification/Relaxmain.cpp",
+			"MU",
+			null
+		],
+		[
+			"C:/Users/emilh/Documents/Tyot/vHelix-Dashboard/src/vHelix/scaffold_routing_rectification/Scene.cpp",
+			"MU",
+			null
+		],
+		[
+			"C:/Users/emilh/Documents/Tyot/vHelix-Dashboard/src/vHelix/scaffold_routing_rectification/Utility.cpp",
+			"MU",
+			null
+		],
+		[
+			"C:/Users/emilh/Documents/Tyot/vHelix-Dashboard/src/vHelix/utils.cpp",
+			"MU",
+			null
+		],
+		[
+			"C:/Users/emilh/Documents/Tyot/vHelix-Dashboard/src/vHelix/vhelix.cpp",
+			"MU",
+			null
+		]
+	],
+	"UIC_OPTIONS" : [],
+	"UIC_SEARCH_PATHS" : [],
+	"UIC_SKIP" : [],
+	"UIC_UI_FILES" : [],
+	"VERBOSITY" : 0
+}

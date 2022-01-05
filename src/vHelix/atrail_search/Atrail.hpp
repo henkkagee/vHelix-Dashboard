@@ -15,7 +15,7 @@
 // For console output to GUI
 #include "vhelix.h"
 
-enum parity { odd_even, even_odd }; // odd_even = odd follows even (1 follows 0, 3 follows 2, ...), even_odd = even follows odd (2 follows 1, 4 follows 3, ... 0 follows d-1)
+//enum parity { odd_even, even_odd }; // odd_even = odd follows even (1 follows 0, 3 follows 2, ...), even_odd = even follows odd (2 follows 1, 4 follows 3, ... 0 follows d-1)
 
 // Checks whether the multigraph G has an Eulerian trail. The output is true if the graph has even degree vertices and is connected upto isolated points.
 bool has_eulerian_trail(const Graph & G);

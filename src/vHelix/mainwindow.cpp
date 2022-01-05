@@ -47,12 +47,17 @@ void MainWindow::printToConsole_(std::string str)
 // slot for receiving strings from the vHelix-class
 void MainWindow::vHelixToWindow_(std::string msg)
 {
-    if (msg.find("POPUP_ERR") != std::string::npos) {
-        msg.erase(0, 9);
+    std::cout << msg;
+    size_t pos = msg.find("POPUP_ERR");
+    if (pos != std::string::npos) {
+        size_t pos2 = msg.find("POPUP_END",pos);
+        std::string popup = msg.substr(pos+9,pos2-9);
+        msg.erase(pos, pos+9);
+        msg.erase(pos2-9, pos2);
         QMessageBox::warning(
             this,
             tr("Error"),
-            tr(msg.c_str()) );
+            tr(popup.c_str()) );
     }
     else if (msg.find("relaxmenu") != std::string::npos) {
         if (dialog_) {
@@ -60,9 +65,7 @@ void MainWindow::vHelixToWindow_(std::string msg)
             dialog_->setBaseEstimate(msg);
         }
     }
-    else {
-        printToConsole_(msg);
-    }
+    printToConsole_(msg);
 }
 
 // ---------------- Slots for UI actions --------------------
@@ -94,6 +97,15 @@ void MainWindow::on_actionAtrail_triggered()
     action_("Atrail", args);
 }
 
+void MainWindow::on_actionScaffold_free_triggered() {
+    QVector<QVariant> args = {};
+    action_("Scaffold-free", args);
+}
+
+void MainWindow::on_actionSpanning_tree_triggered() {
+    QVector<QVariant> args = {};
+    action_("Spanning tree", args);
+}
 
 void MainWindow::on_actionPhysX_triggered()
 {

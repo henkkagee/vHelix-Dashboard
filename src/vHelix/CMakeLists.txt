@@ -11,6 +11,8 @@ set(CMAKE_AUTORCC ON)
 set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
+set(Qt5_DIR "C:/Qt/5.9.9/msvc2017_64/lib/cmake/Qt5") 
+
 set( LIBRARIES
        python38
        debug PhysX3DEBUG_x64 optimized PhysX3_x64
@@ -24,6 +26,7 @@ set( LIBRARIES
        )
 # ----------------- You need to config this for your own setup so the linker can  --------------------
 # ------------------------------ find your Python38 installation ------------------------------------
+message("-- Linking directories")
 project(root)
 include_directories(${root_SOURCE_DIR}/include)
 # Here:
@@ -32,10 +35,12 @@ link_directories(${root_SOURCE_DIR}/lib)
 # And here
 link_directories(C:/Python38/libs)
 link_directories(${root_SOURCE_DIR}/scaffold_routing_rectification)
-add_subdirectory(scaffold_routing_rectification/)
+#add_subdirectory(scaffold_routing_rectification/)
+
 add_subdirectory(include/json)
 #add_executable(lemon ${root_SOURCE_DIR})
 #target_link_libraries(lemon)
+message("-- Done linking directories")
 
 # turn off json library tets
 set(JSON_BuildTests OFF CACHE INTERNAL "")
@@ -70,9 +75,15 @@ add_executable(vHelix
     utils.cpp
     utils.h
     instructions.ui
+    design.h
+    design.cpp
+    atrail.cpp
+    atrail.h
+    scaffold_free.h
+    scaffold_free.cpp
 
     # BSCOR
-    ply_to_dimacs/ply_to_dimacs.hpp
+    #[[ply_to_dimacs/ply_to_dimacs.hpp
     ply_to_dimacs/ply_to_dimacs.cpp
     ply_to_dimacs/boost_graph_helper.hpp
     ply_to_dimacs/boost_graph_helper.cpp
@@ -87,8 +98,11 @@ add_executable(vHelix
     atrail_search/Atrail.hpp
     atrail_search/Atrail.cpp
     atrail_verify/Atrail_verify.hpp
-    atrail_verify/Atrail_verify.cpp
-
+    atrail_verify/Atrail_verify.cpp]]
+    physxrelaxation.cpp
+    physxrelaxation.h
+    relaxation.cpp
+    relaxation.h
     # Relaxation code
     scaffold_routing_rectification/DNA.h
     scaffold_routing_rectification/ParseSettings.h
@@ -112,6 +126,12 @@ add_executable(vHelix
     # Modified vHelix maya plugin source code
     # Not used
     include/mayahelix/Definition.h
+
+    # Happly
+    happly-master/happly.h
+
+    #Obj-Loader
+    OBJ-Loader-master/Source/OBJ_Loader.h
 )
 
 
@@ -123,6 +143,7 @@ set(CompilerFlags
         CMAKE_C_FLAGS
         CMAKE_C_FLAGS_DEBUG
         CMAKE_C_FLAGS_RELEASE
+        -fopenmp
         )
 foreach(CompilerFlag ${CompilerFlags})
   string(REPLACE "/MD" "/MT" ${CompilerFlag} "${${CompilerFlag}}")
@@ -140,16 +161,9 @@ target_link_libraries(vHelix PRIVATE Qt5::Widgets Qt5::3DCore Qt5::3DExtras
 # Automatically copy resources to build directory.
 #[[add_custom_command(TARGET vHelix POST_BUILD
                    # Directories
-
-                   COMMAND ${CMAKE_COMMAND} -E copy_directory ${root_SOURCE_DIR}/d3/ $<TARGET_FILE_DIR:vHelix>/d3
-                   #COMMAND ${CMAKE_COMMAND} -E copy_directory ${CMAKE_SOURCE_DIR}/gamepads/ $<TARGET_FILE_DIR:vHelix>/gamepads
-                   #COMMAND ${CMAKE_COMMAND} -E copy_directory ${CMAKE_SOURCE_DIR}/geometryloaders/ $<TARGET_FILE_DIR:vHelix>/geometryloaders/
-                   #COMMAND ${CMAKE_COMMAND} -E copy_directory ${CMAKE_SOURCE_DIR}/iconengines/ $<TARGET_FILE_DIR:vHelix>/iconengines/
-                   #COMMAND ${CMAKE_COMMAND} -E copy_directory ${CMAKE_SOURCE_DIR}/imageformats/ $<TARGET_FILE_DIR:vHelix>/imageformats/
+                   COMMAND ${CMAKE_COMMAND} -E copy_directory ${root_SOURCE_DIR}/d3/ $<TARGET_FILE_DIR:vHelix>/d3/
                    COMMAND ${CMAKE_COMMAND} -E copy_directory ${root_SOURCE_DIR}/libs/ $<TARGET_FILE_DIR:vHelix>/libs/
                    COMMAND ${CMAKE_COMMAND} -E copy_directory ${root_SOURCE_DIR}/objToPly/ $<TARGET_FILE_DIR:vHelix>/objToPly/
-                   # COMMAND ${CMAKE_COMMAND} -E copy_directory ${root_SOURCE_DIR}/sceneparsers/ $<TARGET_FILE_DIR:vHelix>/sceneparsers/
-                   # COMMAND ${CMAKE_COMMAND} -E copy_directory ${root_SOURCE_DIR}/translations/ $<TARGET_FILE_DIR:vHelix>/translations/
                    # Python files
                    COMMAND ${CMAKE_COMMAND} -E copy ${root_SOURCE_DIR}/base.py $<TARGET_FILE_DIR:vHelix>
                    COMMAND ${CMAKE_COMMAND} -E copy ${root_SOURCE_DIR}/cadnano_utils.py $<TARGET_FILE_DIR:vHelix>
@@ -164,10 +178,7 @@ target_link_libraries(vHelix PRIVATE Qt5::Widgets Qt5::3DCore Qt5::3DExtras
                    COMMAND ${CMAKE_COMMAND} -E copy ${root_SOURCE_DIR}/utils.py $<TARGET_FILE_DIR:vHelix>
                    COMMAND ${CMAKE_COMMAND} -E copy ${root_SOURCE_DIR}/base.py $<TARGET_FILE_DIR:vHelix>
                    # Library files
-                   # COMMAND ${CMAKE_COMMAND} -E copy ${root_SOURCE_DIR}/D3DCompiler.dll $<TARGET_FILE_DIR:vHelix>
                    COMMAND ${CMAKE_COMMAND} -E copy ${root_SOURCE_DIR}/lib/glut32.dll $<TARGET_FILE_DIR:vHelix>
-                   # COMMAND ${CMAKE_COMMAND} -E copy ${root_SOURCE_DIR}/libEGLd.dll $<TARGET_FILE_DIR:vHelix>
-                   # COMMAND ${CMAKE_COMMAND} -E copy ${root_SOURCE_DIR}/libGLESV2d.dll $<TARGET_FILE_DIR:vHelix>
                    COMMAND ${CMAKE_COMMAND} -E copy ${root_SOURCE_DIR}/lib/PhysX3_x64.dll $<TARGET_FILE_DIR:vHelix>
                    COMMAND ${CMAKE_COMMAND} -E copy ${root_SOURCE_DIR}/lib/PhysX3CharacterKinematic_x64.dll $<TARGET_FILE_DIR:vHelix>
                    COMMAND ${CMAKE_COMMAND} -E copy ${root_SOURCE_DIR}/lib/PhysX3Common_x64.dll $<TARGET_FILE_DIR:vHelix>
@@ -177,5 +188,5 @@ target_link_libraries(vHelix PRIVATE Qt5::Widgets Qt5::3DCore Qt5::3DExtras
                    COMMAND ${CMAKE_COMMAND} -E copy ${root_SOURCE_DIR}/LICENSE.txt $<TARGET_FILE_DIR:vHelix>
                    COMMAND ${CMAKE_COMMAND} -E copy ${root_SOURCE_DIR}/instructions.txt $<TARGET_FILE_DIR:vHelix>
 
-)
-]]
+)]]
+

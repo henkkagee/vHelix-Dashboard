@@ -78,6 +78,8 @@ public slots:
     void on_actionExit_triggered();
     void on_actionOpen_triggered();
     void on_actionAtrail_triggered();
+    void on_actionSpanning_tree_triggered();
+    void on_actionScaffold_free_triggered();
     void on_actionPhysX_triggered();
 
 signals:

@@ -50,7 +50,7 @@ int make_embedding_eulerian::main(int argc, const char* argv[], vHelix &parent)
 
 		
 		embedding_t ecode(vcode.size()); //output edgecode
-		std::vector<std::vector<vertex_edge_pair> > embedding_as_pair (vcode.size());
+        std::vector<std::vector<vertex_edge_pair> > embedding_as_pair(vcode.size());
 		DEBUGPRINT(std::cout << "DEBUG: vertex code ... "<<std::endl;)
 		for (i = 0; i < vcode.size(); ++i)
 		{

@@ -106,6 +106,8 @@
      <string>Route</string>
     </property>
     <addaction name="actionAtrail"/>
+    <addaction name="actionScaffold_free"/>
+    <addaction name="actionSpanning_tree"/>
    </widget>
    <widget class="QMenu" name="menuRelaxation">
     <property name="title">
@@ -191,7 +193,7 @@
   </action>
   <action name="actionAtrail">
    <property name="text">
-    <string>Atrail</string>
+    <string>A-trail</string>
    </property>
   </action>
   <action name="actionExport_selection">
@@ -227,6 +229,16 @@
   <action name="actionLicense">
    <property name="text">
     <string>License</string>
+   </property>
+  </action>
+  <action name="actionScaffold_free">
+   <property name="text">
+    <string>Scaffold-free</string>
+   </property>
+  </action>
+  <action name="actionSpanning_tree">
+   <property name="text">
+    <string>Spanning tree</string>
    </property>
   </action>
  </widget>

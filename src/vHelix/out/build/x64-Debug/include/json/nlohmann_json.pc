@@ -1,0 +1,4 @@
+Name: nlohmann_json
+Description: JSON for Modern C++
+Version: 3.9.1
+Cflags: -IC:/Users/emilh/Documents/Tyot/vHelix-Dashboard/src/vHelix/out/install/x64-Debug/include

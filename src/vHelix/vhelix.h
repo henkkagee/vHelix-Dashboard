@@ -13,9 +13,15 @@
 #include <QFile>
 #include <QVector>
 #include <QVariant>
+#include <QDebug>
 
 #include <iostream>
 #include <processio.h>
+#include <sstream>
+#include <fstream>
+#include "boost/lexical_cast.hpp"
+#include "atrail.h"
+#include "scaffold_free.h"
 
 namespace vHelixFunc {
     std::string ExePath();
@@ -51,8 +57,10 @@ private:
     std::string workspace_dir_;
     vHelixFunc::plyData *plydata_;
     std::vector<std::string> fileSelection_;
+    Design *design;
 
     void atrail_();
+    void scaffold_free_();
     void physX_relaxation_(const QVector<QVariant> args);
     void export_(const QVector<QVariant> &args);
     void convert_(const std::string& format);
