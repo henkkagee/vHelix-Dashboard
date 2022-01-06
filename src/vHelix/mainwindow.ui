@@ -135,6 +135,7 @@
     </property>
     <addaction name="actionInstructions"/>
     <addaction name="actionLicense"/>
+    <addaction name="actionSettings"/>
    </widget>
    <widget class="QMenu" name="menuoxDNA">
     <property name="title">
@@ -239,6 +240,11 @@
   <action name="actionSpanning_tree">
    <property name="text">
     <string>Spanning tree</string>
+   </property>
+  </action>
+  <action name="actionSettings">
+   <property name="text">
+    <string>Settings</string>
    </property>
   </action>
  </widget>

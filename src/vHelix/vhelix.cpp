@@ -806,14 +806,6 @@ std::pair<int,int> vHelix::estimate_base_use_(const QVector<QVariant> &args)
 }*/
 void vHelix::physX_relaxation_(const QVector<QVariant> args)
 {
-
-     /*(double &scaling, bool &discretize_lengths, double &density,
-                      double &spring_stiffness, double &fixed_spring_stiffness,
-                      double &spring_damping, bool &attach_fixed,
-                      double &static_friction, double &dynamic_friction,
-                      double &restitution, double &rigid_body_sleep_threshold,
-                      std::string &visual_debugger)
-    */
     std::stringstream sstr;
     sstr << vHelixFunc::ExePath() << "/../workspace/" << mesh_;
     std::string input = sstr.str();

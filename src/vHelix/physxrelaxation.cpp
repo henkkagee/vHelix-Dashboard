@@ -127,9 +127,10 @@ void Helix::createRigidBody(PhysXRelax::physics & phys, int bases, const PhysXRe
 
     const physics::real_type length(physics::real_type(DNA::BasesToLength(bases)));
     //assert(length > DNA::RADIUS_PLUS_SPHERE_RADIUS * 2);
-    if (length <= 0/*DNA::RADIUS_PLUS_SPHERE_RADIUS * 2*/)
+    if (length <= 0/*DNA::RADIUS_PLUS_SPHERE_RADIUS * 2*/) {
+        std::cerr << "Helix length = " << length << ". In bases: " << bases << "\n";
         throw std::runtime_error("Helix length is too short. Rescale the structure so that the length of the structure is at least the diameter of the cylinder approximation. This is because PhysX forces us to approximate helices as capsules.");
-
+    }
     const physics::real_type radius(physics::real_type(DNA::SPHERE_RADIUS * DNA::APPROXIMATION_RADIUS_MULTIPLIER));
     const physics::real_type offset(physics::real_type(DNA::RADIUS - radius + DNA::SPHERE_RADIUS));
 
@@ -444,11 +445,11 @@ bool scene::setupHelices(PhysXRelax::physics & phys) {
             phys, DNA::DistanceToBaseCount(length),
             physics::transform_type((origo +  tangent * physics::real_type((duplicates[edge] - 1) * (DNA::RADIUS + DNA::SPHERE_RADIUS))), rotationFromTo(kPosZAxis, direction)));
     }
-    qDebug("Sorted");
+    std::cout <<"Sorted\n";
     // Connect the scaffold.
     for (HelixContainer::iterator it(helices.begin()); it != helices.end(); ++it)
         circular_decrement(it, helices)->attach(phys, *it, Helix::kForwardThreePrime, Helix::kForwardFivePrime);
-    qDebug("Scaffold connected");
+    std::cout << "Scaffold connected\n";
     // Connect the staples.
 
     for (std::vector<Edge>::const_iterator it(edges.begin()); it != edges.end(); ++it) {
@@ -474,7 +475,7 @@ bool scene::setupHelices(PhysXRelax::physics & phys) {
 
         helices[it_offset].attach(phys, helices[(vertex.neighbor_edges.begin() + staple_edge)->index], Helix::kBackwardFivePrime, Helix::kBackwardThreePrime);
     }
-    qDebug("Staples connected");
+    std::cout << "Staples connected";
 
     /*for (std::vector<Edge>::const_iterator prev_it(edges.begin()); prev_it != edges.end(); ++prev_it) {
         const Vertex & vertex(vertices[prev_it->vertices[1]]);
@@ -909,6 +910,7 @@ PhysXRelaxation::PhysXRelaxation(std::string &name,PhysXRelax::physics::settings
 int PhysXRelaxation::scaffold_main(std::vector<coordinates> &inputvertices, std::vector<unsigned int> &nodetrail) {
     std::cerr << "In scaffold_main(). number of vertices: " << inputvertices.size() << "\nLength of trail: " << nodetrail.size()<< std::endl;
     mesh.set_data(inputvertices,nodetrail);
+    mesh.print_data();
     std::cerr << "Data set up"<< std::endl;
     try {
         if (!mesh.setupHelices(phys)) {

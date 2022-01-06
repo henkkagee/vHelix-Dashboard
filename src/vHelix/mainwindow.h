@@ -18,6 +18,8 @@
 #include <numeric>
 #include <chrono>
 #include <ctime>
+#include <fstream>
+#include <iomanip>
 
 #include <QMainWindow>
 #include <QFile>
@@ -43,6 +45,7 @@
 #include "./ui_rpolydialog.h"
 #include "./ui_sequencedialog.h"
 #include "./ui_instructions.h"
+#include "./ui_settingsdialog.h"
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
@@ -102,6 +105,7 @@ private slots:
     void on_actionAutofill_strands_triggered();
     void on_actionInstructions_triggered();
     void on_actionLicense_triggered();
+    void on_actionSettings_triggered();
 };
 
 
@@ -113,12 +117,13 @@ class RelaxDialog : public QDialog
     Q_OBJECT
 public:
     explicit RelaxDialog(MainWindow *parent);
-    void getOpts(double &scaling, int &iterations, bool &discretize_lengths, double &density,
-                 double &spring_stiffness, double &fixed_spring_stiffness,
-                 double &spring_damping, bool &attach_fixed,
-                 double &static_friction, double &dynamic_friction,
-                 double &restitution, double &rigid_body_sleep_threshold,
-                 std::string &visual_debugger);
+    void getOpts(double &scaling, int &iterations);
+    /*void getOpts(double &scaling, int &iterations, bool &discretize_lengths, double &density,
+                double &spring_stiffness, double &fixed_spring_stiffness,
+                double &spring_damping, bool &attach_fixed,
+                double &static_friction, double &dynamic_friction,
+                double &restitution, double &rigid_body_sleep_threshold,
+                std::string &visual_debugger);*/
     void setBaseEstimate(const std::string &estimate);
 
 private slots:
@@ -135,6 +140,7 @@ class RpolyDialog : public QDialog
 public:
     explicit RpolyDialog(MainWindow *parent);
     void getOpts(int &min, int &max);
+
 private:
     Ui::RpolyDialog ui_;
     MainWindow *parent_;
@@ -150,6 +156,20 @@ public:
 private:
     Ui::SequenceDialog ui_;
     MainWindow *parent_;
+};
+
+class SettingsDialog : public QDialog {
+    Q_OBJECT
+    public:
+        explicit SettingsDialog(MainWindow *parent);
+        void getSettings(bool &write_intermediate_files,
+                         bool &discretize_lengths, double &density, double &spring_stiffness,
+                         double &fixed_spring_stiffness, double &spring_damping, bool &attach_fixed,
+                         double &static_friction,double &dynamic_friction,double &restitution,
+                         double &rigid_body_sleep_threshold, bool &visual_debugger);
+    private:
+        Ui::SettingsDialog ui_;
+        MainWindow *parent_;
 };
 
 class DocWindow : public QWidget

@@ -458,8 +458,17 @@ public:
 
     void set_data(std::vector<coordinates> input_vertices, std::vector<unsigned int> trail) {
         path = trail;
+        path.pop_back();
+
+        std::cerr << "Printing the trail\n";
+        for (int i = 0; i < path.size(); i++) {
+            std::cout << path[i] << " ";
+        }
+        std::cout << "\n";
         vertices.reserve(input_vertices.size());
+        std::cout << "Scaling = " << settings.initial_scaling << "\n";
         for (unsigned int i = 0; i < input_vertices.size(); i++) {
+            std::cout << input_vertices[i].x << " " << input_vertices[i].y << " " << input_vertices[i].z << "\n";
             Vertex vertex(physics::vec3_type(input_vertices[i].x,input_vertices[i].y,input_vertices[i].z)*settings.initial_scaling);
             vertices.push_back(vertex);
         }

@@ -50,6 +50,7 @@ public:
     QAction *actionLicense;
     QAction *actionScaffold_free;
     QAction *actionSpanning_tree;
+    QAction *actionSettings;
     QWidget *centralwidget;
     QGridLayout *gridLayout;
     QHBoxLayout *horizontalLayout;
@@ -117,6 +118,8 @@ public:
         actionScaffold_free->setObjectName(QStringLiteral("actionScaffold_free"));
         actionSpanning_tree = new QAction(MainWindow);
         actionSpanning_tree->setObjectName(QStringLiteral("actionSpanning_tree"));
+        actionSettings = new QAction(MainWindow);
+        actionSettings->setObjectName(QStringLiteral("actionSettings"));
         centralwidget = new QWidget(MainWindow);
         centralwidget->setObjectName(QStringLiteral("centralwidget"));
         QSizePolicy sizePolicy1(QSizePolicy::Expanding, QSizePolicy::Expanding);
@@ -212,6 +215,7 @@ public:
         menuExport->addAction(actionExport_strand_sequences);
         menuHelp->addAction(actionInstructions);
         menuHelp->addAction(actionLicense);
+        menuHelp->addAction(actionSettings);
         menuoxDNA->addAction(actionOpen_selection_in_viewer);
 
         retranslateUi(MainWindow);
@@ -240,6 +244,7 @@ public:
         actionLicense->setText(QApplication::translate("MainWindow", "License", Q_NULLPTR));
         actionScaffold_free->setText(QApplication::translate("MainWindow", "Scaffold-free", Q_NULLPTR));
         actionSpanning_tree->setText(QApplication::translate("MainWindow", "Spanning tree", Q_NULLPTR));
+        actionSettings->setText(QApplication::translate("MainWindow", "Settings", Q_NULLPTR));
         label->setText(QString());
         menuvHelix->setTitle(QApplication::translate("MainWindow", "File", Q_NULLPTR));
         menuRoute->setTitle(QApplication::translate("MainWindow", "Route", Q_NULLPTR));

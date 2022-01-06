@@ -15,6 +15,7 @@
 #include <boost/algorithm/string/classification.hpp>
 #include <QVariant>
 #include <QVector>
+#include <include/json/single_include/nlohmann/json.hpp>
 #include "relaxation.h"
 #include "physxrelaxation.h"
 #include "definitions.h"

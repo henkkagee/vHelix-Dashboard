@@ -1363,9 +1363,21 @@ int Atrail::relax(const QVector<QVariant> args) {
     }
 
     using namespace PhysXRelax;
+
+    std::ifstream json("settings.json");
+    nlohmann::json settings;
+    if (json.is_open()) {
+        std::cout << "Found settings file\n";
+        settings << json;
+    }
+    else {
+        std::cerr << "Could not read physics settings from file\n";
+        return -1;
+    }
+
     double *dblArgs = new double[9];
     bool *boolArgs = new bool[3];
-    unsigned int k = 0; unsigned int j = 0;
+    /*unsigned int k = 0; unsigned int j = 0;
     for (unsigned int i = 0; i < 15; i++) {
         switch (i) {
             case 0: // [0]scaling
@@ -1394,11 +1406,48 @@ int Atrail::relax(const QVector<QVariant> args) {
         }
     }
     const int iterations = args[12].toInt();
+
+    std::cout << "dblArgs:\n";
+    for (int i = 0; i < 9; i++) {
+        std::cout << dblArgs[i] << ", ";
+    }
+
+    std::cout << "boolArgs:\n";
+    for (int i = 0; i < 3; i++) {
+        std::cout << boolArgs[i] << ", ";
+    }
+
+    */
+   
+    std::cout << settings;
+    settings = settings["physX"];
+    dblArgs[0] = args[0].toDouble(); // scaling
+    dblArgs[1] = settings["density"];
+    dblArgs[2] = settings["spring_stiffness"];
+    dblArgs[3] = settings["fixed_spring_stiffness"];
+    dblArgs[4] = settings["spring_damping"];
+    dblArgs[5] = settings["static_friction"];
+    dblArgs[6] = settings["dynamic_friction"];
+    dblArgs[7] = settings["restitution"];
+    dblArgs[8] = settings["rigid_body_sleep_threshold"];
+    boolArgs[0] = settings["discretize_lengths"];
+    boolArgs[1] = settings["attach_fixed"];
+    boolArgs[2] = settings["visual_debugger"];
+    const int iterations = args[1].toInt();
+
+    std::cout << "dblArgs:\n";
+    for (int i = 0; i < 9; i++) {
+        std::cout << dblArgs[i] << ", ";
+    }
+
+    std::cout << "boolArgs:\n";
+    for (int i = 0; i < 3; i++) {
+        std::cout << boolArgs[i] << ", ";
+    }
     PhysXRelax::physics::settings_type physics_settings;
     PhysXRelax::scene::settings_type scene_settings;
     PhysXRelax::Helix::settings_type helix_settings;
     PhysXRelax::parse_settings(dblArgs,boolArgs,physics_settings,scene_settings,helix_settings);
-    //PhysXRelaxation = new PhysXRelaxation(name,physics_settings,scene_settings,helix_settings, iterations);
     PhysXRelaxation relaxation(name,physics_settings,scene_settings,helix_settings, iterations);
     std::cerr << "Created relaxation object\n";
     std::vector<unsigned int> input_path;
@@ -1409,6 +1458,7 @@ int Atrail::relax(const QVector<QVariant> args) {
     std::cerr << "Running scaffold_main(). Argument sizes: " << vertices.size() << ", " << input_path.size()<< std::endl;
     relaxation.scaffold_main(vertices,input_path);
     outstream << relaxation.getoutstream().c_str();
+    delete boolArgs;
+    delete dblArgs;
     return 1;
-
 }

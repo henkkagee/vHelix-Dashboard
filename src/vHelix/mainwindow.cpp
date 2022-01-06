@@ -14,6 +14,8 @@
 // 1: OXDNA for using .conf and .top file formats for rendering and model generation, 0: VHELIX for .rpoly (base positions broken)
 #define FORMAT_MODE 0
 
+const char *settingspath = "settings.json";
+
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent),
     ui_(new Ui::MainWindow),
@@ -107,39 +109,100 @@ void MainWindow::on_actionSpanning_tree_triggered() {
     action_("Spanning tree", args);
 }
 
+void MainWindow::on_actionSettings_triggered() {
+    //std::cout << "Settings action triggered\n";
+    SettingsDialog dialog(this);
+    dialog.exec();
+    if (dialog.result()) {
+        double density, spring_stiffness, fixed_spring_stiffness,
+                spring_damping, static_friction, dynamic_friction, restitution,
+                rigid_body_sleep_threshold;
+        bool discretize_lengths,attach_fixed, visual_debugger;
+        bool write_intermediate_files;
+        dialog.getSettings(write_intermediate_files, discretize_lengths, density, spring_stiffness,
+                           fixed_spring_stiffness, spring_damping, attach_fixed,
+                           static_friction, dynamic_friction, restitution,
+                           rigid_body_sleep_threshold, visual_debugger);
+        nlohmann::json settings = {
+            {"write_intermediate_files", write_intermediate_files},
+            {"physX",{
+                 {"discretize_lengths",discretize_lengths},
+                 {"density",density},
+                 {"spring_stiffness",spring_stiffness},
+                 {"fixed_spring_stiffness",fixed_spring_stiffness},
+                 {"spring_damping",spring_damping},
+                 {"attach_fixed",attach_fixed},
+                 {"static_friction",static_friction},
+                 {"dynamic_friction",dynamic_friction},
+                 {"restitution",restitution},
+                 {"rigid_body_sleep_threshold",rigid_body_sleep_threshold},
+                 {"visual_debugger",visual_debugger}
+             }}
+        };
+
+        std::ofstream file(settingspath);
+        file << std::setw(4) << settings << "\n";
+    }
+
+
+
+
+
+
+}
+
 void MainWindow::on_actionPhysX_triggered()
 {
-    double scaling, density, spring_stiffness, fixed_spring_stiffness,
-            spring_damping, static_friction, dynamic_friction, restitution,
-            rigid_body_sleep_threshold;
-    bool discretize_lengths, attach_fixed;
+    double scaling;//, density, spring_stiffness, fixed_spring_stiffness,
+            //spring_damping, static_friction, dynamic_friction, restitution,
+            //rigid_body_sleep_threshold;
+    //bool discretize_lengths, attach_fixed;
     int iterations;
-    std::string visual_debugger;
+    //std::string visual_debugger;
     /*QString txt = QInputDialog::getText(this, tr("QInputDialog::getText()"),
                                         tr("Enter scaling value:"), QLineEdit::Normal,
                                         QDir::home().dirName(), &ok);*/
     dialog_ = new RelaxDialog(this);
     dialog_->exec();
     if (dialog_->result()) {
-        dialog_->getOpts(scaling, iterations, discretize_lengths, density, spring_stiffness,
+        /*dialog_->getOpts(scaling, iterations, discretize_lengths, density, spring_stiffness,
                         fixed_spring_stiffness, spring_damping, attach_fixed,
                         static_friction, dynamic_friction, restitution,
-                        rigid_body_sleep_threshold, visual_debugger);
+                        rigid_body_sleep_threshold, visual_debugger);*/
+        dialog_->getOpts(scaling, iterations);
         delete dialog_;
         QVector<QVariant> args;
-        args.append(scaling); args.append(discretize_lengths);
+        args.append(scaling);
+        /* args.append(discretize_lengths);
         args.append(density); args.append(spring_stiffness);
         args.append(fixed_spring_stiffness);
         args.append(spring_damping); args.append(attach_fixed);
         args.append(static_friction); args.append(dynamic_friction);
         args.append(restitution);
         args.append(rigid_body_sleep_threshold);
-        args.append(QString::fromStdString(visual_debugger));
+        args.append(QString::fromStdString(visual_debugger));*/
         args.append(iterations);
         action_("PhysX", args);
     }
 
 }
+
+/*void MainWindow::on_actionPhysX_triggered()
+{
+    double scaling;
+    int iterations;
+    dialog_ = new RelaxDialog(this);
+    dialog_->exec();
+    if (dialog_->result()) {
+        dialog_->getOpts(scaling, iterations);
+        delete dialog_;
+        QVector<QVariant> args;
+        args.append(scaling);
+        args.append(iterations);
+        action_("PhysX", args);
+    }
+
+}*/
 
 void MainWindow::on_actionExport_selection_triggered()
 {
@@ -621,7 +684,7 @@ RelaxDialog::RelaxDialog(MainWindow *parent)
     parent_ = parent;
 }
 
-void RelaxDialog::getOpts(double &scaling, int &iterations, bool &discretize_lengths, double &density,
+/*void RelaxDialog::getOpts(double &scaling, int &iterations, bool &discretize_lengths, double &density,
                           double &spring_stiffness, double &fixed_spring_stiffness,
                           double &spring_damping, bool &attach_fixed,
                           double &static_friction, double &dynamic_friction,
@@ -653,6 +716,13 @@ void RelaxDialog::getOpts(double &scaling, int &iterations, bool &discretize_len
     else {
         visual_debugger = ret.toUtf8().constData();
     }
+}*/
+
+
+void RelaxDialog::getOpts(double &scaling, int &iterations)
+{
+    scaling = ui.doubleSpinBox->value();
+    iterations = ui.spinBox->value();
 }
 
 void RelaxDialog::on_pushButton_clicked()
@@ -706,6 +776,34 @@ SequenceDialog::SequenceDialog(MainWindow *parent, const std::vector<Model::Stra
         std::string item = sstr.str();
         ui_.comboBox->addItem(QString(item.c_str()));
     }
+}
+
+SettingsDialog::SettingsDialog(MainWindow *parent) : QDialog(parent){
+    std::cout << "creating settings dialog\n";
+    ui_.setupUi(this);
+    parent_ = parent;
+    setWindowTitle("Settings");
+}
+void SettingsDialog::getSettings(bool &write_intermediate_files,
+                 bool &discretize_lengths, double &density, double &spring_stiffness,
+                 double &fixed_spring_stiffness, double &spring_damping, bool &attach_fixed,
+                 double &static_friction,double &dynamic_friction,double &restitution,
+                 double &rigid_body_sleep_threshold, bool &visual_debugger) {
+    std::cout << "getting settings\n";
+
+    write_intermediate_files = ui_.checkBox->isChecked();
+    discretize_lengths = ui_.discretizeLengthsCheckBox->isChecked();
+    density = ui_.doubleSpinBox_2->value();
+    spring_stiffness = ui_.doubleSpinBox_3->value();
+    fixed_spring_stiffness = ui_.doubleSpinBox_4->value();
+    spring_damping = ui_.doubleSpinBox_5->value();
+    attach_fixed = ui_.attachFixedCheckBox->isChecked();
+    static_friction = ui_.doubleSpinBox_6->value();
+    dynamic_friction = ui_.doubleSpinBox_7->value();
+    restitution = ui_.doubleSpinBox_8->value();
+    rigid_body_sleep_threshold = ui_.doubleSpinBox_9->value();
+    visual_debugger = ui_.visualDebuggerCheckBox->isChecked();
+
 }
 
 // Show instructions

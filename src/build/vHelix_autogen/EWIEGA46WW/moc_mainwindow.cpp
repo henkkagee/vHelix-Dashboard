@@ -22,8 +22,8 @@ QT_BEGIN_MOC_NAMESPACE
 QT_WARNING_PUSH
 QT_WARNING_DISABLE_DEPRECATED
 struct qt_meta_stringdata_MainWindow_t {
-    QByteArrayData data[27];
-    char stringdata0[594];
+    QByteArrayData data[28];
+    char stringdata0[622];
 };
 #define QT_MOC_LITERAL(idx, ofs, len) \
     Q_STATIC_BYTE_ARRAY_DATA_HEADER_INITIALIZER_WITH_OFFSET(len, \
@@ -58,7 +58,8 @@ QT_MOC_LITERAL(22, 418, 42), // "on_actionExport_strand_sequen..."
 QT_MOC_LITERAL(23, 461, 37), // "on_actionSave_current_model_t..."
 QT_MOC_LITERAL(24, 499, 35), // "on_actionAutofill_strands_tri..."
 QT_MOC_LITERAL(25, 535, 31), // "on_actionInstructions_triggered"
-QT_MOC_LITERAL(26, 567, 26) // "on_actionLicense_triggered"
+QT_MOC_LITERAL(26, 567, 26), // "on_actionLicense_triggered"
+QT_MOC_LITERAL(27, 594, 27) // "on_actionSettings_triggered"
 
     },
     "MainWindow\0sendMesh_\0\0std::string\0str\0"
@@ -78,7 +79,8 @@ QT_MOC_LITERAL(26, 567, 26) // "on_actionLicense_triggered"
     "on_actionSave_current_model_triggered\0"
     "on_actionAutofill_strands_triggered\0"
     "on_actionInstructions_triggered\0"
-    "on_actionLicense_triggered"
+    "on_actionLicense_triggered\0"
+    "on_actionSettings_triggered"
 };
 #undef QT_MOC_LITERAL
 
@@ -88,7 +90,7 @@ static const uint qt_meta_data_MainWindow[] = {
        7,       // revision
        0,       // classname
        0,    0, // classinfo
-      19,   14, // methods
+      20,   14, // methods
        0,    0, // properties
        0,    0, // enums/sets
        0,    0, // constructors
@@ -96,27 +98,28 @@ static const uint qt_meta_data_MainWindow[] = {
        2,       // signalCount
 
  // signals: name, argc, parameters, tag, flags
-       1,    1,  109,    2, 0x06 /* Public */,
-       5,    2,  112,    2, 0x06 /* Public */,
+       1,    1,  114,    2, 0x06 /* Public */,
+       5,    2,  117,    2, 0x06 /* Public */,
 
  // slots: name, argc, parameters, tag, flags
-       8,    1,  117,    2, 0x0a /* Public */,
-      10,    0,  120,    2, 0x0a /* Public */,
-      11,    0,  121,    2, 0x0a /* Public */,
-      12,    0,  122,    2, 0x0a /* Public */,
-      13,    0,  123,    2, 0x0a /* Public */,
-      14,    0,  124,    2, 0x0a /* Public */,
-      15,    0,  125,    2, 0x0a /* Public */,
-      16,    0,  126,    2, 0x08 /* Private */,
-      17,    0,  127,    2, 0x08 /* Private */,
-      18,    1,  128,    2, 0x08 /* Private */,
-      20,    1,  131,    2, 0x08 /* Private */,
-      21,    0,  134,    2, 0x08 /* Private */,
-      22,    0,  135,    2, 0x08 /* Private */,
-      23,    0,  136,    2, 0x08 /* Private */,
-      24,    0,  137,    2, 0x08 /* Private */,
-      25,    0,  138,    2, 0x08 /* Private */,
-      26,    0,  139,    2, 0x08 /* Private */,
+       8,    1,  122,    2, 0x0a /* Public */,
+      10,    0,  125,    2, 0x0a /* Public */,
+      11,    0,  126,    2, 0x0a /* Public */,
+      12,    0,  127,    2, 0x0a /* Public */,
+      13,    0,  128,    2, 0x0a /* Public */,
+      14,    0,  129,    2, 0x0a /* Public */,
+      15,    0,  130,    2, 0x0a /* Public */,
+      16,    0,  131,    2, 0x08 /* Private */,
+      17,    0,  132,    2, 0x08 /* Private */,
+      18,    1,  133,    2, 0x08 /* Private */,
+      20,    1,  136,    2, 0x08 /* Private */,
+      21,    0,  139,    2, 0x08 /* Private */,
+      22,    0,  140,    2, 0x08 /* Private */,
+      23,    0,  141,    2, 0x08 /* Private */,
+      24,    0,  142,    2, 0x08 /* Private */,
+      25,    0,  143,    2, 0x08 /* Private */,
+      26,    0,  144,    2, 0x08 /* Private */,
+      27,    0,  145,    2, 0x08 /* Private */,
 
  // signals: parameters
     QMetaType::Void, 0x80000000 | 3,    4,
@@ -134,6 +137,7 @@ static const uint qt_meta_data_MainWindow[] = {
     QMetaType::Void,
     QMetaType::Void, QMetaType::QModelIndex,   19,
     QMetaType::Void, QMetaType::QModelIndex,   19,
+    QMetaType::Void,
     QMetaType::Void,
     QMetaType::Void,
     QMetaType::Void,
@@ -169,6 +173,7 @@ void MainWindow::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int _id, 
         case 16: _t->on_actionAutofill_strands_triggered(); break;
         case 17: _t->on_actionInstructions_triggered(); break;
         case 18: _t->on_actionLicense_triggered(); break;
+        case 19: _t->on_actionSettings_triggered(); break;
         default: ;
         }
     } else if (_c == QMetaObject::RegisterMethodArgumentMetaType) {
@@ -226,13 +231,13 @@ int MainWindow::qt_metacall(QMetaObject::Call _c, int _id, void **_a)
     if (_id < 0)
         return _id;
     if (_c == QMetaObject::InvokeMetaMethod) {
-        if (_id < 19)
+        if (_id < 20)
             qt_static_metacall(this, _c, _id, _a);
-        _id -= 19;
+        _id -= 20;
     } else if (_c == QMetaObject::RegisterMethodArgumentMetaType) {
-        if (_id < 19)
+        if (_id < 20)
             qt_static_metacall(this, _c, _id, _a);
-        _id -= 19;
+        _id -= 20;
     }
     return _id;
 }
@@ -468,6 +473,72 @@ void *SequenceDialog::qt_metacast(const char *_clname)
 }
 
 int SequenceDialog::qt_metacall(QMetaObject::Call _c, int _id, void **_a)
+{
+    _id = QDialog::qt_metacall(_c, _id, _a);
+    return _id;
+}
+struct qt_meta_stringdata_SettingsDialog_t {
+    QByteArrayData data[1];
+    char stringdata0[15];
+};
+#define QT_MOC_LITERAL(idx, ofs, len) \
+    Q_STATIC_BYTE_ARRAY_DATA_HEADER_INITIALIZER_WITH_OFFSET(len, \
+    qptrdiff(offsetof(qt_meta_stringdata_SettingsDialog_t, stringdata0) + ofs \
+        - idx * sizeof(QByteArrayData)) \
+    )
+static const qt_meta_stringdata_SettingsDialog_t qt_meta_stringdata_SettingsDialog = {
+    {
+QT_MOC_LITERAL(0, 0, 14) // "SettingsDialog"
+
+    },
+    "SettingsDialog"
+};
+#undef QT_MOC_LITERAL
+
+static const uint qt_meta_data_SettingsDialog[] = {
+
+ // content:
+       7,       // revision
+       0,       // classname
+       0,    0, // classinfo
+       0,    0, // methods
+       0,    0, // properties
+       0,    0, // enums/sets
+       0,    0, // constructors
+       0,       // flags
+       0,       // signalCount
+
+       0        // eod
+};
+
+void SettingsDialog::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int _id, void **_a)
+{
+    Q_UNUSED(_o);
+    Q_UNUSED(_id);
+    Q_UNUSED(_c);
+    Q_UNUSED(_a);
+}
+
+const QMetaObject SettingsDialog::staticMetaObject = {
+    { &QDialog::staticMetaObject, qt_meta_stringdata_SettingsDialog.data,
+      qt_meta_data_SettingsDialog,  qt_static_metacall, nullptr, nullptr}
+};
+
+
+const QMetaObject *SettingsDialog::metaObject() const
+{
+    return QObject::d_ptr->metaObject ? QObject::d_ptr->dynamicMetaObject() : &staticMetaObject;
+}
+
+void *SettingsDialog::qt_metacast(const char *_clname)
+{
+    if (!_clname) return nullptr;
+    if (!strcmp(_clname, qt_meta_stringdata_SettingsDialog.stringdata0))
+        return static_cast<void*>(this);
+    return QDialog::qt_metacast(_clname);
+}
+
+int SettingsDialog::qt_metacall(QMetaObject::Call _c, int _id, void **_a)
 {
     _id = QDialog::qt_metacall(_c, _id, _a);
     return _id;
