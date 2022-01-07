@@ -757,12 +757,12 @@ SceneDescription::SceneDescription(scene & scene) : totalSeparation(scene.getTot
         helices.push_back(Helix(helix.getBaseCount(), helix.getTransform()));
         helixMap.emplace(&helix, &helices.back());
     }
-    std::cerr << "Creating connections"<< std::endl;
+    //std::cerr << "Creating connections"<< std::endl;
     for (const PhysXRelax::Helix & helix : scene.helices) {
         Helix & newHelix(*helixMap.at(&helix));
         std::cerr << "Creting connections for a helix\n";
         for (int i = 0; i < 4; ++i) {
-            std::cerr << "Creating connection " << i << std::endl;
+            //std::cerr << "Creating connection " << i << std::endl;
             newHelix.connections[i] = helixMap.at(helix.getJoint(PhysXRelax::Helix::AttachmentPoint(i)).helix);
         }
     }
@@ -996,6 +996,7 @@ int PhysXRelaxation::scaffold_free_main(std::vector<coordinates> &inputvertices,
     //setinterrupthandler<handle_exit>();
     std::cerr << "Running grad descent\n";
     SceneDescription best_scene;
+
     gradient_descent(7,
         [&best_scene, &min, &max, &average, &total](scene & mesh, physics::real_type min_, physics::real_type max_, physics::real_type average_, physics::real_type total_) { min = min_; max = max_; average = average_; total = total_; std::stringstream sstr; sstr << "State: min: " << min << ", max: " << max << ", average: " << average << " total: " << total << " nm" << std::endl; std::string str = sstr.str(); best_scene = SceneDescription(mesh); },
         [this]() { return running; }, iterations);

@@ -1,0 +1,13 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="16.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <CustomBuild Include="C:\Users\emilh\Documents\Tyot\vHelix-Dashboard\src\vHelix\CMakeFiles\37dbc2bebebed48e95bbb4a472154b9a\generate.stamp.rule">
+      <Filter>CMake Rules</Filter>
+    </CustomBuild>
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="CMake Rules">
+      <UniqueIdentifier>{3DE5F6F4-C755-3579-A666-3D1BF6485122}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+</Project>

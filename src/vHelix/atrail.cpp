@@ -346,9 +346,10 @@ int Atrail::createGraph() {
         edge_ind++;
     }
     outstream << "Successfully created the Graph\n";
-
-    std::string dimacs(name);
-    write_dimacs(dimacs.append(".dimacs"),graph);
+    if (write_intermediates) {
+        std::string dimacs(name);
+        write_dimacs(dimacs.append(".dimacs"),graph);
+    }
     return 1;
 }
 void Atrail::reindex_edges() {
@@ -499,10 +500,14 @@ int Atrail::postman_tour() {
         outstream << "ERROR! an unknown error occurred. Output file not written.\n";
         return 1;
     }
-    std::string outfile(name);
-    write_dimacs(outfile.append("_multi.dimacs"), graph);
-    std::stringstream sstr;
-    outstream << "INFO: Wrote an Eulerian multigraph after addition of multiedges to " << outfile << std::endl;
+    
+    outstream << "INFO: Created an Eulerian multigraph after addition of multiedges\n" << std::endl;
+    if (write_intermediates) {
+        std::string outfile(name);
+        write_dimacs(outfile.append("_multi.dimacs"), graph);
+        outstream << "INFO: Wrote the Eulerian multigraph after addition of multiedges to " << outfile << std::endl;
+    }
+    
     return 1;
 
 }
@@ -609,10 +614,14 @@ int Atrail::make_embedding_eulerian() {
         }
     }
     //std::cerr << "Line 578"<< std::endl;
-    std::string outfile(name);
-    undir::write_edge_code(outfile.append(".ecode"), ecode);
+    outstream << "INFO: Created the eulerian embedding as an edge code " << std::endl;
+    if (write_intermediates) {
+        std::string outfile(name);
+        undir::write_edge_code(outfile.append(".ecode"), ecode);
+        outstream << "INFO: Wrote the eulerian embedding as an edge code to " << outfile << std::endl;
+    }
 
-    outstream << "INFO: Wrote the embedding as an edge code to " << outfile << std::endl;
+    
 
     return 1;
 }
@@ -1022,9 +1031,51 @@ bool Atrail::Atrail_search()
         std::cout<<"INFO: "; ret = print_walk(new_trail, "Trail (as node list): ");
         outstream <<ret;
     }
-    std::cout<<"---------------------------------------"<<std::endl;
     nodetrail = new_trail;
+
+    if (write_intermediates) {
+        write_trail();
+    }
+    std::cout<<"---------------------------------------"<<std::endl;
+    
     return has_Atrail;
+
+}
+
+bool Atrail::write_trail() {
+        std::string edgetrail_file(name);
+        edgetrail_file.append(".trail");
+        std::ofstream ofs(edgetrail_file);
+        if( !ofs.is_open()) {
+            std::stringstream fileError;
+            outstream << "ERROR: Unable to create file: " << edgetrail_file << std::endl;
+            return false;
+		}
+        else {
+            std::stringstream trailAppend;
+            outstream << "INFO: Appending the trail as edge list to file: " << edgetrail_file  << std::endl;
+            for( auto it = trail_edgelist.begin(); it != trail_edgelist.end(); it++) {
+                ofs<<*it<<" ";
+            }
+        }
+		ofs.close();
+        std::string nodetrail_file(name);
+        nodetrail_file.append(".ntrail");
+        std::ofstream nfs(nodetrail_file.c_str(), std::ios::out);
+        if( !nfs.is_open()){
+            std::stringstream nodetrailError;
+            outstream << "ERROR! Unable to create file "<<nodetrail_file<<std::endl;
+            return false;
+        }
+        else {
+            std::stringstream infoTrail;
+            outstream << "INFO: Appending the trail as node list to file "<<nodetrail_file<<std::endl;
+            for( std::list<Vertex>::iterator it = nodetrail.begin(); it != nodetrail.end(); it++){
+                nfs<<*it<<" ";
+            }
+        }
+        nfs.close();
+        return true;
 }
 
 bool Atrail::split_and_check(Graph & G, const std::vector<std::vector<Vertex> > & P,
@@ -1331,7 +1382,7 @@ bool Atrail::Atrail_verify()
 }
 
 int Atrail::main() {
-    if (readPLY() < 1) return 0;
+    if (read3Dobject() < 1) return 0;
     std::cerr << "read ply\n";
     std::cerr << vertices.size() << nodetrail.size() << number_vertices<< std::endl;
     if (createEmbedding() < 1) return 0;
@@ -1377,47 +1428,6 @@ int Atrail::relax(const QVector<QVariant> args) {
 
     double *dblArgs = new double[9];
     bool *boolArgs = new bool[3];
-    /*unsigned int k = 0; unsigned int j = 0;
-    for (unsigned int i = 0; i < 15; i++) {
-        switch (i) {
-            case 0: // [0]scaling
-            case 2: // [1]density
-            case 3: // [2]spring stiffness
-            case 4: // [3]fixed spring stiffness
-            case 5: // [4]spring damping
-            case 7: // [5]static friction
-            case 8: // [6]dynamic friction
-            case 9: // [7]restitution
-            case 10:// [8]rigid body sleep threshold
-                dblArgs[k] = args[i].toDouble();
-                k++;
-                break;
-            case 1:  // discretize lengths
-            case 6:  // attach fixed
-            case 11: // visual debugger
-                if (args[i].toString() == "Disabled") {
-                    boolArgs[j] = false;
-                }
-                else {
-                    boolArgs[j] = true;
-                }
-                j++;
-                break;
-        }
-    }
-    const int iterations = args[12].toInt();
-
-    std::cout << "dblArgs:\n";
-    for (int i = 0; i < 9; i++) {
-        std::cout << dblArgs[i] << ", ";
-    }
-
-    std::cout << "boolArgs:\n";
-    for (int i = 0; i < 3; i++) {
-        std::cout << boolArgs[i] << ", ";
-    }
-
-    */
    
     std::cout << settings;
     settings = settings["physX"];

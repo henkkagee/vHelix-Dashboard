@@ -1,0 +1,198 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="16.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClCompile Include="C:\Users\emilh\Documents\Tyot\vHelix-Dashboard\src\vHelix\vHelix_autogen\mocs_compilation_Debug.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\emilh\Documents\Tyot\vHelix-Dashboard\src\vHelix\main.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\emilh\Documents\Tyot\vHelix-Dashboard\src\vHelix\mainwindow.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\emilh\Documents\Tyot\vHelix-Dashboard\src\vHelix\console.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\emilh\Documents\Tyot\vHelix-Dashboard\src\vHelix\dirview.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\emilh\Documents\Tyot\vHelix-Dashboard\src\vHelix\vhelix.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\emilh\Documents\Tyot\vHelix-Dashboard\src\vHelix\processio.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\emilh\Documents\Tyot\vHelix-Dashboard\src\vHelix\graphicsview.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\emilh\Documents\Tyot\vHelix-Dashboard\src\vHelix\modelhandler.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\emilh\Documents\Tyot\vHelix-Dashboard\src\vHelix\model.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\emilh\Documents\Tyot\vHelix-Dashboard\src\vHelix\dna.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\emilh\Documents\Tyot\vHelix-Dashboard\src\vHelix\utils.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\emilh\Documents\Tyot\vHelix-Dashboard\src\vHelix\design.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\emilh\Documents\Tyot\vHelix-Dashboard\src\vHelix\atrail.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\emilh\Documents\Tyot\vHelix-Dashboard\src\vHelix\scaffold_free.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\emilh\Documents\Tyot\vHelix-Dashboard\src\vHelix\physxrelaxation.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\emilh\Documents\Tyot\vHelix-Dashboard\src\vHelix\relaxation.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\emilh\Documents\Tyot\vHelix-Dashboard\src\vHelix\scaffold_routing_rectification\Relaxmain.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\emilh\Documents\Tyot\vHelix-Dashboard\src\vHelix\scaffold_routing_rectification\Definition.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\emilh\Documents\Tyot\vHelix-Dashboard\src\vHelix\scaffold_routing_rectification\Helix.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\emilh\Documents\Tyot\vHelix-Dashboard\src\vHelix\scaffold_routing_rectification\Physics.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\emilh\Documents\Tyot\vHelix-Dashboard\src\vHelix\scaffold_routing_rectification\Scene.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\emilh\Documents\Tyot\vHelix-Dashboard\src\vHelix\scaffold_routing_rectification\Utility.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\emilh\Documents\Tyot\vHelix-Dashboard\src\vHelix\vHelix_autogen\QPX6T34KB7\qrc_breeze.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\emilh\Documents\Tyot\vHelix-Dashboard\src\vHelix\vHelix_autogen\mocs_compilation_Release.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\emilh\Documents\Tyot\vHelix-Dashboard\src\vHelix\vHelix_autogen\mocs_compilation_MinSizeRel.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\emilh\Documents\Tyot\vHelix-Dashboard\src\vHelix\vHelix_autogen\mocs_compilation_RelWithDebInfo.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="C:\Users\emilh\Documents\Tyot\vHelix-Dashboard\src\vHelix\mainwindow.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\emilh\Documents\Tyot\vHelix-Dashboard\src\vHelix\console.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\emilh\Documents\Tyot\vHelix-Dashboard\src\vHelix\dirview.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\emilh\Documents\Tyot\vHelix-Dashboard\src\vHelix\vhelix.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\emilh\Documents\Tyot\vHelix-Dashboard\src\vHelix\processio.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\emilh\Documents\Tyot\vHelix-Dashboard\src\vHelix\graphicsview.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\emilh\Documents\Tyot\vHelix-Dashboard\src\vHelix\modelhandler.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\emilh\Documents\Tyot\vHelix-Dashboard\src\vHelix\model.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\emilh\Documents\Tyot\vHelix-Dashboard\src\vHelix\dna.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\emilh\Documents\Tyot\vHelix-Dashboard\src\vHelix\utils.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\emilh\Documents\Tyot\vHelix-Dashboard\src\vHelix\design.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\emilh\Documents\Tyot\vHelix-Dashboard\src\vHelix\atrail.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\emilh\Documents\Tyot\vHelix-Dashboard\src\vHelix\scaffold_free.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\emilh\Documents\Tyot\vHelix-Dashboard\src\vHelix\physxrelaxation.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\emilh\Documents\Tyot\vHelix-Dashboard\src\vHelix\relaxation.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\emilh\Documents\Tyot\vHelix-Dashboard\src\vHelix\scaffold_routing_rectification\DNA.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\emilh\Documents\Tyot\vHelix-Dashboard\src\vHelix\scaffold_routing_rectification\ParseSettings.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\emilh\Documents\Tyot\vHelix-Dashboard\src\vHelix\scaffold_routing_rectification\SimulatedAnnealing.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\emilh\Documents\Tyot\vHelix-Dashboard\src\vHelix\scaffold_routing_rectification\Relaxmain.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\emilh\Documents\Tyot\vHelix-Dashboard\src\vHelix\scaffold_routing_rectification\Definition.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\emilh\Documents\Tyot\vHelix-Dashboard\src\vHelix\scaffold_routing_rectification\Helix.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\emilh\Documents\Tyot\vHelix-Dashboard\src\vHelix\scaffold_routing_rectification\Physics.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\emilh\Documents\Tyot\vHelix-Dashboard\src\vHelix\scaffold_routing_rectification\Scene.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\emilh\Documents\Tyot\vHelix-Dashboard\src\vHelix\scaffold_routing_rectification\Utility.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\emilh\Documents\Tyot\vHelix-Dashboard\src\vHelix\include\mayahelix\Definition.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\emilh\Documents\Tyot\vHelix-Dashboard\src\vHelix\happly-master\happly.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\emilh\Documents\Tyot\vHelix-Dashboard\src\vHelix\OBJ-Loader-master\Source\OBJ_Loader.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <CustomBuild Include="C:\Users\emilh\Documents\Tyot\vHelix-Dashboard\src\vHelix\CMakeFiles\491c72f7dcc8306b59621b500b537e61\qrc_breeze.cpp.rule">
+      <Filter>CMake Rules</Filter>
+    </CustomBuild>
+    <CustomBuild Include="C:\Users\emilh\Documents\Tyot\vHelix-Dashboard\src\vHelix\CMakeLists.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <Natvis Include="C:\Users\emilh\Documents\Tyot\vHelix-Dashboard\src\vHelix\include\json\nlohmann_json.natvis" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="C:\Users\emilh\Documents\Tyot\vHelix-Dashboard\src\vHelix\mainwindow.ui" />
+    <None Include="C:\Users\emilh\Documents\Tyot\vHelix-Dashboard\src\vHelix\dialog.ui" />
+    <None Include="C:\Users\emilh\Documents\Tyot\vHelix-Dashboard\src\vHelix\rpolydialog.ui" />
+    <None Include="C:\Users\emilh\Documents\Tyot\vHelix-Dashboard\src\vHelix\settingsdialog.ui" />
+    <None Include="C:\Users\emilh\Documents\Tyot\vHelix-Dashboard\src\vHelix\sequencedialog.ui" />
+    <None Include="C:\Users\emilh\Documents\Tyot\vHelix-Dashboard\src\vHelix\instructions.ui" />
+    <None Include="C:\Users\emilh\Documents\Tyot\vHelix-Dashboard\src\vHelix\stylesheet\breeze.qrc" />
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="CMake Rules">
+      <UniqueIdentifier>{3DE5F6F4-C755-3579-A666-3D1BF6485122}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{5F79AA90-1AFC-3D16-A6CB-FF89BCB52912}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{BED816A6-42DC-3FED-B888-49677C7BBB0F}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+</Project>

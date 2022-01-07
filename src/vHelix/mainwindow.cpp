@@ -783,6 +783,29 @@ SettingsDialog::SettingsDialog(MainWindow *parent) : QDialog(parent){
     ui_.setupUi(this);
     parent_ = parent;
     setWindowTitle("Settings");
+    
+    std::ifstream currentsettings("settings.json");
+    if (currentsettings.is_open()) {
+        parent_->vHelixToWindow_("Found settings file\n");
+        nlohmann::json settings;
+        currentsettings >> settings;
+        nlohmann::json physxsettings = settings["physX"];
+        ui_.checkBox->setChecked(settings["write_intermediate_files"]);
+        ui_.discretizeLengthsCheckBox->setChecked(physxsettings["discretize_lengths"]);
+        ui_.doubleSpinBox_2->setValue(physxsettings["density"]);
+        ui_.doubleSpinBox_3->setValue(physxsettings["spring_stiffness"]);
+        ui_.doubleSpinBox_4->setValue(physxsettings["fixed_spring_stiffness"]);
+        ui_.doubleSpinBox_5->setValue(physxsettings["spring_damping"]);
+        ui_.attachFixedCheckBox->setChecked(physxsettings["attach_fixed"]);
+        ui_.doubleSpinBox_6->setValue(physxsettings["static_friction"]);
+        ui_.doubleSpinBox_7->setValue(physxsettings["dynamic_friction"]);
+        ui_.doubleSpinBox_8->setValue(physxsettings["restitution"]);
+        ui_.doubleSpinBox_9->setValue(physxsettings["rigid_body_sleep_threshold"]);
+        ui_.visualDebuggerCheckBox->setChecked(physxsettings["visual_debugger"]);
+    }
+    else {
+        parent_->vHelixToWindow_("Could not find settings file, click ok to write\n");
+    }
 }
 void SettingsDialog::getSettings(bool &write_intermediate_files,
                  bool &discretize_lengths, double &density, double &spring_stiffness,
@@ -804,6 +827,38 @@ void SettingsDialog::getSettings(bool &write_intermediate_files,
     rigid_body_sleep_threshold = ui_.doubleSpinBox_9->value();
     visual_debugger = ui_.visualDebuggerCheckBox->isChecked();
 
+}
+
+void SettingsDialog::on_SetDefaults_clicked()
+{
+    nlohmann::json settings = {
+        {"write_intermediate_files",false},
+        {"physX",{
+            {"discretize_lengths",true},
+            {"density",10.0},
+            {"spring_stiffness",100.0},
+            {"fixed_spring_stiffness",1000.0},
+            {"spring_damping",100.0},
+            {"attach_fixed",true},
+            {"static_friction",0.5},
+            {"dynamic_friction",0.5},
+            {"restitution",1},
+            {"rigid_body_sleep_threshold",0.001},
+            {"visual_debugger",false}
+        }}
+    };
+    nlohmann::json physxsettings = settings["physX"];
+    ui_.checkBox->setChecked(settings["write_intermediate_files"]);
+    ui_.discretizeLengthsCheckBox->setChecked(physxsettings["discretize_lengths"]);
+    ui_.doubleSpinBox_2->setValue(physxsettings["density"]);
+    ui_.doubleSpinBox_3->setValue(physxsettings["spring_stiffness"]);
+    ui_.doubleSpinBox_4->setValue(physxsettings["fixed_spring_stiffness"]);
+    ui_.doubleSpinBox_5->setValue(physxsettings["spring_damping"]);
+    ui_.doubleSpinBox_6->setValue(physxsettings["static_friction"]);
+    ui_.doubleSpinBox_7->setValue(physxsettings["dynamic_friction"]);
+    ui_.doubleSpinBox_8->setValue(physxsettings["restitution"]);
+    ui_.doubleSpinBox_9->setValue(physxsettings["rigid_body_sleep_threshold"]);
+    ui_.visualDebuggerCheckBox->setChecked(physxsettings["visual_debugger"]);
 }
 
 // Show instructions
@@ -919,3 +974,5 @@ std::string SequenceDialog::getTargetStrand()
 {
     return std::string(ui_.comboBox->currentText().toLocal8Bit().constData());
 }
+
+

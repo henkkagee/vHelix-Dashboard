@@ -167,7 +167,10 @@ class SettingsDialog : public QDialog {
                          double &fixed_spring_stiffness, double &spring_damping, bool &attach_fixed,
                          double &static_friction,double &dynamic_friction,double &restitution,
                          double &rigid_body_sleep_threshold, bool &visual_debugger);
-    private:
+    private slots:
+            void on_SetDefaults_clicked();
+
+private:
         Ui::SettingsDialog ui_;
         MainWindow *parent_;
 };

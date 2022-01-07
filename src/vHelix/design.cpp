@@ -8,6 +8,22 @@ Design::Design(const std::string meshpath, const std::string meshname)
     number_edges = 0;
     number_vertices = 0;
     number_faces = 0;
+    nlohmann::json settings;
+    std::ifstream file("settings.json");
+    settings << file;
+    write_intermediates = settings["write_intermediate_files"]; 
+}
+
+int Design::read3Dobject() {
+    if (path.find_last_of(".ply") == path.length() - 1) {
+        return readPLY();
+    }
+    else if (path.find_last_of(".obj") == path.length() - 1) {
+        return readOBJ();
+    }
+    else {
+        outstream << "ERROR: File format not supported\n";
+    }
 }
 
 int Design::readPLY() {
@@ -196,7 +212,10 @@ int Design::createEmbedding() {
 
         }
     }
-    write_embedding();
+    if (write_intermediates) {
+        write_embedding();
+    }
+    
     return 1;
 }
 

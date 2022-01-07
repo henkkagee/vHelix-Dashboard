@@ -37,6 +37,7 @@ public:
     Design(const std::string meshpath, const std::string meshname);
     //~Design();
 
+    int read3Dobject();
     int readPLY();
     int readOBJ();
 
@@ -66,7 +67,7 @@ protected:
     embedding_t embedding;
     std::stringstream outstream;
     std::stringstream filestream;
-    //Relaxation *relaxation;
+    bool write_intermediates;
 
 };
 

@@ -235,7 +235,7 @@ int Scaffold_free::find_trail()
 }
 
 int Scaffold_free::main() {
-    if (readPLY() < 1) return 0;
+    if (read3Dobject() < 1) return 0;
     std::cerr << "read ply\n";
     std::cerr << vertices.size() << nodetrail.size() << number_vertices<< std::endl;
     if (createEmbedding() < 1) return 0;

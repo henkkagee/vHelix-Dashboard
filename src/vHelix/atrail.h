@@ -101,6 +101,7 @@ public:
     // as possible.
     void enumerate_intersectable_nodes(const undir::Graph &G, std::vector<unsigned int> & bn, undir::Vertex s=0);
 
+    bool write_trail();
     bool Atrail_verify();
 
     int main();
