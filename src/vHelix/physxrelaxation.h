@@ -612,7 +612,7 @@ public:
     inline SceneDescription & operator=(SceneDescription && scene) { totalSeparation = scene.totalSeparation; helices = std::move(scene.helices); return *this; }
 
     bool write(std::ostream & out) const;
-
+    bool write_scaffold_free(std::ostream & out) const;
     const physics::real_type getTotalSeparation() const {
         return totalSeparation;
     }

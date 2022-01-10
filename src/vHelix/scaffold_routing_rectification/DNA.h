@@ -5,6 +5,7 @@
 *      Author: johan
 */
 
+
 #ifndef DNA_H_
 #define DNA_H_
 
@@ -12,7 +13,7 @@
 
 #include "Physics.h"
 
-namespace DNA {
+//namespace DNA {
 	const double PITCH = 720.0 / 21.0,													// degrees
 		STEP = 0.334,
 		RADIUS = 1.0,
@@ -57,6 +58,6 @@ namespace DNA {
 	T HelixRotation(T distance) {
 		return T(BasesToRotation(DistanceToBaseCount(distance)));
 	}
-}
+//}
 
 #endif /* DNA_H_ */

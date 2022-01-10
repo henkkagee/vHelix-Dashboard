@@ -19,6 +19,7 @@ int Design::read3Dobject() {
         return readPLY();
     }
     else if (path.find_last_of(".obj") == path.length() - 1) {
+        std::cout << "Reading .obj\n";
         return readOBJ();
     }
     else {
@@ -57,14 +58,14 @@ int Design::readOBJ() {
         }
         else if (temp[0].substr(0).compare("v") == 0) {
             number_vertices++;
-            outstream << "Node\n";
+            //outstream << "Node\n";
             vertices.push_back(coordinates(std::stod(temp[1]), std::stod(temp[2]),std::stod(temp[3])));
             std::set<size_t> adj;
             adj_vertices.push_back(adj);
         }
         else if (temp[0].substr(0).compare("f") == 0) { // face
             number_faces++;
-            outstream << "\nFace\n";
+            //outstream << "\nFace\n";
             std::vector<size_t> face_nodes;
 
             for (auto it = temp.begin() + 1; it != temp.end(); it++) {

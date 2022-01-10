@@ -34,7 +34,7 @@ include_directories(C:/Python38/include)
 link_directories(${root_SOURCE_DIR}/lib)
 # And here
 link_directories(C:/Python38/libs)
-link_directories(${root_SOURCE_DIR}/scaffold_routing_rectification)
+#link_directories(${root_SOURCE_DIR}/scaffold_routing_rectification)
 #add_subdirectory(scaffold_routing_rectification/)
 
 add_subdirectory(include/json)
@@ -105,21 +105,21 @@ add_executable(vHelix
     relaxation.cpp
     relaxation.h
     # Relaxation code
-    scaffold_routing_rectification/DNA.h
-    scaffold_routing_rectification/ParseSettings.h
-    scaffold_routing_rectification/SimulatedAnnealing.h
-    scaffold_routing_rectification/Relaxmain.h
-    scaffold_routing_rectification/Relaxmain.cpp
-    scaffold_routing_rectification/Definition.h
-    scaffold_routing_rectification/Definition.cpp
-    scaffold_routing_rectification/Helix.h
-    scaffold_routing_rectification/Helix.cpp
-    scaffold_routing_rectification/Physics.h
-    scaffold_routing_rectification/Physics.cpp
-    scaffold_routing_rectification/Scene.h
-    scaffold_routing_rectification/Scene.cpp
-    scaffold_routing_rectification/Utility.h
-    scaffold_routing_rectification/Utility.cpp
+    #scaffold_routing_rectification/DNA.h
+    #scaffold_routing_rectification/ParseSettings.h
+    #scaffold_routing_rectification/SimulatedAnnealing.h
+    #scaffold_routing_rectification/Relaxmain.h
+    #scaffold_routing_rectification/Relaxmain.cpp
+    #scaffold_routing_rectification/Definition.h
+    #scaffold_routing_rectification/Definition.cpp
+    #scaffold_routing_rectification/Helix.h
+    #scaffold_routing_rectification/Helix.cpp
+    #scaffold_routing_rectification/Physics.h
+    #scaffold_routing_rectification/Physics.cpp
+    #scaffold_routing_rectification/Scene.h
+    #scaffold_routing_rectification/Scene.cpp
+    #scaffold_routing_rectification/Utility.h
+    #scaffold_routing_rectification/Utility.cpp
 
     # Stylesheet by Alexander Huszagh
     stylesheet/breeze.qrc

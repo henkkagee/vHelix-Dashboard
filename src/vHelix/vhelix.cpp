@@ -78,10 +78,10 @@ void vHelix::readMesh_(std::string mesh)
         seglist.push_back(segment);
     }
     mesh_ = seglist.back();
-    if (mesh_.find(".obj") != std::string::npos) {
+    /*if (mesh_.find(".obj") != std::string::npos) {
         convert_("obj_to_ply");
         return;
-    }
+    }*/
     // copy the meshfile to workspace directory
     std::stringstream workspace_file;
     workspace_file << workspace_dir_ << "\\" << mesh_;
@@ -262,7 +262,7 @@ void vHelix::action_(std::string cmd, QVector<QVariant> arg)
             else {
                 s = qs.toUtf8().constData();
             }
-            if (s.find(".ply") != std::string::npos) {
+            if (s.find(".ply") != std::string::npos || s.find(".obj") != std::string::npos) {
                 std::stringstream path(s);
                 std::string segment;
                 std::vector<std::string> seglist;
@@ -365,8 +365,8 @@ void vHelix::atrail_() {
 void vHelix::scaffold_free_() {
     std::cerr << "In scaffold_free_ function\n";
     if (fileSelection_.size() != 1 ||
-            fileSelection_.at(0).find(".ply") == std::string::npos) {
-        sendToConsole_("POPUP_ERRSelect a single valid .ply mesh file!\nPOPUP_END");
+            (fileSelection_.at(0).find(".ply") == std::string::npos && fileSelection_.at(0).find(".obj") == std::string::npos)) {
+        sendToConsole_("POPUP_ERRSelect a single valid .ply/.obj mesh file!\nPOPUP_END");
         return;
     }
     std::stringstream sstr;

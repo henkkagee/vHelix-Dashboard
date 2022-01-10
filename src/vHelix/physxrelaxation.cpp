@@ -508,7 +508,7 @@ bool scene::setupscaffoldfreeHelices(physics & phys) {
         for (std::vector<unsigned int>::const_iterator it(trail.begin()); it != trail.end(); ++it) {
             //++duplicates[Edge(*it, *circular_increment(it, path))];
             unsigned int next = *circular_increment(it, trail);
-            std::cout << "Adding " << *it << " -> " << next << " to edges\n";
+            //std::cout << "Adding " << *it << " -> " << next << " to edges\n";
             edges.push_back(Edge(*it, next));
         }
     }
@@ -541,7 +541,7 @@ bool scene::setupscaffoldfreeHelices(physics & phys) {
             const physics::vec3_type delta(vertices[edges[edge.index].other(vertexIndex)].position - vertex.position);
             //edge.angle = signedAngle(delta - proj(delta, vertex.normal), tangent, vertex.normal);
             edge.angle = signedAngle(tangent, delta - proj(delta, vertex.normal), vertex.normal);
-            std::cout << "Edge " << edge.index << " angle " << edge.angle << "\n";
+            //std::cout << "Edge " << edge.index << " angle " << edge.angle << "\n";
         }
     }
 
@@ -651,8 +651,8 @@ bool scene::setupscaffoldfreeHelices(physics & phys) {
                 //std::cout << "created helix edge pair\n";
                 edge_helix.insert(tmp_edge_helix);
                 //std::cout << "created helix edge mapping\n";
-                std::cout << "Helix index: " << helix_index-1 << "\nposition: " << (float) origo[0] << " " << (float) origo[1] << " " << (float) origo[2] << "\n";
-                std::cout << "rotation: " << direction[0] << " " << direction[1] << " " << direction[2] << "\n";
+                //std::cout << "Helix index: " << helix_index-1 << "\nposition: " << (float) origo[0] << " " << (float) origo[1] << " " << (float) origo[2] << "\n";
+                //std::cout << "rotation: " << direction[0] << " " << direction[1] << " " << direction[2] << "\n";
             }
         }
     }
@@ -674,7 +674,7 @@ bool scene::setupscaffoldfreeHelices(physics & phys) {
     for (std::vector<std::vector<unsigned int>>::const_iterator it1(trails.begin()); it1 != trails.end(); ++it1) {
 
         std::vector<unsigned int> trail = *it1;
-        std::cout << "trail starts from " << trail[0] << "\n";
+        //std::cout << "trail starts from " << trail[0] << "\n";
         for (std::vector<unsigned int>::const_iterator it(trail.begin()); it != trail.end(); ++it) {
             const std::vector<unsigned int>::const_iterator next_it(circular_increment(it, trail));
             const std::vector<unsigned int>::const_iterator next_next_it(circular_increment(next_it, trail));
@@ -685,7 +685,7 @@ bool scene::setupscaffoldfreeHelices(physics & phys) {
             //std::cout << "Edge_2: " << edge_2.vertices[0] << " " << edge_2.vertices[1] << "\n";
             bool edge_1_forward = std::find(has_forward.begin(),has_forward.end(),edge_1) != has_forward.end();
             bool edge_2_forward = std::find(has_forward.begin(),has_forward.end(),edge_2) != has_forward.end();
-            std::cout << "edges identified: " << edge_1.vertices[0] << " -> " << edge_1.vertices[1] << " (" << edge_1_forward << ") and " << edge_2.vertices[0] << " -> " << edge_2.vertices[1] << " (" << edge_2_forward << ")\n";
+            //std::cout << "edges identified: " << edge_1.vertices[0] << " -> " << edge_1.vertices[1] << " (" << edge_1_forward << ") and " << edge_2.vertices[0] << " -> " << edge_2.vertices[1] << " (" << edge_2_forward << ")\n";
             int helix_1 = edge_helix.at(edge_1);
             int helix_2 = edge_helix.at(edge_2);
             //std::cout << "helices identified: " << helix_1+1 << " and " << helix_2+1 << "\n";
@@ -798,6 +798,87 @@ bool SceneDescription::write(std::ostream & out) const {
 
     out << std::endl << "autostaple" << std::endl << "ps " << helixNames.at(&helices.front()) << " f3'" << std::endl;
     return true;
+}
+// TODO: merge with write
+bool SceneDescription::write_scaffold_free(std::ostream & out) const {
+    std::unordered_map<const Helix *, std::string> helixNames;
+	helixNames.reserve(helices.size());
+    std::set<std::pair<std::string,std::string>> connections;
+    {
+		unsigned int i(1);
+		for (const Helix & helix : helices) {
+			std::ostringstream namestream;
+			namestream << "helix_" << i++;
+			const std::string name(namestream.str());
+			helixNames.emplace(&helix, name);
+
+			const physics::vec3_type & position(helix.getPosition());
+			const physics::quaternion_type & orientation(helix.getOrientation());
+            out << "hb " << name << ' ' << helix.baseCount << ' ' << position.x << ' ' << position.y << ' ' << position.z << ' ' << orientation.x << ' ' << orientation.y << ' ' << orientation.z << ' ' << orientation.w << std::endl;
+		}
+	}
+
+	out << std::endl;
+
+	for (const Helix & helix : helices) {
+		const std::string & name(helixNames.at(&helix));
+        //std::cout << name << "\n";
+
+        const Helix* f3 = helix.connections[PhysXRelax::Helix::kForwardThreePrime];
+        const Helix* f5 = helix.connections[PhysXRelax::Helix::kForwardFivePrime];
+        const Helix* b3 = helix.connections[PhysXRelax::Helix::kBackwardThreePrime];
+        const Helix* b5 = helix.connections[PhysXRelax::Helix::kBackwardFivePrime];
+
+        const std::string& f3name = helixNames.at(f3);
+        const std::string& f5name = helixNames.at(f5);
+        const std::string& b3name = helixNames.at(b3);
+        const std::string& b5name = helixNames.at(b5);
+
+        // f3
+        if (connections.find(std::make_pair(name,f3name)) == connections.end()) {
+            if (name.compare(helixNames.at(f3->connections[PhysXRelax::Helix::kForwardFivePrime])) == 0) {
+                out << "c " << name << " f3' " << f3name << " f5'" << std::endl;
+            }
+            else if (name.compare(helixNames.at(f3->connections[PhysXRelax::Helix::kBackwardFivePrime])) == 0) {
+                out << "c " << name << " f3' " << f3name << " b5'" << std::endl;
+            }
+            connections.insert(std::make_pair(name,f3name));
+        }
+        // f5
+        if (connections.find(std::make_pair(f5name,name)) == connections.end()) {
+            if (name.compare(helixNames.at(f5->connections[PhysXRelax::Helix::kBackwardThreePrime])) == 0) {
+                out << "c " << f5name << " b3' " << name << " f5'" << std::endl;
+            }
+            else if (name.compare(helixNames.at(f5->connections[PhysXRelax::Helix::kForwardThreePrime])) == 0) {
+                out << "c " << f5name << " f3' " << name << " f5'" << std::endl;
+            }
+            connections.insert(std::make_pair(f5name,name));
+        }
+        // b3
+        if (connections.find(std::make_pair(name,b3name)) == connections.end()) {
+            if (name.compare(helixNames.at(b3->connections[PhysXRelax::Helix::kBackwardFivePrime])) == 0) {
+                out << "c " << name << " b3' " << b3name << " b5'" << std::endl;
+            }
+            else if (name.compare(helixNames.at(b3->connections[PhysXRelax::Helix::kForwardFivePrime])) == 0) {
+                out << "c " << name << " b3' " << b3name << " f5'" << std::endl;
+            }
+            connections.insert(std::make_pair(name,b3name));
+        }
+        // b5
+        if (connections.find(std::make_pair(b5name,name)) == connections.end()) {
+            if (name.compare(helixNames.at(b5->connections[PhysXRelax::Helix::kBackwardThreePrime])) == 0) {
+                out << "c " << b5name << " b3' " << name << " b5'" << std::endl;
+            }
+            else if (name.compare(helixNames.at(b5->connections[PhysXRelax::Helix::kForwardThreePrime])) == 0) {
+                out << "c " << b5name << " f3' " << name << " b5'" << std::endl;
+            }
+            connections.insert(std::make_pair(b5name,name));
+        }
+	}
+
+	out << std::endl << "autostaple" << std::endl << "ps " << helixNames.at(&helices.front()) << " f3'" << std::endl;
+
+	return true;
 }
 
 template<typename StoreBestFunctorT, typename RunningFunctorT>
@@ -1007,7 +1088,7 @@ int PhysXRelaxation::scaffold_free_main(std::vector<coordinates> &inputvertices,
     outfile << "# Relaxation of original " << " file. " << mesh.getHelixCount() << " helices." << std::endl
         << "# Total separation: Initial: min: " << initialmin << ", max: " << initialmax << ", average: " << initialaverage << ", total: " << initialtotal << " nm" << ", final: min: " << min << ", max: " << max << ", average: " << average << ", total: " << total << " nm" << std::endl;
 
-    if (!best_scene.write(outfile)) {
+    if (!best_scene.write_scaffold_free(outfile)) {
         outstream << "Failed to write resulting mesh to \"" << output_file << "\"" << std::endl;
     }
     outfile.close();
