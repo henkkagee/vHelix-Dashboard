@@ -22,6 +22,8 @@
 #include <string>
 #include <sstream>
 #include <cmath>
+#include <set>
+#include <ctime>
 
 #include <QQuaternion>
 #include <include/json/single_include/nlohmann/json.hpp>
@@ -34,9 +36,9 @@ public:
     Handler();
     void read();
     std::vector<Model::Helix> &readRpoly(const char *filename, int nicking_min_length = 0, int nicking_max_length = 0);
-
+    std::vector<Model::Helix> &readScaffoldFreeRpoly(const char *filename);
     std::vector<Model::Strand> &readOxview(const char *path);
-
+    void writeOxView(const char *fileName);
     void autofillStrandGaps();
 
     struct Base {

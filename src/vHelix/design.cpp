@@ -214,13 +214,13 @@ int Design::createEmbedding() {
         }
     }
     if (write_intermediates) {
-        write_embedding();
+        writeEmbedding();
     }
     
     return 1;
 }
 
-bool Design::write_embedding() {
+bool Design::writeEmbedding() {
     std::string outputembedding(name);
     outputembedding.append(".vcode");
     std::ofstream ofs(outputembedding.c_str(), std::ofstream::out);
@@ -248,4 +248,10 @@ std::string Design::getoutstream() {
     outstream.str( std::string() );
     outstream.clear();
     return ret;
+}
+
+int Design::writeOxView() {
+    std::string file(name);
+    file.append(".oxview");
+    model_.writeOxView(file.c_str());
 }

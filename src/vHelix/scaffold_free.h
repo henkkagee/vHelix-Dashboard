@@ -124,6 +124,7 @@ public:
     int main();
     int relax(const QVector<QVariant> args);
     int create_strands();
+    int create_random_sequences();
 
 private:
     std::vector<std::vector<dir::Vertex>> nodetrail;

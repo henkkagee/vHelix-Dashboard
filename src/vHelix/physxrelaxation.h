@@ -669,7 +669,7 @@ public:
     PhysXRelaxation(std::string &name,physics::settings_type &physics_settings, scene::settings_type &scene_settings, Helix::settings_type &helix_settings, const int &iterations);
     int main();
     template<typename RunningFunctorT>
-    SceneDescription simulated_rectification(RunningFunctorT running_functor) ;
+    SceneDescription simulated_rectification(RunningFunctorT running_functor) ; //not used
     template<typename StoreBestFunctorT, typename RunningFunctorT>
     void gradient_descent(int minbasecount, StoreBestFunctorT store_best_functor, RunningFunctorT running_functor, const int &iterations);
     void handle_exit() {
@@ -677,7 +677,7 @@ public:
     }
     template<typename StoreBestFunctorT, typename RunningFunctorT>
     void simulated_annealing(int kmax, float emax, unsigned int minbasecount, int baserange,
-            StoreBestFunctorT store_best_functor, RunningFunctorT running_functor);
+            StoreBestFunctorT store_best_functor, RunningFunctorT running_functor); // not used
 
     int scaffold_main(std::vector<coordinates> &vertices, std::vector<unsigned int> &nodetrail);
     int scaffold_free_main(std::vector<coordinates> &vertices, std::vector<std::vector<unsigned int>> &nodetrail);

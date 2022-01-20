@@ -1213,10 +1213,36 @@ int Scaffold_free::create_strands() {
     outstream << "Creating strands\n";
     std::string rpoly(name);
     rpoly.append(".rpoly");
-    Create_strands cs;
-    cs.readRpoly(rpoly.c_str());
+    model_.readScaffoldFreeRpoly(rpoly.c_str());
     std::string oxview(name);
     oxview.append(".oxview");
-    cs.writeOxView(oxview.c_str());
+    create_random_sequences();
+    model_.writeOxView(oxview.c_str());
     return 0;
 }
+
+int Scaffold_free::create_random_sequences() {
+
+    // pseudo-random base generator
+    std::random_device dev;
+    std::mt19937 rng(dev());
+    std::uniform_int_distribution<std::mt19937::result_type> dist4(0,3);
+    std::vector<Nucleobase> basemap{ADENINE, CYTOSINE, THYMINE, GUANINE};
+    std::map<Nucleobase, Nucleobase> oppmap;
+    oppmap.insert(std::pair<Nucleobase,Nucleobase>(ADENINE,THYMINE));
+    oppmap.insert(std::pair<Nucleobase,Nucleobase>(THYMINE,ADENINE));
+    oppmap.insert(std::pair<Nucleobase,Nucleobase>(CYTOSINE,GUANINE));
+    oppmap.insert(std::pair<Nucleobase,Nucleobase>(GUANINE,CYTOSINE));
+    for (auto &strand : model_.strands) {
+        for (auto &base : strand.bases_) {
+            if (base->getBase() == Nucleobase::NONE) {
+                Nucleobase nb = basemap[dist4(rng)];
+                base->setBase(nb);
+                base->getOpposite()->setBase(oppmap[nb]);
+                std::cout << "set base " << base->baseId_ << " to " << nb <<  " and " << base->getOpposite()->baseId_ << " to " << oppmap[nb] << "\n";
+            }
+        }
+    }
+    return 0;
+}
+

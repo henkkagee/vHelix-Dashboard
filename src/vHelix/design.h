@@ -9,6 +9,7 @@
 #include <sstream>
 #include <set>
 #include <map>
+#include <random>
 
 #include "happly-master/happly.h"
 #include <boost/algorithm/string/split.hpp>
@@ -19,6 +20,8 @@
 #include "relaxation.h"
 #include "physxrelaxation.h"
 #include "definitions.h"
+#include "model.h"
+#include "modelhandler.h"
 
 
 
@@ -43,7 +46,8 @@ public:
 
     int createEmbedding();
     std::string getoutstream();
-    bool write_embedding();
+    bool writeEmbedding();
+    int writeOxView();
     virtual int main() { // Overloaded in subclasses, e.g. Atrail
         outstream << "ERROR: Desing method not specified\n";
         return 0;
@@ -62,13 +66,14 @@ protected:
     std::vector<std::set<unsigned long long>> adj_vertices;
     unsigned int number_vertices;
     unsigned int number_faces;
-    unsigned int number_edges; //faceless
+    unsigned int number_edges; //non-face
     std::string rpoly_code;
     embedding_t embedding;
     std::stringstream outstream;
     std::stringstream filestream;
     bool write_intermediates;
 
+    Controller::Handler model_;
 };
 
 #endif // DESIGN_H

@@ -125,11 +125,10 @@ namespace Model {
     };
 
     struct Strand {
-        Strand() : sequenced_(false) {}
-        Strand(unsigned long long int length, unsigned long id) : length_(length), id_(id), scaffold_(false), sequenced_(false) {}
+        Strand() {}
+        Strand(unsigned long long int length, unsigned long id) : length_(length), id_(id), scaffold_(false)/*, sequenced_(false)*/ {}
 
         std::vector<Base*> bases_;
-        bool sequenced_;
         int length_;
 
         unsigned long id_;

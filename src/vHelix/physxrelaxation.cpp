@@ -876,7 +876,7 @@ bool SceneDescription::write_scaffold_free(std::ostream & out) const {
         }
 	}
 
-	out << std::endl << "autostaple" << std::endl << "ps " << helixNames.at(&helices.front()) << " f3'" << std::endl;
+	//out << std::endl << "autostaple" << std::endl << "ps " << helixNames.at(&helices.front()) << " f3'" << std::endl;
 
 	return true;
 }
