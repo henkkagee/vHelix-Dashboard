@@ -101,9 +101,9 @@
     <addaction name="actionSave_current_model"/>
     <addaction name="actionExit"/>
    </widget>
-   <widget class="QMenu" name="menuRoute">
+   <widget class="QMenu" name="menuDesign">
     <property name="title">
-     <string>Route</string>
+     <string>Design</string>
     </property>
     <addaction name="actionAtrail"/>
     <addaction name="actionScaffold_free"/>
@@ -144,7 +144,7 @@
     <addaction name="actionOpen_selection_in_viewer"/>
    </widget>
    <addaction name="menuvHelix"/>
-   <addaction name="menuRoute"/>
+   <addaction name="menuDesign"/>
    <addaction name="menuRelaxation"/>
    <addaction name="menuEdit"/>
    <addaction name="menuExport"/>

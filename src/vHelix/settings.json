@@ -10,7 +10,8 @@
         "spring_damping": 100.0,
         "spring_stiffness": 100.0,
         "static_friction": 0.5,
-        "visual_debugger": false
+        "visual_debugger": false,
+        "iterations": 1
     },
     "write_intermediate_files": true
 }

@@ -46,6 +46,7 @@ int main(int argc, char *argv[])
                      &w, &MainWindow::vHelixToWindow_);
     QObject::connect(&w, &MainWindow::action_,
                      &vh, &vHelix::action_);
+    
     w.show();
     return a.exec();
 }

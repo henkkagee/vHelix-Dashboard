@@ -59,8 +59,8 @@ private:
     std::vector<std::string> fileSelection_;
     Design *design;
 
-    void atrail_();
-    void scaffold_free_();
+    void atrail_(const QVector<QVariant> &args);
+    void scaffold_free_(const QVector<QVariant> &args);
     void physX_relaxation_(const QVector<QVariant> args);
     void export_(const QVector<QVariant> &args);
     void convert_(const std::string& format);
@@ -74,6 +74,7 @@ public slots:
 
 signals:
     void sendToConsole_(std::string msg);
+    void sendBaseEstimate_(std::string msg);
 };
 
 

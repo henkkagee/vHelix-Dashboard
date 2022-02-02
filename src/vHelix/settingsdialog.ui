@@ -64,7 +64,7 @@
      <x>10</x>
      <y>140</y>
      <width>501</width>
-     <height>331</height>
+     <height>352</height>
     </rect>
    </property>
    <layout class="QFormLayout" name="formLayout">
@@ -232,6 +232,23 @@
     </item>
     <item row="10" column="1">
      <widget class="QCheckBox" name="visualDebuggerCheckBox"/>
+    </item>
+    <item row="11" column="0">
+     <widget class="QLabel" name="iterationsLabel">
+      <property name="text">
+       <string>Iterations</string>
+      </property>
+     </widget>
+    </item>
+    <item row="11" column="1">
+     <widget class="QSpinBox" name="iterationsSpinBox">
+      <property name="minimum">
+       <number>1</number>
+      </property>
+      <property name="value">
+       <number>1</number>
+      </property>
+     </widget>
     </item>
    </layout>
   </widget>

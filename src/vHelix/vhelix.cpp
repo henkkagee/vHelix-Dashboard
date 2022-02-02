@@ -28,7 +28,7 @@ std::string vHelixFunc::ExePath() {
     return std::string( buffer ).substr( 0, pos);
 }
 
-vHelix::vHelix() : meshdir_(""), mesh_(""), workspace_dir_(""), plydata_(nullptr)
+vHelix::vHelix() : meshdir_(""), mesh_(""), workspace_dir_(""), plydata_(nullptr), design(nullptr)
 {
     //Initialize Python interpreter
     Py_Initialize();
@@ -235,9 +235,9 @@ void vHelix::action_(std::string cmd, QVector<QVariant> arg)
         msg << "Running Atrail routing on " << mesh_ << "..." << std::endl;
         std::string str = msg.str();
         sendToConsole_(str);
-        atrail_();
+        atrail_(arg);
     }
-    else if (cmd.find("Scaffold-free") != std::string::npos) {
+    else if (cmd.find("Scaffold free") != std::string::npos) {
         if (mesh_ == "") {
             sendToConsole_(std::string("No mesh loaded.\n"));
         }
@@ -245,7 +245,7 @@ void vHelix::action_(std::string cmd, QVector<QVariant> arg)
         msg << "Running scaffold-free design on " << mesh_ << "..." << std::endl;
         std::string str = msg.str();
         sendToConsole_(str);
-        scaffold_free_();
+        scaffold_free_(arg);
     }
     else if (cmd.find("Spanning tree") != std::string::npos) {
         sendToConsole_("Spanning tree routing is not yet implemented");
@@ -292,7 +292,13 @@ void vHelix::action_(std::string cmd, QVector<QVariant> arg)
     else if (cmd.find("estimate bases") != std::string::npos) {
         std::pair<int,int> estimate = estimate_base_use_(arg);
         std::stringstream retsstr;
-        retsstr << "relaxmenu " << std::get<0>(estimate) << " + " << std::get<1>(estimate) << "(filled strand gaps)";
+        if (arg[1].toString().toStdString().find("Scaffold free")) {
+             retsstr << "Estimated base use: " << std::get<0>(estimate) << " + " << std::get<1>(estimate) << " (filled strand gaps)\n";
+        }
+        else {
+            retsstr << "Estimated scaffold strand length: " << std::get<0>(estimate) << " + " << std::get<1>(estimate) << " (filled strand gaps)\n";
+        }
+        
         std::string ret = retsstr.str();
         sendToConsole_(ret);
     }
@@ -342,7 +348,10 @@ void vHelix::action_(std::string cmd, QVector<QVariant> arg)
     }
 }
 
-void vHelix::atrail_() {
+void vHelix::atrail_(const QVector<QVariant> &args) {
+    if (design != nullptr) {
+        delete design;
+    }
     std::cerr << "In atrail_ function\n";
     if (fileSelection_.size() != 1 ||
             fileSelection_.at(0).find(".ply") == std::string::npos) {
@@ -354,15 +363,31 @@ void vHelix::atrail_() {
     sstr << dir << mesh_;
     std::string name(sstr.str());
     name.resize(name.size() - 4);
+    std::string rpoly(name);
+    rpoly.append(".rpoly");
     std::cerr << name.c_str() << "\n" << sstr.str().c_str() << "\n";
     design = new Atrail(sstr.str(),name);
-    //Atrail atrail(sstr.str(),name);
     std::cerr << "Created atrail object\n";
     design->main();
     sendToConsole_(design->getoutstream());
+    design->relax(QVector<QVariant>({args[0]}));
+    sendToConsole_(design->getoutstream());
+    design->model_.readRpoly(rpoly.c_str(),args[1].toInt(),args[2].toInt());
+    if (args[3].toBool()) {
+        sendToConsole_("Autofilling strand gaps\n");
+        design->model_.autofillStrandGaps();
+    }
+    std::string seq = args[4].toString().toStdString();
+    std::cout << "Length of sequenceVHELIX: " << seq.length() << "\n"; 
+    if (seq.length() > 0) {
+        
+        design->generate_sequences(seq);
+    }
+    design->writeOxView();
+    sendToConsole_(design->getoutstream());
 }
 
-void vHelix::scaffold_free_() {
+void vHelix::scaffold_free_(const QVector<QVariant> &args) {
     std::cerr << "In scaffold_free_ function\n";
     if (fileSelection_.size() != 1 ||
             (fileSelection_.at(0).find(".ply") == std::string::npos && fileSelection_.at(0).find(".obj") == std::string::npos)) {
@@ -374,11 +399,24 @@ void vHelix::scaffold_free_() {
     sstr << dir << mesh_;
     std::string name(sstr.str());
     name.resize(name.size() - 4);
+    std::string rpoly(name);
+    rpoly.append(".rpoly");
     std::cerr << name.c_str() << "\n" << sstr.str().c_str() << "\n";
     design = new Scaffold_free(sstr.str(),name);
     //Atrail atrail(sstr.str(),name);
     std::cerr << "Created scaffoldfree object\n";
     design->main();
+    sendToConsole_(design->getoutstream());
+    design->relax(QVector<QVariant>({args[0]}));
+    sendToConsole_(design->getoutstream());
+    std::cout << "Reading rpoly\n";
+    design->model_.readScaffoldFreeRpoly(rpoly.c_str());
+    if (args[1].toBool()) {
+        sendToConsole_("Autofilling strand gaps\n");
+        design->model_.autofillStrandGaps();
+    }
+    design->generate_sequences(args[2].toString().toStdString());
+    design->writeOxView();
     sendToConsole_(design->getoutstream());
 }
 /*
@@ -599,8 +637,8 @@ void vHelix::export_(const QVector<QVariant> &args)
                         "\n pName:" << Py_REFCNT(pName) <<
                         //"\n pRet:" << Py_REFCNT(pRet) <<
                         "\n pFunc:" << Py_REFCNT(pFunc) << "\n";
+            
             PyObject *pRet = PyObject_CallObject(pFunc, pArgs);
-            //PyObject_CallObject(pFunc, pArgs);
             std::cerr << "Python function called successfully\n";
             std::cerr << "BEFORE DECREF: "
                         "\n pModule:" << Py_REFCNT(pModule) <<
@@ -742,7 +780,8 @@ void vHelix::convert_(const std::string& format)
 // estimate base use for structure based on relaxation scaling value (/2 = scaffold strand length)
 std::pair<int,int> vHelix::estimate_base_use_(const QVector<QVariant> &args)
 {
-    double scaling = args[0].toDouble();
+    double scaling = args[1].toDouble();
+    std::string type = args[0].toString().toStdString();
     openPLY();
 
     double totalLength = 0.0;
@@ -751,7 +790,18 @@ std::pair<int,int> vHelix::estimate_base_use_(const QVector<QVariant> &args)
                 std::pow(plydata_->y[edge[0]] - plydata_->y[edge[1]], 2) +
                 std::pow(plydata_->z[edge[0]] - plydata_->z[edge[1]], 2) );
     }
-    int estimated_use = (int)((totalLength * scaling * 2.80) - plydata_->vertexnr * 18);
+    int estimated_use = -1;
+    if (type.find("Atrail")) {
+        std::cout << "Estimating according to Atrail\n";
+        estimated_use = (int)((totalLength * scaling * 2.80) - plydata_->vertexnr * 18);
+    }
+    else if (type.find("Spanning tree")) { // Spanning
+        estimated_use = (int)((totalLength * scaling * 4) - plydata_->vertexnr * 18);
+    }
+    else if (type.find("Scaffold free")) {
+        estimated_use = estimated_use = (int)((totalLength * scaling * 2) - plydata_->vertexnr * 18);
+        return std::make_pair(estimated_use/2, plydata_->vertexnr*4);
+    }
     return std::make_pair(estimated_use/2, plydata_->vertexnr*4);
 }
 

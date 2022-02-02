@@ -46,12 +46,15 @@
 #include "./ui_sequencedialog.h"
 #include "./ui_instructions.h"
 #include "./ui_settingsdialog.h"
+#include "./ui_atraildialog.h"
+#include "./ui_scaffoldfreedialog.h"
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
 QT_END_NAMESPACE
 
-class RelaxDialog;
+//class RelaxDialog;
+//class AtrailDialog;
 
 // Main UI class
 class MainWindow : public QMainWindow
@@ -66,7 +69,7 @@ private:
     Ui::MainWindow *ui_;
     Console *console_;
     DirView *dirview_;
-    RelaxDialog *dialog_;
+    //QDialog *designdialog_;
     GraphicsView *graphicsview_;
     Controller::Handler *handler_;
     std::vector<std::string> selection_;
@@ -83,7 +86,7 @@ public slots:
     void on_actionAtrail_triggered();
     void on_actionSpanning_tree_triggered();
     void on_actionScaffold_free_triggered();
-    void on_actionPhysX_triggered();
+    //void on_actionPhysX_triggered();
 
 signals:
     void sendMesh_(std::string str);
@@ -124,13 +127,43 @@ public:
                 double &static_friction, double &dynamic_friction,
                 double &restitution, double &rigid_body_sleep_threshold,
                 std::string &visual_debugger);*/
-    void setBaseEstimate(const std::string &estimate);
-
+    //void setBaseEstimate(const std::string &estimate);
 private slots:
     void on_pushButton_clicked();
 
 private:
     Ui::Dialog ui;
+    MainWindow *parent_;
+};
+
+class AtrailDialog : public QDialog
+{
+    Q_OBJECT
+public:
+    explicit AtrailDialog(MainWindow * parent);
+    void getValues(double &scaling, int &minlength, int &maxlength, bool &autofill, std::string& seq);
+    //void setBaseEstimate(const std::string &estimate);
+
+private slots:
+    void on_pushButton_clicked();
+
+private:
+    Ui::AtrailDialog ui_;
+    MainWindow *parent_;
+};
+
+class ScaffoldfreeDialog : public QDialog {
+    Q_OBJECT
+public:
+    explicit ScaffoldfreeDialog(MainWindow * parent);
+    void getValues(double &scaling, bool &autofill, int& seq_gen);
+    //void setBaseEstimate(const std::string &estimate);
+
+private slots:
+    void on_pushButton_clicked();
+
+private:
+    Ui::ScaffoldfreeDialog ui_;
     MainWindow *parent_;
 };
 
@@ -166,7 +199,7 @@ class SettingsDialog : public QDialog {
                          bool &discretize_lengths, double &density, double &spring_stiffness,
                          double &fixed_spring_stiffness, double &spring_damping, bool &attach_fixed,
                          double &static_friction,double &dynamic_friction,double &restitution,
-                         double &rigid_body_sleep_threshold, bool &visual_debugger);
+                         double &rigid_body_sleep_threshold, bool &visual_debugger, int &iterations);
     private slots:
             void on_SetDefaults_clicked();
 

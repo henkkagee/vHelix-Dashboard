@@ -1628,3 +1628,4 @@ std::vector<Model::Helix> &Handler::readScaffoldFreeRpoly(const char *filename) 
         }
     }
 }
+

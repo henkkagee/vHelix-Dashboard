@@ -60,6 +60,8 @@ add_executable(vHelix
     dialog.ui
     rpolydialog.ui
     settingsdialog.ui
+    atraildialog.ui
+    scaffoldfreedialog.ui
     vhelix.cpp
     vhelix.h
     processio.h

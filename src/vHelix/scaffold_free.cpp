@@ -5,6 +5,19 @@ using namespace dir;
 using namespace boost;
 using json = nlohmann::json;
 
+// Python.h includes "slots" as well, resulting in a conflict. This fixes the issue.
+#pragma push_macro("slots")
+#undef slots
+#define MS_NO_COREDLL
+#ifdef _DEBUG
+    #undef _DEBUG
+    #include "Python.h"
+    #define _DEBUG
+#else
+    #include "Python.h"
+#endif
+#pragma pop_macro("slots")
+
 #define BUFFER_SIZE 1024
 // 0.84 scaling is ad hoc solution to get good looking models
 #define POSITION_SCALING 0.84f
@@ -1182,7 +1195,7 @@ int Scaffold_free::relax(const QVector<QVariant> args) {
     boolArgs[0] = settings["discretize_lengths"];
     boolArgs[1] = settings["attach_fixed"];
     boolArgs[2] = settings["visual_debugger"];
-    const int iterations = args[1].toInt();
+    const int iterations = settings["iterations"];
     
     PhysXRelax::physics::settings_type physics_settings;
     PhysXRelax::scene::settings_type scene_settings;
@@ -1203,10 +1216,26 @@ int Scaffold_free::relax(const QVector<QVariant> args) {
     //outstream << relaxation->getoutstream().c_str();
     std::cerr << "Running scaffold_free_main(). Argument sizes: " << vertices.size() << ", " << input_paths.size()<< std::endl;
     relaxation.scaffold_free_main(vertices,input_paths);
+    std::cout << "Almost finsihed relaxation\n";
     outstream << relaxation.getoutstream().c_str();
-
-    create_strands();
+    std::cout << "Finished relaxation\n";
+    //create_strands();
     return 1;
+}
+
+void Scaffold_free::generate_sequences(std::string &s) {
+    std::cout << "Creating sequences\n";
+    int opt = std::stoi(s);
+    std::cout << "Seq gen option: " << opt << "\n";
+    if (opt == 1) {
+        create_random_sequences();
+    }
+    else if (opt == 2) {
+        outstream << "Using simulated annealing\n";
+        
+        create_sequences();
+    }
+
 }
 
 int Scaffold_free::create_strands() {
@@ -1214,10 +1243,10 @@ int Scaffold_free::create_strands() {
     std::string rpoly(name);
     rpoly.append(".rpoly");
     model_.readScaffoldFreeRpoly(rpoly.c_str());
-    std::string oxview(name);
-    oxview.append(".oxview");
-    create_random_sequences();
-    model_.writeOxView(oxview.c_str());
+    //std::string oxview(name);
+    //oxview.append(".oxview");
+    //create_random_sequences(); // ANTTI
+    //model_.writeOxView(oxview.c_str());
     return 0;
 }
 
@@ -1227,22 +1256,126 @@ int Scaffold_free::create_random_sequences() {
     std::random_device dev;
     std::mt19937 rng(dev());
     std::uniform_int_distribution<std::mt19937::result_type> dist4(0,3);
-    std::vector<Nucleobase> basemap{ADENINE, CYTOSINE, THYMINE, GUANINE};
-    std::map<Nucleobase, Nucleobase> oppmap;
+    std::vector<Nucleobase> basemap{ADENINE, CYTOSINE, THYMINE, GUANINE}; // Maps number created by random generator to bases
+    std::map<Nucleobase, Nucleobase> oppmap; // Key: Base; Value: Its complementary base
     oppmap.insert(std::pair<Nucleobase,Nucleobase>(ADENINE,THYMINE));
     oppmap.insert(std::pair<Nucleobase,Nucleobase>(THYMINE,ADENINE));
     oppmap.insert(std::pair<Nucleobase,Nucleobase>(CYTOSINE,GUANINE));
     oppmap.insert(std::pair<Nucleobase,Nucleobase>(GUANINE,CYTOSINE));
     for (auto &strand : model_.strands) {
         for (auto &base : strand.bases_) {
-            if (base->getBase() == Nucleobase::NONE) {
+            if (base->getBase() == Nucleobase::NONE) { // If base not set, set it and its complemetary
                 Nucleobase nb = basemap[dist4(rng)];
                 base->setBase(nb);
                 base->getOpposite()->setBase(oppmap[nb]);
-                std::cout << "set base " << base->baseId_ << " to " << nb <<  " and " << base->getOpposite()->baseId_ << " to " << oppmap[nb] << "\n";
+                //std::cout << "set base " << base->baseId_ << " to " << nb <<  " and " << base->getOpposite()->baseId_ << " to " << oppmap[nb] << "\n";
             }
         }
     }
     return 0;
+}
+
+//Useful definition defined in mostly in model.h
+/*
+Strand {
+	vector<Base*> bases_
+	int length_
+	unsigned long id_
+
+	# scaffolded models
+	bool scaffold_
+	bool forward_
+}
+
+enum Nucleobase {
+    ADENINE = 0,
+    CYTOSINE = 1,
+    GUANINE = 2,
+    THYMINE = 3,
+    NONE = 4
+};
+
+enum Type {
+    BASE = 0,
+    FIVE_PRIME_END = 1,
+    THREE_PRIME_END = 2,
+    END = 3
+};
+
+Base {
+	Base* getForward()
+	Base *getBackward()
+	Base *getOpposite()
+	void setBase(Nucleobase)
+	Type &getType();
+	unsigned int strandId_
+}
+*/
+int Scaffold_free::create_sequences() {
+    std::cout << "In create_sequences\n";
+    // vector of Strand structs to work with: model_.strands
+    std::random_device dev;
+    std::mt19937 rng(dev());
+    std::uniform_int_distribution<std::mt19937::result_type> dist4(0,3);
+    std::vector<Nucleobase> basemap{ADENINE, CYTOSINE, THYMINE, GUANINE}; // Maps number created by random generator to bases
+    std::map<const char , Nucleobase> base_char_map; // Key: Char; Value: Its corresponding base
+    base_char_map.insert(std::pair<const char ,Nucleobase>('T',THYMINE));
+    base_char_map.insert(std::pair<const char ,Nucleobase>('A',ADENINE));
+    base_char_map.insert(std::pair<const char ,Nucleobase>('G',GUANINE));
+    base_char_map.insert(std::pair<const char ,Nucleobase>('C',CYTOSINE));
+
+    //std::map<int,int> pairing_dict;
+    PyObject *pairing_dict = PyDict_New();
+
+    //std::cout << "Length of bases container: " << model_.bases.size() << "\n";
+    for (auto &strand : model_.strands) {
+        for (auto &base : strand.bases_) {
+            PyObject *key = PyLong_FromLong(base->baseId_);
+            PyObject *val = NULL;
+            if (base->getOpposite() == nullptr) {
+                val = PyLong_FromLong(-1);
+            }
+            else {
+                val = PyLong_FromLong(base->getOpposite()->baseId_);
+            }
+            PyDict_SetItem(pairing_dict,key,val);
+        }
+    }
+
+    PyObject *pName = PyUnicode_FromString("multi_strand_generator");
+    PyObject *pModule = PyImport_Import(pName);
+    if (pModule == NULL) {
+        std::cout << "--- Something went wrong when importing rpoly_oxDNA.py ---\n";
+        PyErr_PrintEx(1);
+        Py_DECREF(pName);
+        return 0;
+    }
+    PyObject *pFunc = PyObject_GetAttrString(pModule,"generate_primary");
+    if (pFunc == NULL || !PyCallable_Check(pFunc)) {
+        std::cout << "Something went wrong while importing the function\n";
+        PyErr_PrintEx(1);
+        Py_DECREF(pName);
+        return 0;
+    }
+    PyObject *pArgs = PyTuple_New(1);
+    PyTuple_SetItem(pArgs,0,pairing_dict);
+    PyObject *pRet = PyObject_CallObject(pFunc,pArgs);
+    if (pRet == NULL) {
+        std::cout << "Something went wrong while running the function\n";
+        PyErr_PrintEx(1);
+        Py_DECREF(pName);
+        return 0;
+    }
+    const char *ps = PyUnicode_AsUTF8(pRet);
+    std::cout << ps << "\n";
+
+    for (auto &strand : model_.strands) {
+        for (auto &base : strand.bases_) {
+            std::cout << base->baseId_ << " ";
+            base->setBase(base_char_map[ps[base->baseId_]]);
+        }
+    }
+    return 1;
+
 }
 

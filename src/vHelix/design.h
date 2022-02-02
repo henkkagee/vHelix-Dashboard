@@ -38,7 +38,7 @@ class Design
 {
 public:
     Design(const std::string meshpath, const std::string meshname);
-    //~Design();
+    virtual ~Design() {}
 
     int read3Dobject();
     int readPLY();
@@ -56,6 +56,11 @@ public:
         outstream << "ERROR: Desing method not specified\n";
         return 0;
     }
+    virtual void generate_sequences(std::string &s) {
+        outstream << "ERROR: Desing method not specified\n";
+    }
+
+    Controller::Handler model_;
 
 protected:
     std::string name;
@@ -73,7 +78,7 @@ protected:
     std::stringstream filestream;
     bool write_intermediates;
 
-    Controller::Handler model_;
+
 };
 
 #endif // DESIGN_H

@@ -108,6 +108,8 @@ public:
 
     int relax(const QVector<QVariant> args);
 
+    void generate_sequences(std::string &seq);
+
 private:
     std::list<undir::Vertex> nodetrail;
     undir::Graph graph;

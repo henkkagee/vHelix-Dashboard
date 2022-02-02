@@ -1443,7 +1443,7 @@ int Atrail::relax(const QVector<QVariant> args) {
     boolArgs[0] = settings["discretize_lengths"];
     boolArgs[1] = settings["attach_fixed"];
     boolArgs[2] = settings["visual_debugger"];
-    const int iterations = args[1].toInt();
+    const int iterations = settings["iterations"];
 
     std::cout << "dblArgs:\n";
     for (int i = 0; i < 9; i++) {
@@ -1468,7 +1468,108 @@ int Atrail::relax(const QVector<QVariant> args) {
     std::cerr << "Running scaffold_main(). Argument sizes: " << vertices.size() << ", " << input_path.size()<< std::endl;
     relaxation.scaffold_main(vertices,input_path);
     outstream << relaxation.getoutstream().c_str();
-    delete boolArgs;
-    delete dblArgs;
+    delete[] boolArgs;
+    delete[] dblArgs;
     return 1;
+}
+
+void Atrail::generate_sequences(std::string &seq)
+{
+
+    if (!seq.size()) {
+        return;
+    }
+    for (unsigned long long int i = 0; i < seq.size(); i++) {
+        if (seq[i] != 'a' && seq[i] != 'A' && seq[i] != 'c' && seq[i] != 'C'
+            && seq[i] != 't' && seq[i] != 'T' && seq[i] != 'g' && seq[i] != 'G') {
+            seq.erase(i, 1);
+            i--;
+        }
+    }
+    // pseudo-random base generator
+    std::random_device dev;
+    std::mt19937 rng(dev());
+    std::uniform_int_distribution<std::mt19937::result_type> dist4(1,4);
+
+    outstream << "\nApplying sequence...\n";
+    unsigned long long int s = 0;       // strand counter
+    unsigned long long int i = 0;       // char counter
+    Nucleobase nb;
+    bool random_start = false;
+    while (s < model_.strands.size()) {
+        Model::Strand &strand = model_.strands[s];
+        if (strand.forward_) {
+            for (unsigned long long int j = 0; j < strand.bases_.size(); j++) {
+                if (!random_start) {
+                    if (seq[i] == 'a' || seq[i] == 'A') {
+                        nb = Nucleobase::ADENINE;
+                    }
+                    else if (seq[i] == 'c' || seq[i] == 'C') {
+                        nb = Nucleobase::CYTOSINE;
+                    }
+                    else if (seq[i] == 't' || seq[i] == 'T') {
+                        nb = Nucleobase::THYMINE;
+                    }
+                    else if (seq[i] == 'g' || seq[i] == 'G') {
+                        nb = Nucleobase::GUANINE;
+                    }
+                    else {
+                        outstream << "\nUnknown base type in sequence!\n";
+                        nb = Nucleobase::NONE;
+                    }
+                }
+                else {
+                    if (dist4(rng) == 0) {
+                        nb = Nucleobase::ADENINE;
+                    }
+                    else if (dist4(rng) == 1) {
+                        nb = Nucleobase::CYTOSINE;
+                    }
+                    else if (dist4(rng) == 2) {
+                        nb = Nucleobase::THYMINE;
+                    }
+                    else {
+                        nb = Nucleobase::GUANINE;
+                    }
+                }
+                strand.bases_[j]->setBase(nb);
+                i++;
+                if (i >= seq.size() -1) {
+                    random_start = true;
+                }
+            }
+        }
+        s++;
+    }
+    if (random_start) {
+        outstream <<  "The assigned sequence is too short! Generating the rest randomly.\n";
+    }
+
+    // assign complementary bases on opposite (reverse) strands
+    s = 0;
+    while (s < model_.strands.size()) {
+        Model::Strand &strand = model_.strands[s];
+        if (!strand.forward_) {
+            for (unsigned long long int j = 0; j < strand.bases_.size(); j++) {
+                if (strand.bases_[j]->getOpposite() != nullptr) {
+                    if (strand.bases_[j]->getOpposite()->getBase() == Nucleobase::ADENINE) {
+                        strand.bases_[j]->setBase(Nucleobase::THYMINE);
+                    }
+                    else if (strand.bases_[j]->getOpposite()->getBase() == Nucleobase::CYTOSINE) {
+                        strand.bases_[j]->setBase(Nucleobase::GUANINE);
+                    }
+                    else if (strand.bases_[j]->getOpposite()->getBase() == Nucleobase::THYMINE) {
+                        strand.bases_[j]->setBase(Nucleobase::ADENINE);
+                    }
+                    else if (strand.bases_[j]->getOpposite()->getBase() == Nucleobase::GUANINE) {
+                        strand.bases_[j]->setBase(Nucleobase::CYTOSINE);
+                    }
+                    else {
+                        strand.bases_[j]->setBase(Nucleobase::NONE);
+                    }
+                }
+            }
+        }
+        s++;
+    }
 }

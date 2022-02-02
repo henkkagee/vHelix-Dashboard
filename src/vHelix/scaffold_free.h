@@ -11,6 +11,10 @@
 #include "model.h"
 
 
+//#include <boost/python/dict.hpp>
+//#include <boost/python.hpp>
+
+
 
 
 
@@ -124,7 +128,9 @@ public:
     int main();
     int relax(const QVector<QVariant> args);
     int create_strands();
+    void generate_sequences(std::string &s);
     int create_random_sequences();
+    int create_sequences();
 
 private:
     std::vector<std::vector<dir::Vertex>> nodetrail;
