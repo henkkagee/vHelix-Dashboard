@@ -30,6 +30,8 @@ typedef struct {
     size_t back;
 } neighbours;
 
+
+
 typedef std::vector<std::vector<size_t> > embedding_t;
 
 enum parity { odd_even, even_odd }; // odd_even = odd follows even (1 follows 0, 3 follows 2, ...), even_odd = even follows odd (2 follows 1, 4 follows 3, ... 0 follows d-1)
@@ -48,6 +50,9 @@ public:
     std::string getoutstream();
     bool writeEmbedding();
     int writeOxView();
+    rpoly &getRpoly() {
+        return rpoly_code;
+    }
     virtual int main() { // Overloaded in subclasses, e.g. Atrail
         outstream << "ERROR: Desing method not specified\n";
         return 0;
@@ -72,7 +77,7 @@ protected:
     unsigned int number_vertices;
     unsigned int number_faces;
     unsigned int number_edges; //non-face
-    std::string rpoly_code;
+    rpoly rpoly_code;
     embedding_t embedding;
     std::stringstream outstream;
     std::stringstream filestream;

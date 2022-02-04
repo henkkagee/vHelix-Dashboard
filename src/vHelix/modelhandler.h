@@ -27,6 +27,7 @@
 
 #include <QQuaternion>
 #include <include/json/single_include/nlohmann/json.hpp>
+#include "definitions.h"
 
 namespace Controller {
 
@@ -36,7 +37,9 @@ public:
     Handler();
     void read();
     std::vector<Model::Helix> &readRpoly(const char *filename, int nicking_min_length = 0, int nicking_max_length = 0);
+    std::vector<Model::Helix> &readRpoly2(rpoly &rpoly, int nicking_min_length = 0, int nicking_max_length = 0);
     std::vector<Model::Helix> &readScaffoldFreeRpoly(const char *filename);
+    std::vector<Model::Helix> &readScaffoldFreeRpoly2(rpoly &rpoly);
     std::vector<Model::Strand> &readOxview(const char *path);
     void writeOxView(const char *fileName);
     void autofillStrandGaps();

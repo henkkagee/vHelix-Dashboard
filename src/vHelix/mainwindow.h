@@ -53,8 +53,6 @@ QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
 QT_END_NAMESPACE
 
-//class RelaxDialog;
-//class AtrailDialog;
 
 // Main UI class
 class MainWindow : public QMainWindow
@@ -115,6 +113,7 @@ private slots:
 
 #endif // MAINWINDOW_H
 
+// Not used currently
 class RelaxDialog : public QDialog
 {
     Q_OBJECT
@@ -167,6 +166,7 @@ private:
     MainWindow *parent_;
 };
 
+// Not used currently
 class RpolyDialog : public QDialog
 {
     Q_OBJECT
@@ -179,6 +179,7 @@ private:
     MainWindow *parent_;
 };
 
+// Not used currently
 class SequenceDialog : public QDialog
 {
     Q_OBJECT

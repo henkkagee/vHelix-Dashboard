@@ -314,6 +314,8 @@ std::vector<Model::Helix> &Handler::readScaffoldFreeRpoly(const char *filename) 
         }
     }
 
+    std::cout << "Number of helices: " << helices.size() << "\n Connections: " << connections.size() << "\n"; 
+
     // Now create the helices, bases and make the connections.
     #if defined(WIN32) || defined(WIN64)
                 typedef std::unordered_map<std::string, Model::Helix> string_helix_map_t;
@@ -323,6 +325,9 @@ std::vector<Model::Helix> &Handler::readScaffoldFreeRpoly(const char *filename) 
     string_helix_map_t helixStructures;
     std::cout << "information imported from rpoly file\n";
 
+    for (auto &conn : connections) {
+        std::cout << "Connection: " << conn.fromHelixName << " " << conn.fromName << " " << conn.toHelixName << " " << conn.toName << " " << conn.toType << " " << conn.fromType << "\n";
+    }
     // Use Meliks code here (cadwire)
     for (std::vector<Model::Helix>::iterator it(helices.begin()); it != helices.end(); ++it) {
         std::set<int> disconnect_forw;
@@ -479,267 +484,6 @@ std::vector<Model::Helix> &Handler::readScaffoldFreeRpoly(const char *filename) 
         std::cout << "Length of strand " << s.id_ << ": " << s.length_ << "\n";
     }
 
-    /*for (auto &s : strands) {
-        Model::Helix *parent = s.bases_[0]->getParent();
-        Model::Base *fiveprime = s.bases_[0];
-        Model::Base *threeprime = s.bases_[s.length_-1];
-        if (parent != nullptr) {
-            std::cout << "Base " << base.baseId_ << " in strand" << parent->name_ << "\n";
-        }
-        else {
-            std::cout << "Base " << base.baseId_ << " is in no strand \n";
-        }
-    }*/
-
-    /*for (unsigned int i = 0; i < helices.size(); i++) {
-        for (int forw = 0; forw < 2; forw++) {
-            if (forw == 0) { // backward strand
-                Model::Base *current = nullptr;
-                for (auto &b : helices[i].Bbases_) { // Start from nicking point
-                    if (std::find(disconnectBases.begin(),disconnectBases.end(),b) == disconnectBases.end()) {
-                        std::cout << b.baseId_;
-                        current = b.getForward();
-                        break;
-                    }
-                }
-                Model::Strand strand = Model::Strand(0, sId);
-                while (current != nullptr) {
-                    strand.bases_.push_back(current);
-                    strand.length_ += 1;
-                    //strand.forward_ = forward;
-                    //strand.scaffold_ = forward;
-                    current->in_strand_ = true;
-                    current->strandId_ = strand.id_;
-                    current = current->getForward();
-                }
-
-            }
-            else { // forward strand
-                Model::Base *current = nullptr;
-                for (auto &b : helices[i].Fbases_) { // Start from nicking point
-                    if (std::find(disconnectBases.begin(),disconnectBases.end(),b) == disconnectBases.end()) {
-                        std::cout << b.baseId_;
-                        current = b.getForward();
-                        break;
-                    }
-                }
-                Model::Strand strand = Model::Strand(0, sId);
-                while (current != nullptr) { // continue to next nicking point
-                    strand.bases_.push_back(current);
-                    strand.length_ += 1;
-                    //strand.forward_ = forward;
-                    //strand.scaffold_ = forward;
-                    current->in_strand_ = true;
-                    current->strandId_ = strand.id_;
-                    current = current->getForward();
-                }
-                strands.push_back(strand);
-                sId++;
-
-            }
-        }
-    }
-    // create the strands
-
-
-    /*Model::Helix *h = &helices.front();
-    Model::Base *current;
-    unsigned long sId = 0;
-    Model::Strand strand = Model::Strand(0, sId);
-    bool forward;
-
-    // forward and backward strands throughout structure. Assign bases to strands.
-    for (int i = 0; i < 2; i++) {
-        if (i == 0) {
-            current = h -> getForwardFivePrime();
-            forward = true;
-        }
-        else {
-            current = h -> getBackwardFivePrime();
-            forward = false;
-        }
-        while (true) {
-            if (!current || (strand.length_ > nicking_min_length + (nicking_max_length - nicking_min_length)/2) || current->in_strand_) {
-                std::cout << "Helix: " << current->getParent()->name_ << ", Base: " << current->baseId_ << "\n";
-                // make sure that the last strand isn't too short if we looped back to already assigned bases
-                if (strand.length_ < nicking_min_length) {
-                    std::cout << "Strand too short\n";
-                    strands.push_back(strand);
-                    std::vector<Model::Strand>::iterator strandit = --strands.end();
-                    std::vector<Model::Strand>::iterator prevStrand;
-                    // loop through last strands and adjust in case they are too short
-                    while (strandit->length_ < nicking_min_length) {
-                        // get previous strand
-                        // auto prevStrand = find_if(strands.begin(), strands.end(), [&prevSId](const Model::Strand& str) {return str.id_ == prevSId;});
-                        prevStrand = strandit - 1;
-                        // transfer bases from previous strand to current strand until it is long enough
-                        while (strandit->length_ < nicking_min_length) {
-                            strandit->bases_.insert(strandit->bases_.begin(), prevStrand->bases_[prevStrand->bases_.size()-1]);
-                            prevStrand->bases_.pop_back();
-                            strandit->length_ = strandit->length_ + 1;
-                            prevStrand->length_ = prevStrand->length_ -1;
-                        }
-                        strandit = prevStrand;
-                    }
-                }
-                if (current->in_strand_) {
-                    strands.push_back(strand);
-                    sId++;
-                    strand = Model::Strand(0, sId);
-                    break;
-                }
-                strands.push_back(strand);
-                sId++;
-                strand = Model::Strand(0, sId);
-            }
-            strand.bases_.push_back(current);
-            strand.length_ += 1;
-            strand.forward_ = forward;
-            //strand.scaffold_ = forward;
-            current->in_strand_ = true;
-            current->strandId_ = strand.id_;
-
-            // next
-            current = current->strand_forward_;
-        }
-    }
-    //strands.pop_back();
-    std::cerr << "Strands created\n";
-
-    // loop through all helices and look for staple loops that weren't added to strands
-    sId++;
-    strand = Model::Strand(0, sId);
-    bool found;
-    for (unsigned int i = 0; i < helices.size(); i++) {
-        for (int j = 0; j < 2; j++) {
-            if (j == 0) {
-                current = helices[i].getForwardFivePrime();
-                forward = true;
-            }
-            else {
-                current = helices[i].getBackwardFivePrime();
-                forward = false;
-            }
-            found = false;
-            int firstloopid = current->baseId_;
-            bool first = true;
-            while (true) {
-                // found unassigned loop
-                if (!current->in_strand_) {
-                    found = true;
-                    if (!current || (strand.length_ > nicking_min_length + (nicking_max_length - nicking_min_length)/2) || current->in_strand_) {
-                        // make sure that the last strand isn't too short if we looped back to already assigned bases
-                        if (current->in_strand_) {
-                            int helix_len = current->getParent()->Bbases_.size();
-                            int minlen = helix_len > 2.5 * MIN_NICK_VERTEX_DISTANCE ? MIN_NICK_VERTEX_DISTANCE : helix_len / 2;
-                            unsigned int nextstrid = current->strandId_;
-                            Model::Strand* nextstrand;
-                            for (unsigned int ss = 0; ss < strands.size(); ++ss) {
-                                if (strands[ss].id_ == nextstrid) {
-                                    nextstrand = &strands[ss];
-                                }
-                            }
-                            for (int l = 0; l < minlen; l++) {
-                                strand.bases_.push_back(current);
-                                strand.length_++;
-                                current->strandId_ = strand.id_;
-                                nextstrand->bases_.erase(nextstrand->bases_.begin());
-                                nextstrand->length_--;
-                                current = current->strand_forward_;
-                            }
-                        }
-                        strands.push_back(strand);
-                        sId++;
-                        strand = Model::Strand(0, sId);
-                    }
-                    strand.bases_.push_back(current);
-                    strand.length_ += 1;
-                    strand.forward_ = forward;
-                    strand.scaffold_ = forward;
-                    current->in_strand_ = true;
-                    current->strandId_ = strand.id_;
-
-                    // next
-                    current = current->strand_forward_;
-                    first = false;
-                }
-                else if (current->in_strand_ && found) {
-                    // skip entire helix edge as it is already assigned
-                    strands.push_back(strand);
-                    sId++;
-                    strand = Model::Strand(0, sId);
-                    break;
-                }
-                else {
-                    break;
-                }
-            }
-        }
-    }
-
-
-    Model::Strand* s;
-/*
-    int mnvd;
-    for (unsigned int i = 0; i < strands.size(); ++i) {
-        s = &strands[i];
-
-        // skip scaffold strand
-        if (s->forward_) {
-            continue;
-        }
-
-        // due to direction of the staple strands, the first base in the vector is the one with the last base id
-        current = s->bases_[0];
-        int helix_len = current->getParent()->bases_;
-        mnvd = helix_len > 2.5 * MIN_NICK_VERTEX_DISTANCE ? MIN_NICK_VERTEX_DISTANCE : helix_len / 2;
-        if (current->offset_ > (helix_len - mnvd - 1) ) {
-            // expand the next strand in the forward direction
-            if (current->strand_backward_ && current->strand_forward_) {
-                unsigned int nextstrandid = current->strand_backward_->strandId_;
-                Model::Strand* nextstrand = nullptr;
-                for (unsigned int ss = 0; ss < strands.size(); ++ss) {
-                    if (strands[ss].id_ == nextstrandid) {
-                        nextstrand = &strands[ss];
-                    }
-                }
-                int offset = current->offset_;
-                while (offset > (helix_len - mnvd)) {
-                    nextstrand->bases_.push_back(current);
-                    current->strandId_ = nextstrandid;
-                    nextstrand->length_++;
-                    s->bases_.erase(s->bases_.begin());
-                    s->length_--;
-                    current = current->strand_forward_;
-                    offset = current->offset_;
-                }
-            }
-        }
-        current = s->bases_[s->bases_.size()-1];
-        if (current->offset_ < (mnvd+1)) {
-            if (current->strand_backward_ && current->strand_forward_) {
-                // expand the next strand in the backward direction
-                unsigned int prevstrandid = current->strand_forward_->strandId_;
-                Model::Strand* prevstrand;
-                for (unsigned int ss = 0; ss < strands.size(); ++ss) {
-                    if (strands[ss].id_ == prevstrandid) {
-                        prevstrand = &strands[ss];
-                    }
-                }
-                int offset = current->offset_;
-                while (offset < mnvd) {
-                    prevstrand->bases_.insert(prevstrand->bases_.begin(), current);
-                    current->strandId_ = prevstrandid;
-                    prevstrand->length_++;
-                    s->bases_.pop_back();
-                    s->length_--;
-                    current = current->strand_backward_;
-                    offset = current->offset_;
-                }
-            }
-        }
-    }*/
-
 
     for (unsigned int i = 0; i < strands.size(); ++i) {
         if (strands[i].bases_.empty()) {
@@ -747,112 +491,7 @@ std::vector<Model::Helix> &Handler::readScaffoldFreeRpoly(const char *filename) 
         }
     }
     std::cerr << "Bases connected\n";
-    // remove strands with identical ids that connect strangely
-    // can't find a solution to this rare bug but these can easily be connected/disconneced manually in oxview
-    /*std::vector<unsigned long> sids;
-    bool removed = false;
-    for (unsigned long i = 0; i < strands.size(); ++i) {
-        for (unsigned long j = 0; j < sids.size(); ++j) {
-            if (strands[i].id_ == sids[j]) {
-                for (unsigned int b = 0; b < strands[i].bases_.size(); ++b) {
-                    strands[i].bases_[b]->in_strand_ = false;
-                }
-                strands.erase(strands.begin()+i);
-                removed = true;
-            }
-        }
-        if (removed) {
-            removed = false;
 
-            continue;
-        }
-        sids.push_back(strands[i].id_);
-    }
-
-    unsigned long largest = 0;
-    for (unsigned long i = 0; i < strands.size(); ++i) {
-        if (strands[i].id_ > largest) {
-            largest = strands[i].id_;
-        }
-    }
-    largest++;
-    Model::Strand newstrand = Model::Strand(0, largest);
-    bool found_unassigned = false;
-    for (unsigned int h = 0; h < helices.size(); ++h) {
-        for (unsigned int b = 0; b < helices[h].Bbases_.size(); ++b) {
-            if (!helices[h].Bbases_[b].in_strand_) {
-                found_unassigned = true;
-                helices[h].Bbases_[b].in_strand_ = true;
-                helices[h].Bbases_[b].strandId_ = newstrand.id_;
-                newstrand.length_++;
-                newstrand.bases_.push_back(&helices[h].Bbases_[b]);
-            }
-        }
-        if (found_unassigned) {
-            found_unassigned = false;
-            strands.push_back(newstrand);
-            largest++;
-            newstrand = Model::Strand(0, largest);
-        }
-    }*/
-
-    // make sure no strands are too short, and even them out if that's the case
-    /*for (unsigned int i = 0; i < strands.size(); ++i) {
-        s = &strands[i];
-        if (s->bases_.size() < MIN_NICK_VERTEX_DISTANCE + 1) {
-            std::cout << "Strand id: " << s->id_ << " is too short with length " << s->bases_.size() << std::endl << std::flush;
-            unsigned int forwstrandid = s->bases_[s->bases_.size()-1]->strand_backward_->strandId_;
-            unsigned int prevstrandid = s->bases_[0]->strand_forward_->strandId_;
-            std::cout << "forwstrandid: " << forwstrandid << " prevstrandid: " << prevstrandid << std::endl << std::flush;
-            Model::Strand* prevstrand = nullptr;
-            Model::Strand* forwstrand = nullptr;
-            for (unsigned int ss = 0; ss < strands.size(); ++ss) {
-                if (strands[ss].id_ == prevstrandid) {
-                    prevstrand = &strands[ss];
-                }
-                if (strands[ss].id_ == forwstrandid) {
-                    forwstrand = &strands[ss];
-                }
-            }
-            if (!prevstrand || !forwstrand || prevstrand == forwstrand) {
-                std::cout << "Skipped strand id: " << s->id_  << std::endl << std::flush;
-                continue;
-            }
-
-            Model::Strand* receiver = prevstrand->bases_.size() > forwstrand->bases_.size() ? forwstrand : prevstrand;
-            bool forw = prevstrand->bases_.size() > forwstrand->bases_.size() ? true : false;
-
-            while (s->bases_.size() > 0) {
-                if (forw) {
-                    receiver->bases_.insert(receiver->bases_.begin(), s->bases_[s->bases_.size()-1]);
-                    s->bases_.pop_back();
-                    receiver->bases_[0]->strandId_ = receiver->id_;
-                    receiver->length_++;
-                }
-                else {
-                    receiver->bases_.push_back(s->bases_[0]);
-                    s->bases_.erase(s->bases_.begin());
-                    receiver->bases_[receiver->bases_.size()-1]->strandId_ = receiver->id_;
-                    receiver->length_++;
-                }
-            }
-            strands.erase(strands.begin()+i);
-            i--;
-
-            begin comment while (s->bases_.size() <= MIN_NICK_VERTEX_DISTANCE*2) {
-                s->bases_.push_back(forwstrand->bases_[forwstrand->bases_.size()-1]);
-                s->bases_[s->bases_.size()-1]->strandId_ = s->id_;
-                forwstrand->bases_.pop_back();
-                s->bases_.insert(s->bases_.begin(), prevstrand->bases_[0]);
-                s->bases_[0]->strandId_ = s->id_;
-                prevstrand->bases_.erase(prevstrand->bases_.begin());
-                s->length_ += 2;
-                forwstrand->length_--;
-                prevstrand->length_--;
-            } end comment
-        }
-    }
-    */
     // finally, connect all bases inside strands and disconnect connections between strands
     for (auto s : strands) {
         for (unsigned long b = 0; b < s.bases_.size(); ++b) {
@@ -873,6 +512,283 @@ std::vector<Model::Helix> &Handler::readScaffoldFreeRpoly(const char *filename) 
     return helices;
 }
 
+
+
+std::vector<Model::Helix> &Handler::readScaffoldFreeRpoly2(rpoly &rpoly) {
+    unsigned int MIN_NICK_VERTEX_DISTANCE = 7;
+
+    //clear vectors if they have been in use from before
+    helices.clear();
+    connections.clear();
+    strands.clear();
+    bases.clear();
+    explicitBases.clear();
+    explicitBaseLabels.clear();
+
+
+    std::vector<double> pos(3);
+    std::vector<double> ori(4); // x, y, z, w
+    unsigned int num_bases;
+    char nameBuffer[BUFFER_SIZE], helixNameBuffer[BUFFER_SIZE], materialNameBuffer[BUFFER_SIZE], targetNameBuffer[BUFFER_SIZE], targetHelixNameBuffer[BUFFER_SIZE];
+    char label;
+    bool autostaple(true);
+    std::vector< std::pair<std::string, std::string> > paintStrands;
+    std::vector<Model::Base*> paintStrandBases, disconnectBases;
+
+    std::vector<Model::Base*> nonNickedBases;
+    // check how many helices were dealing with so we can reserve space in helices[] beforehand
+    // to avoid vector reallocation
+
+    int num_helices = rpoly.helices.size();
+    helices.reserve(num_helices);
+    unsigned long bIdStart = 0;
+    for (int i = 0; i < num_helices; i++) {
+        QVector3D position;
+            // 0.84 scaling is ad hoc solution to get good looking models
+        
+        std::tuple<unsigned int, unsigned int, coordinates, orientation> helix = rpoly.helices[i];
+        std::stringstream namestream;
+        namestream << "helix_" << std::get<0>(helix);
+        
+        unsigned int num_bases = std::get<1>(helix);
+        coordinates pos = std::get<2>(helix);
+        orientation ori = std::get<3>(helix);
+        position.setX(pos.x/POSITION_SCALING);  position.setY(pos.y/POSITION_SCALING); position.setZ(pos.z/POSITION_SCALING);
+        QQuaternion orientation;
+        float *values = new float[9];
+        // helix rotation x,y,z and w to 3x3 rotation matrix
+        // no Qt method for this?
+        values[0] = 1-2*pow(ori.y,2)-2*pow(ori.z,2);
+        values[1] = 2*ori.x*ori.y-2*ori.z*ori.w;
+        values[2] = 2*ori.x*ori.z+2*ori.y*ori.w;
+        values[3] = 2*ori.x*ori.y+2*ori.z*ori.w;
+        values[4] = 1-2*pow(ori.x,2)-2*pow(ori.z,2);
+        values[5] = 2*ori.y*ori.z-2*ori.x*ori.w;
+        values[6] = 2*ori.x*ori.z-2*ori.y*ori.w;
+        values[7] = 2*ori.y*ori.z+2*ori.x*ori.w;
+        values[8] = 1-2*pow(ori.x, 2)-2*pow(ori.y,2);
+        orientation = QQuaternion::fromRotationMatrix(QMatrix3x3(values));
+            //std::cout << "Orientation: x = " << orientation.x() << ", y = " << orientation.y() << ", z = " << orientation.z() << ", scalar = " << orientation.scalar() << "\n";
+            
+        //Model::Helix(position, orientation, helix_name.c_str(), bIdStart, num_bases);
+        helices.push_back(Model::Helix(position, orientation, namestream.str().c_str(), bIdStart, num_bases));
+        for (int i = 0; i < helices.back().bases_; i++) {
+            helices.back().Fbases_[i].setParent(&helices.back());
+            helices.back().Bbases_[i].setParent(&helices.back());
+        }
+        bIdStart += helices.back().bases_*2;
+        std::cout << "Bases: " << helices.back().bases_ << " -- next bIdStart: " << bIdStart << std::endl << std::flush;
+        delete[] values;
+    }
+
+    unsigned int num_connections = rpoly.connections.size();
+    for (int i = 0; i < num_connections; i++) {
+        std::tuple<unsigned int, char *, unsigned int, char *> conn = rpoly.connections[i];
+        std::string helix_name("helix_" + std::to_string(std::get<0>(conn)));
+        std::string tgt_name("helix_" + std::to_string(std::get<2>(conn)));
+        std::string fromtype = std::get<1>(conn);
+        std::string totype = std::get<3>(conn);
+        connections.push_back(Connection(helix_name.c_str(), fromtype.c_str(), tgt_name.c_str(), totype.c_str(), Connection::TypeFromString(fromtype.c_str()), Connection::TypeFromString(totype.c_str())));
+    }
+
+
+    std::cout << "Number of helices: " << helices.size() << "\n Connections: " << connections.size() << "\n"; 
+
+    // Now create the helices, bases and make the connections.
+    #if defined(WIN32) || defined(WIN64)
+                typedef std::unordered_map<std::string, Model::Helix> string_helix_map_t;
+    #else
+                typedef std::tr1::unordered_map<std::string, Model::Helix> string_helix_map_t;
+    #endif /* N Windows */
+    string_helix_map_t helixStructures;
+    std::cout << "information imported from rpoly file\n";
+
+    for (auto &conn : connections) {
+        std::cout << "Connection: " << conn.fromHelixName << " " << conn.fromName << " " << conn.toHelixName << " " << conn.toName << " " << conn.toType << " " << conn.fromType << "\n";
+    }
+    // Use Meliks code here (cadwire)
+    for (std::vector<Model::Helix>::iterator it(helices.begin()); it != helices.end(); ++it) {
+        std::set<int> disconnect_forw;
+        std::set<int> disconnect_back;
+        if (abs(it->bases_ - 21) <= 2) { // ~ 2 turns
+            disconnect_forw.insert(it->bases_ - 7);
+            disconnect_back.insert(7);
+        }
+        else if (abs(it->bases_ - 32) <= 2) { // ~ 3 turns
+            disconnect_forw.insert(it->bases_ - 11);
+            disconnect_back.insert(11);
+        }
+        else if (abs(it->bases_ - 42) <= 2) { // ~ 4 turns
+            disconnect_forw.insert(it->bases_ - 14);
+            disconnect_back.insert(14);
+        }
+        else if (it->bases_ > 44 && it->bases_ < 82)  { // ~ 5, 6 or 7 turns
+            disconnect_forw.insert(21);
+            disconnect_forw.insert(it->bases_ - 11);
+            disconnect_back.insert(11);
+            disconnect_back.insert(it->bases_ - 21);
+        }
+        else if (abs(it->bases_ - 84) <= 2)  {
+            disconnect_forw.insert(21);
+            disconnect_forw.insert(47);
+            disconnect_forw.insert(it->bases_ - 11);
+            disconnect_back.insert(11);
+            disconnect_back.insert(37);
+            disconnect_back.insert(it->bases_ - 21);
+        }
+        else if (abs(it->bases_ - 95) <= 2)  {
+            disconnect_forw.insert(21);
+            disconnect_forw.insert(52);
+            disconnect_forw.insert(it->bases_ - 11);
+            disconnect_back.insert(11);
+            disconnect_back.insert(42);
+            disconnect_back.insert(it->bases_ - 21);
+        }
+        else if (it->bases_ > 97) {
+            disconnect_forw.insert(21);
+            disconnect_forw.insert(21 + (int) ((it->bases_ - 32) / 2));
+            disconnect_forw.insert(it->bases_ - 11);
+            disconnect_back.insert(11);
+            disconnect_back.insert(11 + (int) ((it->bases_ - 32) / 2));
+            disconnect_back.insert(it->bases_ - 21);
+        }
+        Model::Base *bbase = it->getBackwardThreePrime();
+        Model::Base *fbase = it->getForwardFivePrime();
+        for (int i = 0; i < it->bases_ - 1; ++i) {
+            bbase = bbase->getBackward();
+            fbase = fbase->getForward();
+            if (bbase == nullptr || fbase == nullptr) {
+                std::cout << "baseError\n" << std::flush;
+                break;
+            }
+            if (disconnect_back.find(i) != disconnect_back.end()) {
+                disconnectBases.push_back(bbase);
+            }
+            if (disconnect_forw.find(i) != disconnect_forw.end()) {
+                disconnectBases.push_back(fbase);
+            }
+
+        }
+    }
+
+    std::cerr << "Nicking locations determined\n";
+
+    for (std::vector<Connection>::iterator it(connections.begin()); it != connections.end(); it++) {
+        Model::Helix *fromHelix;
+        Model::Helix *toHelix;
+        Model::Base *fromBase;
+        Model::Base *toBase;
+        bool fromHelixFound = false; bool toHelixFound = false;
+        for (auto &h : helices) {
+        if (h.name_ == it->fromHelixName) {
+            fromHelix = &h;
+            fromHelixFound = true;
+        }
+        if (h.name_ == it->toHelixName) {
+            toHelix = &h;
+            toHelixFound = true;
+        }
+        }
+        if (fromHelixFound && toHelixFound) {
+            if (it->fromName == "f3'") {
+                fromBase = fromHelix->getForwardThreePrime();
+            }
+            else if (it->fromName == "f5'") {
+                fromBase = fromHelix->getForwardFivePrime();
+            }
+            else if (it->fromName == "b3'") {
+                fromBase = fromHelix->getBackwardThreePrime();
+            }
+            else if (it->fromName == "b5'") {
+                fromBase = fromHelix->getBackwardFivePrime();
+            }
+
+            if (it->toName == "f3'") {
+                toBase = toHelix->getForwardThreePrime();
+            }
+            else if (it->toName == "f5'") {
+                toBase = toHelix->getForwardFivePrime();
+            }
+            else if (it->toName == "b3'") {
+                toBase = toHelix->getBackwardThreePrime();
+            }
+            else if (it->toName == "b5'") {
+                toBase = toHelix->getBackwardFivePrime();
+            }
+
+            // connect the bases from the two strands
+            fromBase->setForward(toBase);
+            fromBase->strand_forward_ = toBase;
+            toBase->setBackward(fromBase);
+            toBase->strand_backward_ = fromBase;
+            std::cout << "Connected " << fromHelix->name_ << " " << it->fromName << " to " << toHelix->name_ << " " << it->toName << "\n";
+        }
+    }
+
+
+    std::cerr << "Connections determined\n";
+
+
+    for (auto k : disconnectBases) {
+        Model::Base *b = k->getBackward();
+        k->checked_ = true;
+        k->setBackward(nullptr);
+        b->setForward(nullptr);
+    }
+
+    std::cerr << "Bases disconnected\n";
+    std::cout << "Size of disconnectbases: " << disconnectBases.size() << "\n";
+    unsigned long int sId = 0;
+
+    for (auto &b : disconnectBases) {
+        Model::Base *current = b;
+        Model::Strand strand = Model::Strand(0, sId);
+        while (current != nullptr) {
+            strand.bases_.push_back(current);
+            strand.length_ += 1;
+            //strand.forward_ = forward;
+            //strand.scaffold_ = forward;
+            current->in_strand_ = true;
+            current->strandId_ = strand.id_;
+            current = current->forward_;
+        }
+        strands.push_back(strand);
+        sId++;
+    }
+
+    std::cerr << "Strands created. Number of strands: " << strands.size() << "\n";
+
+    for (auto &s : strands) {
+        std::cout << "Length of strand " << s.id_ << ": " << s.length_ << "\n";
+    }
+
+
+    for (unsigned int i = 0; i < strands.size(); ++i) {
+        if (strands[i].bases_.empty()) {
+            strands.erase(strands.begin() + i);
+        }
+    }
+    std::cerr << "Bases connected\n";
+    
+    // finally, connect all bases inside strands and disconnect connections between strands
+    for (auto s : strands) {
+        for (unsigned long b = 0; b < s.bases_.size(); ++b) {
+            if (b == 0) {
+                s.bases_[b]->setBackward(nullptr);
+                s.bases_[b]->setForward(s.bases_[b+1]);
+            }
+            else if (b == s.bases_.size()-1) {
+                s.bases_[b]->setBackward(s.bases_[b-1]);
+                s.bases_[b]->setForward(nullptr);
+            }
+            else {
+                s.bases_[b]->setBackward(s.bases_[b-1]);
+                s.bases_[b]->setForward(s.bases_[b+1]);
+            }
+        }
+    }
+    return helices;
+}
     /* Creates a DNA structure from an .rpoly file generated from the BSCOR-pipeline assuming a scaffold- and staple strand configuration*/
     /* You probably don't want to touch this function unless you know what you're doing */
     std::vector<Model::Helix> &Handler::readRpoly(const char *filename, int nicking_min_length, int nicking_max_length) {
@@ -944,6 +860,7 @@ std::vector<Model::Helix> &Handler::readScaffoldFreeRpoly(const char *filename) 
                 float *values = new float[9];
                 // helix rotation x,y,z and w to 3x3 rotation matrix
                 // no Qt method for this?
+                std::cout << "Adding " << nameBuffer << " to helices. Bases: " << bases << ". Position:" << pos[0] << " " << pos[1] << " " << pos[2] << ". Orientation: " << ori[0] << " " << ori[1] << " " << ori[2] << " " << ori[3] << "\n";
                 values[0] = 1-2*pow(ori[1],2)-2*pow(ori[2],2);
                 values[1] = 2*ori[0]*ori[1]-2*ori[2]*ori[3];
                 values[2] = 2*ori[0]*ori[2]+2*ori[1]*ori[3];
@@ -979,6 +896,12 @@ std::vector<Model::Helix> &Handler::readScaffoldFreeRpoly(const char *filename) 
             else if (line == "autostaple" || line == "autonick") {
                 autostaple = true;
             }
+        }
+        for (auto &conn : connections) {
+            std::cout << "Connection: " << conn.fromHelixName << " " << conn.fromName << " " << conn.toHelixName << " " << conn.toName << " " << conn.toType << " " << conn.fromType << "\n";
+        }
+        for (auto &ps : paintStrands) {
+            std::cout << "Paintstrands: " << ps.first << " " << ps.second << "\n";
         }
 
         // Now create the helices, bases and make the connections.
@@ -1135,6 +1058,7 @@ std::vector<Model::Helix> &Handler::readScaffoldFreeRpoly(const char *filename) 
 
                 // next
                 current = current->strand_forward_;
+                std::cout << "At strand " << current->strandId_ << " of helix" << current->getParent()->name_ << "\n";
             }
         }
 
@@ -1386,6 +1310,533 @@ std::vector<Model::Helix> &Handler::readScaffoldFreeRpoly(const char *filename) 
         }
 
         // finally, connect all bases inside strands and disconnect connections between strands
+        for (auto s : strands) {
+            for (unsigned long b = 0; b < s.bases_.size(); ++b) {
+                if (b == 0) {
+                    s.bases_[b]->setBackward(nullptr);
+                    s.bases_[b]->setForward(s.bases_[b+1]);
+                }
+                else if (b == s.bases_.size()-1) {
+                    s.bases_[b]->setBackward(s.bases_[b-1]);
+                    s.bases_[b]->setForward(nullptr);
+                }
+                else {
+                    s.bases_[b]->setBackward(s.bases_[b-1]);
+                    s.bases_[b]->setForward(s.bases_[b+1]);
+                }
+            }
+        }
+        return helices;
+    }
+
+    std::vector<Model::Helix> &Handler::readRpoly2(rpoly &rpoly, int nicking_min_length, int nicking_max_length) {
+        unsigned int MIN_NICK_VERTEX_DISTANCE = 7;
+
+        //clear vectors if they have been in use from before
+        helices.clear();
+        connections.clear();
+        strands.clear();
+        bases.clear();
+        explicitBases.clear();
+        explicitBaseLabels.clear();
+
+
+        std::vector<double> pos(3);
+        std::vector<double> ori(4); // x, y, z, w
+        unsigned int num_bases;
+        char nameBuffer[BUFFER_SIZE], helixNameBuffer[BUFFER_SIZE], materialNameBuffer[BUFFER_SIZE], targetNameBuffer[BUFFER_SIZE], targetHelixNameBuffer[BUFFER_SIZE];
+        char label;
+        bool autostaple(true);
+
+        std::vector< std::pair<std::string, std::string> > paintStrands;
+        std::vector<Model::Base*> paintStrandBases, disconnectBackwardBases;
+
+        std::vector<Model::Base*> nonNickedBases;
+        // check how many helices were dealing with so we can reserve space in helices[] beforehand
+        // to avoid vector reallocation
+
+        size_t num_helices = rpoly.helices.size();
+        helices.reserve(num_helices+1);
+        unsigned long bIdStart = 0;
+        for (size_t i = 0; i < num_helices; i++) {
+            QVector3D position;
+                // 0.84 scaling is ad hoc solution to get good looking models
+            std::tuple<unsigned int, unsigned int, coordinates, orientation> helix = rpoly.helices[i];
+            std::stringstream namestream;
+            namestream << "helix_" << std::get<0>(helix);
+            //std::string helix_name = "helix_" + std::to_string(std::get<0>(helix));
+            
+            unsigned int num_bases = std::get<1>(helix);
+            coordinates pos = std::get<2>(helix);
+            orientation ori = std::get<3>(helix);
+            std::cout << "Adding " << namestream.str() << " to helices. Bases: " << num_bases << ". Position:" << pos.x << " " << pos.y << " " << pos.z << ". Orientation: " << ori.x << " " << ori.y << " " << ori.z << " " << ori.w << "\n";
+            position.setX(pos.x/POSITION_SCALING);  position.setY(pos.y/POSITION_SCALING); position.setZ(pos.z/POSITION_SCALING);
+            QQuaternion orientation;
+            float *values = new float[9];
+            // helix rotation x,y,z and w to 3x3 rotation matrix
+            // no Qt method for this?
+            values[0] = 1-2*pow(ori.y,2)-2*pow(ori.z,2);
+            values[1] = 2*ori.x*ori.y-2*ori.z*ori.w;
+            values[2] = 2*ori.x*ori.z+2*ori.y*ori.w;
+            values[3] = 2*ori.x*ori.y+2*ori.z*ori.w;
+            values[4] = 1-2*pow(ori.x,2)-2*pow(ori.z,2);
+            values[5] = 2*ori.y*ori.z-2*ori.x*ori.w;
+            values[6] = 2*ori.x*ori.z-2*ori.y*ori.w;
+            values[7] = 2*ori.y*ori.z+2*ori.x*ori.w;
+            values[8] = 1-2*pow(ori.x, 2)-2*pow(ori.y,2);
+            orientation = QQuaternion::fromRotationMatrix(QMatrix3x3(values));
+                //std::cout << "Orientation: x = " << orientation.x() << ", y = " << orientation.y() << ", z = " << orientation.z() << ", scalar = " << orientation.scalar() << "\n";
+                
+            helices.push_back(Model::Helix(position, orientation, namestream.str().c_str(), bIdStart, num_bases));
+            for (int i = 0; i < helices.back().bases_; i++) {
+                helices.back().Fbases_[i].setParent(&helices.back());
+                helices.back().Bbases_[i].setParent(&helices.back());
+            }
+            bIdStart += helices.back().bases_*2;
+            //std::cout << "Bases: " << helices.back().bases_ << " -- next bIdStart: " << bIdStart << std::endl << std::flush;
+            delete[] values;
+        }
+
+        unsigned int num_connections = rpoly.connections.size();
+        for (int i = 0; i < num_connections; i++) {
+            std::tuple<unsigned int, char *, unsigned int, char *> conn = rpoly.connections[i];
+            std::string helix_name("helix_" + std::to_string(std::get<0>(conn)));
+            std::string tgt_name("helix_" + std::to_string(std::get<2>(conn)));
+            std::string fromtype = std::get<1>(conn);
+            std::string totype = std::get<3>(conn);
+            connections.push_back(Connection(helix_name.c_str(), fromtype.c_str(), tgt_name.c_str(), totype.c_str(), Connection::TypeFromString(fromtype.c_str()), Connection::TypeFromString(totype.c_str())));
+        }
+
+        size_t num_other_lines = rpoly.others.size();
+        std::cout << "Num other lines: " << num_other_lines << "\n";
+        for (size_t i = 0; i < num_other_lines; i++) {
+            std::cout << rpoly.others[i] << "\n";
+            if (sscanf(rpoly.others[i].c_str(), "ps %s %s",helixNameBuffer, nameBuffer) == 2) {
+                paintStrands.push_back(std::make_pair(std::string(helixNameBuffer), std::string(nameBuffer)));
+            }
+            else if (rpoly.others[i] == "autostaple" || rpoly.others[i] == "autonick") {
+                autostaple = true;
+            }
+        }
+        std::cout << "Number of helices: " << helices.size() << "\nConnections: " << connections.size() << "\n";
+        std::cout << "Nicking lens: " << nicking_min_length << " " << nicking_max_length << "\n";
+        for (auto &conn : connections) {
+            std::cout << "Connection: " << conn.fromHelixName << " " << conn.fromName << " " << conn.toHelixName << " " << conn.toName << " " << conn.toType << " " << conn.fromType << "\n";
+        }
+        for (auto &ps : paintStrands) {
+            std::cout << "Paintstrands: " << ps.first << " " << ps.second << "\n";
+        }
+        // Now create the helices, bases and make the connections.
+        #if defined(WIN32) || defined(WIN64)
+                    typedef std::unordered_map<std::string, Model::Helix> string_helix_map_t;
+        #else
+                    typedef std::tr1::unordered_map<std::string, Model::Helix> string_helix_map_t;
+        #endif /* N Windows */
+        string_helix_map_t helixStructures;
+        std::cout << "Iterating over helices\n";
+        for (std::vector<Model::Helix>::iterator it(helices.begin()); it != helices.end(); ++it) {
+            //std::cout << it->name_ << std::endl << std::flush;
+            //helixStructures.insert(std::make_pair(it->name_, *it));
+            if (autostaple && it->bases_ > 1) {
+                Model::Base *base = it->getBackwardThreePrime();
+
+                // Disconnect base at backward 5' + floor(<num bases> / 2)
+                for (int i = 0; i < (it->bases_ - 1) / 2 + 1; ++i) {
+                    base = base->getBackward();
+                    if (base == nullptr) {
+                        std::cout << "baseError\n" << std::flush;
+                        break;
+                    }
+                }
+                if (it->bases_ > nicking_min_length) {
+                    //std::cout << "Base at " << base->getParent()->name_ << " in pos " << base->offset_ << " should be disconnected. Parent is: " << base->getParent() << "\n" << std::flush;
+                    disconnectBackwardBases.push_back(base);
+                    paintStrandBases.push_back(base);
+                }
+                else {
+                    // Add this edge to non-nicked strands but only add the strand once.
+                    //HPRINT("Not nicking %s because only %u bases", base.getDagPath(status).fullPathName().asChar(), it->bases);
+                    nonNickedBases.push_back(base);
+                }
+            }
+        }
+        std::cout << "Iterating over connections\n";
+        for (std::vector<Connection>::iterator it(connections.begin()); it != connections.end(); it++) {
+            Model::Helix *fromHelix;
+            Model::Helix *toHelix;
+            Model::Base *fromBase;
+            Model::Base *toBase;
+            bool fromHelixFound = false; bool toHelixFound = false;
+            for (auto &h : helices) {
+               if (h.name_ == it->fromHelixName) {
+                   fromHelix = &h;
+                   fromHelixFound = true;
+               }
+               if (h.name_ == it->toHelixName) {
+                   toHelix = &h;
+                   toHelixFound = true;
+               }
+            }
+            if (fromHelixFound && toHelixFound) {
+                if (it->fromName == "f3'") {
+                    fromBase = fromHelix->getForwardThreePrime();
+                }
+                else if (it->fromName == "f5'") {
+                    fromBase = fromHelix->getForwardFivePrime();
+                }
+                else if (it->fromName == "b3'") {
+                    fromBase = fromHelix->getBackwardThreePrime();
+                }
+                else if (it->fromName == "b5'") {
+                    fromBase = fromHelix->getBackwardFivePrime();
+                }
+
+                if (it->toName == "f3'") {
+                    toBase = toHelix->getForwardThreePrime();
+                }
+                else if (it->toName == "f5'") {
+                    toBase = toHelix->getForwardFivePrime();
+                }
+                else if (it->toName == "b3'") {
+                    toBase = toHelix->getBackwardThreePrime();
+                }
+                else if (it->toName == "b5'") {
+                    toBase = toHelix->getBackwardFivePrime();
+                }
+
+                // connect the bases from the two strands
+                fromBase->setForward(toBase);
+                fromBase->strand_forward_ = toBase;
+                toBase->setBackward(fromBase);
+                toBase->strand_backward_ = fromBase;
+            }
+        }
+        std::cout << "Iterating over disconnectbackwardbases\n";
+        for (auto k : disconnectBackwardBases) {
+            Model::Base *b = k->getBackward();
+            k->checked_ = true;
+            k->setBackward(nullptr);
+            b->setForward(nullptr);
+        }
+
+        // create the strands
+        Model::Helix *h = &helices.front();
+        Model::Base *current;
+        unsigned long sId = 0;
+        Model::Strand strand = Model::Strand(0, sId);
+        bool forward;
+        std::cout << "Creating the strands\n";
+        // forward and backward strands throughout structure
+        for (int i = 0; i < 2; i++) {
+            if (i == 0) {
+                current = h -> getForwardFivePrime();
+                forward = true;
+            }
+            else {
+                current = h -> getBackwardFivePrime();
+                forward = false;
+            }
+            while (true) {
+                if (!current || (strand.length_ > nicking_min_length + (nicking_max_length - nicking_min_length)/2 && !forward) || current->in_strand_) {
+                    if (forward) {
+                        // make scaffold strand cyclic
+                        current->setBackward(current->strand_backward_);
+                        current->strand_backward_->setForward(current);
+                    }
+                    // make sure that the last strand isn't too short if we looped back to already assigned bases
+                    if (strand.length_ < nicking_min_length) {
+                        strands.push_back(strand);
+                        std::vector<Model::Strand>::iterator strandit = --strands.end();
+                        std::vector<Model::Strand>::iterator prevStrand;
+                        // loop through last strands and adjust in case they are too short
+                        while (strandit->length_ < nicking_min_length) {
+                            // get previous strand
+                            // auto prevStrand = find_if(strands.begin(), strands.end(), [&prevSId](const Model::Strand& str) {return str.id_ == prevSId;});
+                            prevStrand = strandit - 1;
+                            // transfer bases from previous strand to current strand until it is long enough
+                            while (strandit->length_ < nicking_min_length) {
+                                strandit->bases_.insert(strandit->bases_.begin(), prevStrand->bases_[prevStrand->bases_.size()-1]);
+                                prevStrand->bases_.pop_back();
+                                strandit->length_ = strandit->length_ + 1;
+                                prevStrand->length_ = prevStrand->length_ -1;
+                            }
+                            strandit = prevStrand;
+                        }
+                    }
+                    if (current->in_strand_) {
+                        strands.push_back(strand);
+                        sId++;
+                        strand = Model::Strand(0, sId);
+                        break;
+                    }
+                    strands.push_back(strand);
+                    sId++;
+                    strand = Model::Strand(0, sId);
+                }
+                strand.bases_.push_back(current);
+                strand.length_ += 1;
+                strand.forward_ = forward;
+                strand.scaffold_ = forward;
+                current->in_strand_ = true;
+                current->strandId_ = strand.id_;
+
+                // next
+                current = current->strand_forward_;
+                //std::cout << "At strand " << current->strandId_ << " of helix" << current->getParent()->name_ << "\n";
+            }
+        }
+
+        // loop through all helices and look for staple loops that weren't added to strands
+        std::cout << "Adding staple loops to strands\n";
+        sId++;
+        strand = Model::Strand(0, sId);
+        bool found;
+        for (unsigned int i = 0; i < helices.size(); i++) {
+            for (int j = 0; j < 2; j++) {
+                if (j == 0) {
+                    current = helices[i].getForwardFivePrime();
+                    forward = true;
+                }
+                else {
+                    current = helices[i].getBackwardFivePrime();
+                    forward = false;
+                }
+                found = false;
+                int firstloopid = current->baseId_;
+                bool first = true;
+                while (true) {
+                    // found unassigned loop
+                    if (!current->in_strand_) {
+                        found = true;
+                        if (!current || (strand.length_ > nicking_min_length + (nicking_max_length - nicking_min_length)/2 && !forward) || current->in_strand_) {
+                            // make sure that the last strand isn't too short if we looped back to already assigned bases
+                            if (current->in_strand_) {
+                                int helix_len = current->getParent()->Bbases_.size();
+                                int minlen = helix_len > 2.5 * MIN_NICK_VERTEX_DISTANCE ? MIN_NICK_VERTEX_DISTANCE : helix_len / 2;
+                                unsigned int nextstrid = current->strandId_;
+                                Model::Strand* nextstrand;
+                                for (unsigned int ss = 0; ss < strands.size(); ++ss) {
+                                    if (strands[ss].id_ == nextstrid) {
+                                        nextstrand = &strands[ss];
+                                    }
+                                }
+                                for (int l = 0; l < minlen; l++) {
+                                    strand.bases_.push_back(current);
+                                    strand.length_++;
+                                    current->strandId_ = strand.id_;
+                                    nextstrand->bases_.erase(nextstrand->bases_.begin());
+                                    nextstrand->length_--;
+                                    current = current->strand_forward_;
+                                }
+                            }
+                            strands.push_back(strand);
+                            sId++;
+                            strand = Model::Strand(0, sId);
+                        }
+                        strand.bases_.push_back(current);
+                        strand.length_ += 1;
+                        strand.forward_ = forward;
+                        strand.scaffold_ = forward;
+                        current->in_strand_ = true;
+                        current->strandId_ = strand.id_;
+
+                        // next
+                        current = current->strand_forward_;
+                        first = false;
+                    }
+                    else if (current->in_strand_ && found) {
+                        // skip entire helix edge as it is already assigned
+                        strands.push_back(strand);
+                        sId++;
+                        strand = Model::Strand(0, sId);
+                        break;
+                    }
+                    else {
+                        break;
+                    }
+                }
+            }
+        }
+
+        std::cout << "Iterating over strands\n";
+        Model::Strand* s;
+
+        int mnvd;
+        for (unsigned int i = 0; i < strands.size(); ++i) {
+            s = &strands[i];
+
+            // skip scaffold strand
+            if (s->forward_) {
+                continue;
+            }
+
+            // due to direction of the staple strands, the first base in the vector is the one with the last base id
+            current = s->bases_[0];
+            int helix_len = current->getParent()->bases_;
+            mnvd = helix_len > 2.5 * MIN_NICK_VERTEX_DISTANCE ? MIN_NICK_VERTEX_DISTANCE : helix_len / 2;
+            if (current->offset_ > (helix_len - mnvd - 1) ) {
+                // expand the next strand in the forward direction
+                if (current->strand_backward_ && current->strand_forward_) {
+                    unsigned int nextstrandid = current->strand_backward_->strandId_;
+                    Model::Strand* nextstrand = nullptr;
+                    for (unsigned int ss = 0; ss < strands.size(); ++ss) {
+                        if (strands[ss].id_ == nextstrandid) {
+                            nextstrand = &strands[ss];
+                        }
+                    }
+                    int offset = current->offset_;
+                    while (offset > (helix_len - mnvd)) {
+                        nextstrand->bases_.push_back(current);
+                        current->strandId_ = nextstrandid;
+                        nextstrand->length_++;
+                        s->bases_.erase(s->bases_.begin());
+                        s->length_--;
+                        current = current->strand_forward_;
+                        offset = current->offset_;
+                    }
+                }
+            }
+            current = s->bases_[s->bases_.size()-1];
+            if (current->offset_ < (mnvd+1)) {
+                if (current->strand_backward_ && current->strand_forward_) {
+                    // expand the next strand in the backward direction
+                    unsigned int prevstrandid = current->strand_forward_->strandId_;
+                    Model::Strand* prevstrand;
+                    for (unsigned int ss = 0; ss < strands.size(); ++ss) {
+                        if (strands[ss].id_ == prevstrandid) {
+                            prevstrand = &strands[ss];
+                        }
+                    }
+                    int offset = current->offset_;
+                    while (offset < mnvd) {
+                        prevstrand->bases_.insert(prevstrand->bases_.begin(), current);
+                        current->strandId_ = prevstrandid;
+                        prevstrand->length_++;
+                        s->bases_.pop_back();
+                        s->length_--;
+                        current = current->strand_backward_;
+                        offset = current->offset_;
+                    }
+                }
+            }
+        }
+
+        for (unsigned int i = 0; i < strands.size(); ++i) {
+            if (strands[i].bases_.empty()) {
+                strands.erase(strands.begin() + i);
+            }
+        }
+
+        // remove strands with identical ids that connect strangely
+        // can't find a solution to this rare bug but these can easily be connected/disconneced manually in oxview
+        std::cout << "Removing strands with same ids\n";
+        std::vector<unsigned long> sids;
+        bool removed = false;
+        for (unsigned long i = 0; i < strands.size(); ++i) {
+            for (unsigned long j = 0; j < sids.size(); ++j) {
+                if (strands[i].id_ == sids[j]) {
+                    for (unsigned int b = 0; b < strands[i].bases_.size(); ++b) {
+                        strands[i].bases_[b]->in_strand_ = false;
+                    }
+                    strands.erase(strands.begin()+i);
+                    removed = true;
+                }
+            }
+            if (removed) {
+                removed = false;
+
+                continue;
+            }
+            sids.push_back(strands[i].id_);
+        }
+
+        unsigned long largest = 0;
+        for (unsigned long i = 0; i < strands.size(); ++i) {
+            if (strands[i].id_ > largest) {
+                largest = strands[i].id_;
+            }
+        }
+        largest++;
+        Model::Strand newstrand = Model::Strand(0, largest);
+        bool found_unassigned = false;
+        for (unsigned int h = 0; h < helices.size(); ++h) {
+            for (unsigned int b = 0; b < helices[h].Bbases_.size(); ++b) {
+                if (!helices[h].Bbases_[b].in_strand_) {
+                    found_unassigned = true;
+                    helices[h].Bbases_[b].in_strand_ = true;
+                    helices[h].Bbases_[b].strandId_ = newstrand.id_;
+                    newstrand.length_++;
+                    newstrand.bases_.push_back(&helices[h].Bbases_[b]);
+                }
+            }
+            if (found_unassigned) {
+                found_unassigned = false;
+                strands.push_back(newstrand);
+                largest++;
+                newstrand = Model::Strand(0, largest);
+            }
+        }
+
+        // make sure no strands are too short, and even them out if that's the case
+        std::cout << "Making sure no strands are too short\n";
+        for (unsigned int i = 0; i < strands.size(); ++i) {
+            s = &strands[i];
+            if (s->bases_.size() < MIN_NICK_VERTEX_DISTANCE + 1) {
+                std::cout << "Strand id: " << s->id_ << " is too short with length " << s->bases_.size() << std::endl << std::flush;
+                unsigned int forwstrandid = s->bases_[s->bases_.size()-1]->strand_backward_->strandId_;
+                unsigned int prevstrandid = s->bases_[0]->strand_forward_->strandId_;
+                std::cout << "forwstrandid: " << forwstrandid << " prevstrandid: " << prevstrandid << std::endl << std::flush;
+                Model::Strand* prevstrand = nullptr;
+                Model::Strand* forwstrand = nullptr;
+                for (unsigned int ss = 0; ss < strands.size(); ++ss) {
+                    if (strands[ss].id_ == prevstrandid) {
+                        prevstrand = &strands[ss];
+                    }
+                    if (strands[ss].id_ == forwstrandid) {
+                        forwstrand = &strands[ss];
+                    }
+                }
+                if (!prevstrand || !forwstrand || prevstrand == forwstrand) {
+                    std::cout << "Skipped strand id: " << s->id_  << std::endl << std::flush;
+                    continue;
+                }
+
+                Model::Strand* receiver = prevstrand->bases_.size() > forwstrand->bases_.size() ? forwstrand : prevstrand;
+                bool forw = prevstrand->bases_.size() > forwstrand->bases_.size() ? true : false;
+
+                while (s->bases_.size() > 0) {
+                    if (forw) {
+                        receiver->bases_.insert(receiver->bases_.begin(), s->bases_[s->bases_.size()-1]);
+                        s->bases_.pop_back();
+                        receiver->bases_[0]->strandId_ = receiver->id_;
+                        receiver->length_++;
+                    }
+                    else {
+                        receiver->bases_.push_back(s->bases_[0]);
+                        s->bases_.erase(s->bases_.begin());
+                        receiver->bases_[receiver->bases_.size()-1]->strandId_ = receiver->id_;
+                        receiver->length_++;
+                    }
+                }
+                strands.erase(strands.begin()+i);
+                i--;
+
+                /*while (s->bases_.size() <= MIN_NICK_VERTEX_DISTANCE*2) {
+                    s->bases_.push_back(forwstrand->bases_[forwstrand->bases_.size()-1]);
+                    s->bases_[s->bases_.size()-1]->strandId_ = s->id_;
+                    forwstrand->bases_.pop_back();
+                    s->bases_.insert(s->bases_.begin(), prevstrand->bases_[0]);
+                    s->bases_[0]->strandId_ = s->id_;
+                    prevstrand->bases_.erase(prevstrand->bases_.begin());
+                    s->length_ += 2;
+                    forwstrand->length_--;
+                    prevstrand->length_--;
+                }*/
+            }
+        }
+
+        // finally, connect all bases inside strands and disconnect connections between strands
+        std::cout << "Connecting bases in strands\n";
         for (auto s : strands) {
             for (unsigned long b = 0; b < s.bases_.size(); ++b) {
                 if (b == 0) {

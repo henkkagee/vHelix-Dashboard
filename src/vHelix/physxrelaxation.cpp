@@ -693,22 +693,22 @@ bool scene::setupscaffoldfreeHelices(physics & phys) {
             if (edge_1_forward && edge_2_forward) {
                 edge_1_conn = Helix::kForwardThreePrime;
                 edge_2_conn = Helix::kForwardFivePrime;
-                std::cout << helix_1 + 1 << " f3 " << helix_2 + 1 << " f5\n";
+                std::cout << helix_1 + 1 << " f3' " << helix_2 + 1 << " f5'\n";
             }
             else if (edge_1_forward && !edge_2_forward){
                 edge_1_conn = Helix::kForwardThreePrime;
                 edge_2_conn = Helix::kBackwardFivePrime;
-                std::cout << helix_1 + 1 << " f3 " << helix_2 + 1 << " b5\n";
+                std::cout << helix_1 + 1 << " f3' " << helix_2 + 1 << " b5'\n";
             }
             else if (!edge_1_forward && edge_2_forward) {
                 edge_1_conn = Helix::kBackwardThreePrime;
                 edge_2_conn = Helix::kForwardFivePrime;
-                std::cout << helix_1 +1 << " b3 " << helix_2 + 1 << " f5\n";
+                std::cout << helix_1 +1 << " b3' " << helix_2 + 1 << " f5'\n";
             }
             else{ // both false
                 edge_2_conn = Helix::kBackwardFivePrime;
                 edge_1_conn = Helix::kBackwardThreePrime;
-                std::cout << helix_1 + 1 << " b3 " << helix_2 + 1 << " b5\n";
+                std::cout << helix_1 + 1 << " b3' " << helix_2 + 1 << " b5'\n";
             }
             //std::cout << "attachment points identified\n";
             helices[helix_1].attach(phys,helices[helix_2],edge_1_conn,edge_2_conn);
@@ -769,6 +769,41 @@ SceneDescription::SceneDescription(scene & scene) : totalSeparation(scene.getTot
     std::cerr << "Created scenedescription"<< std::endl;
 }
 
+bool SceneDescription::write_2(rpoly& target) const {
+    std::unordered_map<const Helix *, unsigned int> helixNames;
+    helixNames.reserve(helices.size());
+    target.helices.reserve(helices.size());
+    unsigned int i(0);
+    // add the helices
+    for (const Helix & helix : helices) {
+        const physics::vec3_type & phys_position(helix.getPosition());
+        const physics::quaternion_type & phys_orientation(helix.getOrientation());
+        unsigned int bases = helix.baseCount;
+        coordinates coord(phys_position.x,phys_position.y,phys_position.z);
+        orientation ori(phys_orientation.x,phys_orientation.y,phys_orientation.z,phys_orientation.w);
+        target.helices.push_back(std::tuple<unsigned int,unsigned int,coordinates,orientation>(i,bases,coord,ori));
+        helixNames.emplace(&helix,i);
+        i++;
+    }
+    // add the connections
+    for (const Helix & helix : helices) {
+        int h1 = helixNames.at(&helix);
+        int hb5 = helixNames.at(helix.connections[PhysXRelax::Helix::kBackwardFivePrime]);
+        int hf3 = helixNames.at(helix.connections[PhysXRelax::Helix::kForwardThreePrime]);
+        target.connections.push_back(std::tuple<unsigned int,char*,unsigned int,char*>(h1,"f3'",hf3,"f5'"));
+        target.connections.push_back(std::tuple<unsigned int,char*,unsigned int,char*>(hb5,"b3'",h1,"b5'"));
+    }
+    std::stringstream ps;
+    
+    ps << "ps helix_" << helixNames.at(&helices.front()) << " f3'";
+    std::cout << ps.str() << "\n";
+    std::cout << ps.str().c_str() << "\n"; 
+    std::cout << "write_2: " << helixNames.at(&helices.front()) << "\n";
+    target.others.push_back("autostaple");
+    target.others.push_back(ps.str());
+    std::cout << target.others[1];
+}
+
 bool SceneDescription::write(std::ostream & out) const {
     std::unordered_map<const Helix *, std::string> helixNames;
     helixNames.reserve(helices.size());
@@ -798,6 +833,93 @@ bool SceneDescription::write(std::ostream & out) const {
 
     out << std::endl << "autostaple" << std::endl << "ps " << helixNames.at(&helices.front()) << " f3'" << std::endl;
     return true;
+}
+
+bool SceneDescription::write_scaffold_free_2(rpoly &target) const {
+    std::unordered_map<const Helix *, unsigned int> helixNames;
+	helixNames.reserve(helices.size());
+    target.helices.reserve(helices.size());
+    std::set<std::pair<unsigned int,unsigned int>> connections;
+    unsigned int i(0);
+    // add the helices
+    for (const Helix & helix : helices) {
+        const physics::vec3_type & phys_position(helix.getPosition());
+        const physics::quaternion_type & phys_orientation(helix.getOrientation());
+        unsigned int bases = helix.baseCount;
+        coordinates coord(phys_position.x,phys_position.y,phys_position.z);
+        orientation ori(phys_orientation.x,phys_orientation.y,phys_orientation.z,phys_orientation.w);
+        target.helices.push_back(std::tuple<unsigned int,unsigned int,coordinates,orientation>(i,bases,coord,ori));
+        helixNames.emplace(&helix,i);
+        i++;
+    }
+
+    for (const Helix & helix : helices) {
+		unsigned int name(helixNames.at(&helix));
+        //std::cout << name << "\n";
+
+        const Helix* f3 = helix.connections[PhysXRelax::Helix::kForwardThreePrime];
+        const Helix* f5 = helix.connections[PhysXRelax::Helix::kForwardFivePrime];
+        const Helix* b3 = helix.connections[PhysXRelax::Helix::kBackwardThreePrime];
+        const Helix* b5 = helix.connections[PhysXRelax::Helix::kBackwardFivePrime];
+
+        unsigned int f3name = helixNames.at(f3);
+        unsigned int f5name = helixNames.at(f5);
+        unsigned int b3name = helixNames.at(b3);
+        unsigned int b5name = helixNames.at(b5);
+
+        // f3
+        if (connections.find(std::make_pair(name,f3name)) == connections.end()) {
+            if (name == helixNames.at(f3->connections[PhysXRelax::Helix::kForwardFivePrime])) {
+                //out << "c " << name << " f3' " << f3name << " f5'" << std::endl;
+                target.connections.push_back(std::tuple<unsigned int,char*,unsigned int,char*>(name,"f3'",f3name,"f5'"));
+            }
+            else if (name == helixNames.at(f3->connections[PhysXRelax::Helix::kBackwardFivePrime])) {
+                //out << "c " << name << " f3' " << f3name << " b5'" << std::endl;
+                target.connections.push_back(std::tuple<unsigned int,char*,unsigned int,char*>(name,"f3'",f3name,"b5'"));
+            }
+            connections.insert(std::make_pair(name,f3name));
+        }
+        // f5
+        if (connections.find(std::make_pair(f5name,name)) == connections.end()) {
+            if (name == helixNames.at(f5->connections[PhysXRelax::Helix::kBackwardThreePrime])) {
+                //out << "c " << f5name << " b3' " << name << " f5'" << std::endl;
+                target.connections.push_back(std::tuple<unsigned int,char*,unsigned int,char*>(f5name,"b3'",name,"f5'"));
+            }
+            else if (name == helixNames.at(f5->connections[PhysXRelax::Helix::kForwardThreePrime])) {
+                //out << "c " << f5name << " f3' " << name << " f5'" << std::endl;
+                target.connections.push_back(std::tuple<unsigned int,char*,unsigned int,char*>(f5name,"f3'",name,"f5'"));
+            }
+            connections.insert(std::make_pair(f5name,name));
+        }
+        // b3
+        if (connections.find(std::make_pair(name,b3name)) == connections.end()) {
+            if (name == helixNames.at(b3->connections[PhysXRelax::Helix::kBackwardFivePrime])) {
+                //out << "c " << name << " b3' " << b3name << " b5'" << std::endl;
+                target.connections.push_back(std::tuple<unsigned int,char*,unsigned int,char*>(name,"b3'",b3name,"b5'"));
+            }
+            else if (name == helixNames.at(b3->connections[PhysXRelax::Helix::kForwardFivePrime])) {
+                //out << "c " << name << " b3' " << b3name << " f5'" << std::endl;
+                target.connections.push_back(std::tuple<unsigned int,char*,unsigned int,char*>(name,"b3'",b3name,"f5'"));
+            }
+            connections.insert(std::make_pair(name,b3name));
+        }
+        // b5
+        if (connections.find(std::make_pair(b5name,name)) == connections.end()) {
+            if (name == helixNames.at(b5->connections[PhysXRelax::Helix::kBackwardThreePrime])) {
+                //out << "c " << b5name << " b3' " << name << " b5'" << std::endl;
+                target.connections.push_back(std::tuple<unsigned int,char*,unsigned int,char*>(b5name,"b3'",name,"b5'"));
+            }
+            else if (name == helixNames.at(b5->connections[PhysXRelax::Helix::kForwardThreePrime])) {
+                //out << "c " << b5name << " f3' " << name << " b5'" << std::endl;
+                target.connections.push_back(std::tuple<unsigned int,char*,unsigned int,char*>(b5name,"f3'",name,"b5'"));
+            }
+            connections.insert(std::make_pair(b5name,name));
+        }
+	}
+    return true;
+
+
+
 }
 // TODO: merge with write
 bool SceneDescription::write_scaffold_free(std::ostream & out) const {
@@ -1041,6 +1163,54 @@ int PhysXRelaxation::scaffold_main(std::vector<coordinates> &inputvertices, std:
     return 1;
 }
 
+int PhysXRelaxation::scaffold_main2(std::vector<coordinates> &inputvertices, std::vector<unsigned int> &nodetrail, rpoly& rpoly) {
+    std::cerr << "In scaffold_main(). number of vertices: " << inputvertices.size() << "\nLength of trail: " << nodetrail.size()<< std::endl;
+    mesh.set_data(inputvertices,nodetrail);
+    mesh.print_data();
+    std::cerr << "Data set up"<< std::endl;
+    try {
+        if (!mesh.setupHelices(phys)) {
+            outstream << "Failed to read scene" << std::endl;
+            return 1;
+        }
+    }
+    catch (const std::runtime_error & e) {
+        outstream << "POPUP_ERRFailed to read scene\n" << e.what() << "POPUP_END" << std::endl;
+        return 1;
+    }
+    std::cerr << "Helices set up"<< std::endl;
+    physics::real_type initialmin, initialmax, initialaverage, initialtotal, min, max, average, total;
+    mesh.getTotalSeparationMinMaxAverage(initialmin, initialmax, initialaverage, initialtotal);
+    std::cerr << "Got separation"<< std::endl;
+    std::cerr << "name" << name.c_str()<< std::endl;
+    std::string output_file(name.c_str());
+    output_file.append(".rpoly");
+    std::cerr << "Creating scenedescription"<< std::endl;
+    SceneDescription test_scene(mesh);
+    std::stringstream testout;
+    test_scene.write(testout);
+    std::cerr << testout.str().c_str()<< std::endl;
+    outstream << "Running simulation for scene, outputting to " << output_file << "\"." << std::endl
+        << "Initial: min: " << initialmin << ", max: " << initialmax << ", average: " << initialaverage << ", total: " << initialtotal << " nm" << std::endl
+        << "Connect with NVIDIA PhysX Visual Debugger to " << PVD_HOST << ':' << PVD_PORT << " to visualize the progress. " << std::endl
+        << "Press ^C to stop the relaxation...." << std::endl;
+
+    //setinterrupthandler<handle_exit>();
+    std::cerr << "Running grad descent";
+    SceneDescription best_scene;
+    gradient_descent(7,
+        [&best_scene, &min, &max, &average, &total](scene & mesh, physics::real_type min_, physics::real_type max_, physics::real_type average_, physics::real_type total_) { min = min_; max = max_; average = average_; total = total_; std::stringstream sstr; sstr << "State: min: " << min << ", max: " << max << ", average: " << average << " total: " << total << " nm" << std::endl; std::string str = sstr.str(); best_scene = SceneDescription(mesh); },
+        [this]() { return running; }, iterations);
+
+    std::cerr << "run grad descent"<< std::endl;
+    outstream << "Result: min: " << min << ", max: " << max << ", average: " << average << ", total: " << total << " nm" << std::endl;
+
+    if (!best_scene.write_2(rpoly)) {
+        outstream << "Failed to write resulting mesh" << std::endl;
+    }
+    std::cerr << outstream.str().c_str()<< std::endl;
+    return 1;
+}
 
 int PhysXRelaxation::scaffold_free_main(std::vector<coordinates> &inputvertices, std::vector<std::vector<unsigned int>> &nodetrail) {
     std::cerr << "In scaffold_free_main(). number of vertices: " << inputvertices.size() << "\nLength of trail: " << nodetrail.size()<< std::endl;
@@ -1092,6 +1262,55 @@ int PhysXRelaxation::scaffold_free_main(std::vector<coordinates> &inputvertices,
         outstream << "Failed to write resulting mesh to \"" << output_file << "\"" << std::endl;
     }
     outfile.close();
+    std::cerr << outstream.str().c_str()<< std::endl;
+    return 1;
+}
+
+int PhysXRelaxation::scaffold_free_main2(std::vector<coordinates> &inputvertices, std::vector<std::vector<unsigned int>> &nodetrail, rpoly &rpoly) {
+    std::cerr << "In scaffold_free_main(). number of vertices: " << inputvertices.size() << "\nLength of trail: " << nodetrail.size()<< std::endl;
+    mesh.set_sf_data(inputvertices,nodetrail);
+    mesh.print_data();
+    std::cerr << "Data set up"<< std::endl;
+    try {
+        if (!mesh.setupscaffoldfreeHelices(phys)) {
+            outstream << "Failed to read scene" << std::endl;
+            return 1;
+        }
+    }
+    catch (const std::runtime_error & e) {
+        outstream << "POPUP_ERRFailed to read scene\n" << e.what() << "POPUP_END" << std::endl;
+        return 1;
+    }
+    std::cerr << "Helices set up"<< std::endl;
+    physics::real_type initialmin, initialmax, initialaverage, initialtotal, min, max, average, total;
+    mesh.getTotalSeparationMinMaxAverage(initialmin, initialmax, initialaverage, initialtotal);
+    std::cerr << "Got separation"<< std::endl;
+    std::cerr << "name" << name.c_str()<< std::endl;
+    std::string output_file(name.c_str());
+    output_file.append(".rpoly");
+    std::cerr << "Creating scenedescription"<< std::endl;
+    //SceneDescription test_scene(mesh);
+    //std::stringstream testout;
+    //test_scene.write(testout);
+    //std::cerr << testout.str().c_str()<< std::endl;
+    outstream << "Running simulation for scene, outputting to " << output_file << "\"." << std::endl
+        << "Initial: min: " << initialmin << ", max: " << initialmax << ", average: " << initialaverage << ", total: " << initialtotal << " nm" << std::endl
+        << "Connect with NVIDIA PhysX Visual Debugger to " << PVD_HOST << ':' << PVD_PORT << " to visualize the progress. " << std::endl
+        << "Press ^C to stop the relaxation...." << std::endl;
+
+    //setinterrupthandler<handle_exit>();
+    std::cerr << "Running grad descent\n";
+    SceneDescription best_scene;
+
+    gradient_descent(7,
+        [&best_scene, &min, &max, &average, &total](scene & mesh, physics::real_type min_, physics::real_type max_, physics::real_type average_, physics::real_type total_) { min = min_; max = max_; average = average_; total = total_; std::stringstream sstr; sstr << "State: min: " << min << ", max: " << max << ", average: " << average << " total: " << total << " nm" << std::endl; std::string str = sstr.str(); best_scene = SceneDescription(mesh); },
+        [this]() { return running; }, iterations);
+
+    std::cerr << "run grad descent"<< std::endl;
+    outstream << "Result: min: " << min << ", max: " << max << ", average: " << average << ", total: " << total << " nm" << std::endl;
+    if (!best_scene.write_scaffold_free_2(rpoly)) {
+        outstream << "Failed to write resulting mesh " << std::endl;
+    }
     std::cerr << outstream.str().c_str()<< std::endl;
     return 1;
 }

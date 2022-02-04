@@ -612,7 +612,9 @@ public:
     inline SceneDescription & operator=(SceneDescription && scene) { totalSeparation = scene.totalSeparation; helices = std::move(scene.helices); return *this; }
 
     bool write(std::ostream & out) const;
+    bool SceneDescription::write_2(rpoly& target) const;
     bool write_scaffold_free(std::ostream & out) const;
+    bool SceneDescription::write_scaffold_free_2(rpoly& target) const;
     const physics::real_type getTotalSeparation() const {
         return totalSeparation;
     }
@@ -680,7 +682,9 @@ public:
             StoreBestFunctorT store_best_functor, RunningFunctorT running_functor); // not used
 
     int scaffold_main(std::vector<coordinates> &vertices, std::vector<unsigned int> &nodetrail);
+    int scaffold_main2(std::vector<coordinates> &vertices, std::vector<unsigned int> &nodetrail, rpoly &rpoly);
     int scaffold_free_main(std::vector<coordinates> &vertices, std::vector<std::vector<unsigned int>> &nodetrail);
+    int scaffold_free_main2(std::vector<coordinates> &vertices, std::vector<std::vector<unsigned int>> &nodetrail, rpoly &rpoly);
 
 protected:
     scene mesh;

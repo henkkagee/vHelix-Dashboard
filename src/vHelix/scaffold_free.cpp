@@ -1215,7 +1215,15 @@ int Scaffold_free::relax(const QVector<QVariant> args) {
 
     //outstream << relaxation->getoutstream().c_str();
     std::cerr << "Running scaffold_free_main(). Argument sizes: " << vertices.size() << ", " << input_paths.size()<< std::endl;
-    relaxation.scaffold_free_main(vertices,input_paths);
+    //relaxation.scaffold_free_main(vertices,input_paths);
+    relaxation.scaffold_free_main2(vertices,input_paths,rpoly_code);
+    if (write_intermediates) {
+        std::string output_file(name.c_str());
+        output_file.append(".rpoly");
+        std::ofstream outfile(output_file);
+        rpoly_code.write(outfile);
+        outfile.close();
+    }
     std::cout << "Almost finsihed relaxation\n";
     outstream << relaxation.getoutstream().c_str();
     std::cout << "Finished relaxation\n";
@@ -1243,10 +1251,6 @@ int Scaffold_free::create_strands() {
     std::string rpoly(name);
     rpoly.append(".rpoly");
     model_.readScaffoldFreeRpoly(rpoly.c_str());
-    //std::string oxview(name);
-    //oxview.append(".oxview");
-    //create_random_sequences(); // ANTTI
-    //model_.writeOxView(oxview.c_str());
     return 0;
 }
 

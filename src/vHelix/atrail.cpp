@@ -1466,7 +1466,14 @@ int Atrail::relax(const QVector<QVariant> args) {
 
     //outstream << relaxation->getoutstream().c_str();
     std::cerr << "Running scaffold_main(). Argument sizes: " << vertices.size() << ", " << input_path.size()<< std::endl;
-    relaxation.scaffold_main(vertices,input_path);
+    relaxation.scaffold_main2(vertices,input_path,rpoly_code);
+    if (write_intermediates) {
+        std::string output_file(name.c_str());
+        output_file.append(".rpoly");
+        std::ofstream outfile(output_file);
+        rpoly_code.write(outfile);
+        outfile.close();
+    }
     outstream << relaxation.getoutstream().c_str();
     delete[] boolArgs;
     delete[] dblArgs;

@@ -109,19 +109,6 @@
     <addaction name="actionScaffold_free"/>
     <addaction name="actionSpanning_tree"/>
    </widget>
-   <widget class="QMenu" name="menuRelaxation">
-    <property name="title">
-     <string>Relaxation</string>
-    </property>
-    <addaction name="actionPhysX"/>
-   </widget>
-   <widget class="QMenu" name="menuEdit">
-    <property name="title">
-     <string>Edit</string>
-    </property>
-    <addaction name="actionAutofill_strands"/>
-    <addaction name="actionAdd_sequence"/>
-   </widget>
    <widget class="QMenu" name="menuExport">
     <property name="title">
      <string>Export</string>
@@ -145,8 +132,6 @@
    </widget>
    <addaction name="menuvHelix"/>
    <addaction name="menuDesign"/>
-   <addaction name="menuRelaxation"/>
-   <addaction name="menuEdit"/>
    <addaction name="menuExport"/>
    <addaction name="menuoxDNA"/>
    <addaction name="menuHelp"/>

@@ -372,7 +372,8 @@ void vHelix::atrail_(const QVector<QVariant> &args) {
     sendToConsole_(design->getoutstream());
     design->relax(QVector<QVariant>({args[0]}));
     sendToConsole_(design->getoutstream());
-    design->model_.readRpoly(rpoly.c_str(),args[1].toInt(),args[2].toInt());
+    //design->model_.readRpoly(rpoly.c_str(),args[1].toInt(),args[2].toInt());
+    design->model_.readRpoly2(design->getRpoly(),args[1].toInt(),args[2].toInt());
     if (args[3].toBool()) {
         sendToConsole_("Autofilling strand gaps\n");
         design->model_.autofillStrandGaps();
@@ -410,7 +411,8 @@ void vHelix::scaffold_free_(const QVector<QVariant> &args) {
     design->relax(QVector<QVariant>({args[0]}));
     sendToConsole_(design->getoutstream());
     std::cout << "Reading rpoly\n";
-    design->model_.readScaffoldFreeRpoly(rpoly.c_str());
+    //design->model_.readScaffoldFreeRpoly(rpoly.c_str());
+    design->model_.readScaffoldFreeRpoly2(design->getRpoly());
     if (args[1].toBool()) {
         sendToConsole_("Autofilling strand gaps\n");
         design->model_.autofillStrandGaps();
