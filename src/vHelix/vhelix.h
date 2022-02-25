@@ -14,6 +14,7 @@
 #include <QVector>
 #include <QVariant>
 #include <QDebug>
+#include <thread>
 
 #include <iostream>
 #include <processio.h>
@@ -22,6 +23,7 @@
 #include "boost/lexical_cast.hpp"
 #include "atrail.h"
 #include "scaffold_free.h"
+#include <QtConcurrent>
 
 namespace vHelixFunc {
     std::string ExePath();
@@ -38,6 +40,16 @@ namespace vHelixFunc {
 
 }
 
+/*class vHelixThread : public QThread 
+{
+    Q_OBJECT
+    void run() override {
+        vHelix vh;
+
+    }
+public slots:
+
+};*/
 // Main class responsible for program logic
 class vHelix : public QObject
 {
@@ -61,20 +73,22 @@ private:
 
     void atrail_(const QVector<QVariant> &args);
     void scaffold_free_(const QVector<QVariant> &args);
-    void physX_relaxation_(const QVector<QVariant> args);
+    //void physX_relaxation_(const QVector<QVariant> args);
     void export_(const QVector<QVariant> &args);
     void convert_(const std::string& format);
     std::pair<int,int> estimate_base_use_(const QVector<QVariant> &args);
     void openPLY();
+    void open3d();
 
 // Qt slots and signals shouldn't pass arguments as references
 public slots:
-    void readMesh_(std::string mesh);
-    void action_(std::string cmd, QVector<QVariant> arg);
+    void readMesh_(QString mesh);
+    void action_(QString cmd, QVector<QVariant> arg);
 
 signals:
-    void sendToConsole_(std::string msg);
-    void sendBaseEstimate_(std::string msg);
+    void sendToConsole_(QString msg);
+    void sendBaseEstimate_(QString msg);
+    void finished_();
 };
 
 

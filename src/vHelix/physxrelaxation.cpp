@@ -760,7 +760,7 @@ SceneDescription::SceneDescription(scene & scene) : totalSeparation(scene.getTot
     //std::cerr << "Creating connections"<< std::endl;
     for (const PhysXRelax::Helix & helix : scene.helices) {
         Helix & newHelix(*helixMap.at(&helix));
-        std::cerr << "Creting connections for a helix\n";
+        //std::cerr << "Creting connections for a helix\n";
         for (int i = 0; i < 4; ++i) {
             //std::cerr << "Creating connection " << i << std::endl;
             newHelix.connections[i] = helixMap.at(helix.getJoint(PhysXRelax::Helix::AttachmentPoint(i)).helix);
@@ -796,12 +796,12 @@ bool SceneDescription::write_2(rpoly& target) const {
     std::stringstream ps;
     
     ps << "ps helix_" << helixNames.at(&helices.front()) << " f3'";
-    std::cout << ps.str() << "\n";
-    std::cout << ps.str().c_str() << "\n"; 
-    std::cout << "write_2: " << helixNames.at(&helices.front()) << "\n";
+    //std::cout << ps.str() << "\n";
+    //std::cout << ps.str().c_str() << "\n"; 
+    //std::cout << "write_2: " << helixNames.at(&helices.front()) << "\n";
     target.others.push_back("autostaple");
     target.others.push_back(ps.str());
-    std::cout << target.others[1];
+    //std::cout << target.others[1];
 }
 
 bool SceneDescription::write(std::ostream & out) const {
@@ -1118,12 +1118,13 @@ int PhysXRelaxation::scaffold_main(std::vector<coordinates> &inputvertices, std:
     try {
         if (!mesh.setupHelices(phys)) {
             outstream << "Failed to read scene" << std::endl;
-            return 1;
+            return 0;
         }
     }
     catch (const std::runtime_error & e) {
         outstream << "POPUP_ERRFailed to read scene\n" << e.what() << "POPUP_END" << std::endl;
-        return 1;
+        
+        return 0;
     }
     std::cerr << "Helices set up"<< std::endl;
     physics::real_type initialmin, initialmax, initialaverage, initialtotal, min, max, average, total;
@@ -1163,20 +1164,29 @@ int PhysXRelaxation::scaffold_main(std::vector<coordinates> &inputvertices, std:
     return 1;
 }
 
-int PhysXRelaxation::scaffold_main2(std::vector<coordinates> &inputvertices, std::vector<unsigned int> &nodetrail, rpoly& rpoly) {
+inline void PhysXRelaxation::optim_wrapper(SceneDescription &best_scene, bool &hasresult) {
+    /*physics::real_type initialmin, initialmax, initialaverage, initialtotal, min, max, average, total;
+    mesh.getTotalSeparationMinMaxAverage(initialmin, initialmax, initialaverage, initialtotal);
+    gradient_descent(7,
+        [&best_scene, &min, &max, &average, &total](scene & mesh, physics::real_type min_, physics::real_type max_, physics::real_type average_, physics::real_type total_) { min = min_; max = max_; average = average_; total = total_; std::stringstream sstr; sstr << "State: min: " << min << ", max: " << max << ", average: " << average << " total: " << total << " nm" << std::endl; std::string str = sstr.str(); best_scene = SceneDescription(mesh); },
+        [this]() { return running; }, iterations);
+    hasresult = true;*/
+}
+int PhysXRelaxation::scaffold_main2(std::vector<coordinates> &inputvertices, std::vector<unsigned int> &nodetrail, rpoly& rpoly, bool &hasresult) {
     std::cerr << "In scaffold_main(). number of vertices: " << inputvertices.size() << "\nLength of trail: " << nodetrail.size()<< std::endl;
     mesh.set_data(inputvertices,nodetrail);
-    mesh.print_data();
+    //mesh.print_data();
     std::cerr << "Data set up"<< std::endl;
     try {
         if (!mesh.setupHelices(phys)) {
             outstream << "Failed to read scene" << std::endl;
-            return 1;
+            return 0;
         }
     }
     catch (const std::runtime_error & e) {
         outstream << "POPUP_ERRFailed to read scene\n" << e.what() << "POPUP_END" << std::endl;
-        return 1;
+        std::cout << "returning at phsyxrelaxation 1180\n";
+        return 0;
     }
     std::cerr << "Helices set up"<< std::endl;
     physics::real_type initialmin, initialmax, initialaverage, initialtotal, min, max, average, total;
@@ -1189,7 +1199,7 @@ int PhysXRelaxation::scaffold_main2(std::vector<coordinates> &inputvertices, std
     SceneDescription test_scene(mesh);
     std::stringstream testout;
     test_scene.write(testout);
-    std::cerr << testout.str().c_str()<< std::endl;
+    //std::cerr << testout.str().c_str()<< std::endl;
     outstream << "Running simulation for scene, outputting to " << output_file << "\"." << std::endl
         << "Initial: min: " << initialmin << ", max: " << initialmax << ", average: " << initialaverage << ", total: " << initialtotal << " nm" << std::endl
         << "Connect with NVIDIA PhysX Visual Debugger to " << PVD_HOST << ':' << PVD_PORT << " to visualize the progress. " << std::endl
@@ -1201,9 +1211,13 @@ int PhysXRelaxation::scaffold_main2(std::vector<coordinates> &inputvertices, std
     gradient_descent(7,
         [&best_scene, &min, &max, &average, &total](scene & mesh, physics::real_type min_, physics::real_type max_, physics::real_type average_, physics::real_type total_) { min = min_; max = max_; average = average_; total = total_; std::stringstream sstr; sstr << "State: min: " << min << ", max: " << max << ", average: " << average << " total: " << total << " nm" << std::endl; std::string str = sstr.str(); best_scene = SceneDescription(mesh); },
         [this]() { return running; }, iterations);
+    
 
+   //SceneDescription best_scene;
+   //std::thread(&PhysXRelaxation::optim_wrapper,std::ref(*this),std::ref(best_scene),hasresult);
+    hasresult = true;
     std::cerr << "run grad descent"<< std::endl;
-    outstream << "Result: min: " << min << ", max: " << max << ", average: " << average << ", total: " << total << " nm" << std::endl;
+    //outstream << "Result: min: " << min << ", max: " << max << ", average: " << average << ", total: " << total << " nm" << std::endl;
 
     if (!best_scene.write_2(rpoly)) {
         outstream << "Failed to write resulting mesh" << std::endl;
@@ -1215,17 +1229,17 @@ int PhysXRelaxation::scaffold_main2(std::vector<coordinates> &inputvertices, std
 int PhysXRelaxation::scaffold_free_main(std::vector<coordinates> &inputvertices, std::vector<std::vector<unsigned int>> &nodetrail) {
     std::cerr << "In scaffold_free_main(). number of vertices: " << inputvertices.size() << "\nLength of trail: " << nodetrail.size()<< std::endl;
     mesh.set_sf_data(inputvertices,nodetrail);
-    mesh.print_data();
+    //mesh.print_data();
     std::cerr << "Data set up"<< std::endl;
     try {
         if (!mesh.setupscaffoldfreeHelices(phys)) {
             outstream << "Failed to read scene" << std::endl;
-            return 1;
+            return 0;
         }
     }
     catch (const std::runtime_error & e) {
         outstream << "POPUP_ERRFailed to read scene\n" << e.what() << "POPUP_END" << std::endl;
-        return 1;
+        return 0;
     }
     std::cerr << "Helices set up"<< std::endl;
     physics::real_type initialmin, initialmax, initialaverage, initialtotal, min, max, average, total;
@@ -1274,12 +1288,12 @@ int PhysXRelaxation::scaffold_free_main2(std::vector<coordinates> &inputvertices
     try {
         if (!mesh.setupscaffoldfreeHelices(phys)) {
             outstream << "Failed to read scene" << std::endl;
-            return 1;
+            return 0;
         }
     }
     catch (const std::runtime_error & e) {
         outstream << "POPUP_ERRFailed to read scene\n" << e.what() << "POPUP_END" << std::endl;
-        return 1;
+        return 0;
     }
     std::cerr << "Helices set up"<< std::endl;
     physics::real_type initialmin, initialmax, initialaverage, initialtotal, min, max, average, total;

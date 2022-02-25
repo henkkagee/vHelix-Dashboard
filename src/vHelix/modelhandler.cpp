@@ -293,7 +293,7 @@ std::vector<Model::Helix> &Handler::readScaffoldFreeRpoly(const char *filename) 
                 helices.back().Bbases_[i].setParent(&helices.back());
             }
             bIdStart += helices.back().bases_*2;
-            std::cout << "Bases: " << helices.back().bases_ << " -- next bIdStart: " << bIdStart << std::endl << std::flush;
+            //std::cout << "Bases: " << helices.back().bases_ << " -- next bIdStart: " << bIdStart << std::endl << std::flush;
             delete[] values;
         }
         /*else if (sscanf(line.c_str(), "b %s %s %lf %lf %lf %s %c", nameBuffer, helixNameBuffer, &position[0], &position[1], &position[2], materialNameBuffer, &label) == 7) {
@@ -326,7 +326,7 @@ std::vector<Model::Helix> &Handler::readScaffoldFreeRpoly(const char *filename) 
     std::cout << "information imported from rpoly file\n";
 
     for (auto &conn : connections) {
-        std::cout << "Connection: " << conn.fromHelixName << " " << conn.fromName << " " << conn.toHelixName << " " << conn.toName << " " << conn.toType << " " << conn.fromType << "\n";
+        //std::cout << "Connection: " << conn.fromHelixName << " " << conn.fromName << " " << conn.toHelixName << " " << conn.toName << " " << conn.toType << " " << conn.fromType << "\n";
     }
     // Use Meliks code here (cadwire)
     for (std::vector<Model::Helix>::iterator it(helices.begin()); it != helices.end(); ++it) {
@@ -393,7 +393,7 @@ std::vector<Model::Helix> &Handler::readScaffoldFreeRpoly(const char *filename) 
         }
     }
 
-    std::cerr << "Nicking locations determined\n";
+    //std::cerr << "Nicking locations determined\n";
 
     for (std::vector<Connection>::iterator it(connections.begin()); it != connections.end(); it++) {
         Model::Helix *fromHelix;
@@ -443,7 +443,7 @@ std::vector<Model::Helix> &Handler::readScaffoldFreeRpoly(const char *filename) 
             fromBase->strand_forward_ = toBase;
             toBase->setBackward(fromBase);
             toBase->strand_backward_ = fromBase;
-            std::cout << "Connected " << fromHelix->name_ << " " << it->fromName << " to " << toHelix->name_ << " " << it->toName << "\n";
+            //std::cout << "Connected " << fromHelix->name_ << " " << it->fromName << " to " << toHelix->name_ << " " << it->toName << "\n";
         }
     }
 
@@ -458,8 +458,8 @@ std::vector<Model::Helix> &Handler::readScaffoldFreeRpoly(const char *filename) 
         b->setForward(nullptr);
     }
 
-    std::cerr << "Bases disconnected\n";
-    std::cout << "Size of disconnectbases: " << disconnectBases.size() << "\n";
+    //std::cerr << "Bases disconnected\n";
+    //std::cout << "Size of disconnectbases: " << disconnectBases.size() << "\n";
     unsigned long int sId = 0;
 
     for (auto &b : disconnectBases) {
@@ -481,7 +481,7 @@ std::vector<Model::Helix> &Handler::readScaffoldFreeRpoly(const char *filename) 
     std::cerr << "Strands created. Number of strands: " << strands.size() << "\n";
 
     for (auto &s : strands) {
-        std::cout << "Length of strand " << s.id_ << ": " << s.length_ << "\n";
+        //std::cout << "Length of strand " << s.id_ << ": " << s.length_ << "\n";
     }
 
 
@@ -490,7 +490,7 @@ std::vector<Model::Helix> &Handler::readScaffoldFreeRpoly(const char *filename) 
             strands.erase(strands.begin() + i);
         }
     }
-    std::cerr << "Bases connected\n";
+    //std::cerr << "Bases connected\n";
 
     // finally, connect all bases inside strands and disconnect connections between strands
     for (auto s : strands) {
@@ -604,7 +604,7 @@ std::vector<Model::Helix> &Handler::readScaffoldFreeRpoly2(rpoly &rpoly) {
     std::cout << "information imported from rpoly file\n";
 
     for (auto &conn : connections) {
-        std::cout << "Connection: " << conn.fromHelixName << " " << conn.fromName << " " << conn.toHelixName << " " << conn.toName << " " << conn.toType << " " << conn.fromType << "\n";
+        //std::cout << "Connection: " << conn.fromHelixName << " " << conn.fromName << " " << conn.toHelixName << " " << conn.toName << " " << conn.toType << " " << conn.fromType << "\n";
     }
     // Use Meliks code here (cadwire)
     for (std::vector<Model::Helix>::iterator it(helices.begin()); it != helices.end(); ++it) {
@@ -860,7 +860,7 @@ std::vector<Model::Helix> &Handler::readScaffoldFreeRpoly2(rpoly &rpoly) {
                 float *values = new float[9];
                 // helix rotation x,y,z and w to 3x3 rotation matrix
                 // no Qt method for this?
-                std::cout << "Adding " << nameBuffer << " to helices. Bases: " << bases << ". Position:" << pos[0] << " " << pos[1] << " " << pos[2] << ". Orientation: " << ori[0] << " " << ori[1] << " " << ori[2] << " " << ori[3] << "\n";
+                //std::cout << "Adding " << nameBuffer << " to helices. Bases: " << bases << ". Position:" << pos[0] << " " << pos[1] << " " << pos[2] << ". Orientation: " << ori[0] << " " << ori[1] << " " << ori[2] << " " << ori[3] << "\n";
                 values[0] = 1-2*pow(ori[1],2)-2*pow(ori[2],2);
                 values[1] = 2*ori[0]*ori[1]-2*ori[2]*ori[3];
                 values[2] = 2*ori[0]*ori[2]+2*ori[1]*ori[3];
@@ -898,7 +898,7 @@ std::vector<Model::Helix> &Handler::readScaffoldFreeRpoly2(rpoly &rpoly) {
             }
         }
         for (auto &conn : connections) {
-            std::cout << "Connection: " << conn.fromHelixName << " " << conn.fromName << " " << conn.toHelixName << " " << conn.toName << " " << conn.toType << " " << conn.fromType << "\n";
+            //std::cout << "Connection: " << conn.fromHelixName << " " << conn.fromName << " " << conn.toHelixName << " " << conn.toName << " " << conn.toType << " " << conn.fromType << "\n";
         }
         for (auto &ps : paintStrands) {
             std::cout << "Paintstrands: " << ps.first << " " << ps.second << "\n";
@@ -1058,7 +1058,7 @@ std::vector<Model::Helix> &Handler::readScaffoldFreeRpoly2(rpoly &rpoly) {
 
                 // next
                 current = current->strand_forward_;
-                std::cout << "At strand " << current->strandId_ << " of helix" << current->getParent()->name_ << "\n";
+                //std::cout << "At strand " << current->strandId_ << " of helix" << current->getParent()->name_ << "\n";
             }
         }
 
@@ -1256,10 +1256,10 @@ std::vector<Model::Helix> &Handler::readScaffoldFreeRpoly2(rpoly &rpoly) {
         for (unsigned int i = 0; i < strands.size(); ++i) {
             s = &strands[i];
             if (s->bases_.size() < MIN_NICK_VERTEX_DISTANCE + 1) {
-                std::cout << "Strand id: " << s->id_ << " is too short with length " << s->bases_.size() << std::endl << std::flush;
+                //std::cout << "Strand id: " << s->id_ << " is too short with length " << s->bases_.size() << std::endl << std::flush;
                 unsigned int forwstrandid = s->bases_[s->bases_.size()-1]->strand_backward_->strandId_;
                 unsigned int prevstrandid = s->bases_[0]->strand_forward_->strandId_;
-                std::cout << "forwstrandid: " << forwstrandid << " prevstrandid: " << prevstrandid << std::endl << std::flush;
+                //std::cout << "forwstrandid: " << forwstrandid << " prevstrandid: " << prevstrandid << std::endl << std::flush;
                 Model::Strand* prevstrand = nullptr;
                 Model::Strand* forwstrand = nullptr;
                 for (unsigned int ss = 0; ss < strands.size(); ++ss) {
@@ -1369,7 +1369,7 @@ std::vector<Model::Helix> &Handler::readScaffoldFreeRpoly2(rpoly &rpoly) {
             unsigned int num_bases = std::get<1>(helix);
             coordinates pos = std::get<2>(helix);
             orientation ori = std::get<3>(helix);
-            std::cout << "Adding " << namestream.str() << " to helices. Bases: " << num_bases << ". Position:" << pos.x << " " << pos.y << " " << pos.z << ". Orientation: " << ori.x << " " << ori.y << " " << ori.z << " " << ori.w << "\n";
+            //std::cout << "Adding " << namestream.str() << " to helices. Bases: " << num_bases << ". Position:" << pos.x << " " << pos.y << " " << pos.z << ". Orientation: " << ori.x << " " << ori.y << " " << ori.z << " " << ori.w << "\n";
             position.setX(pos.x/POSITION_SCALING);  position.setY(pos.y/POSITION_SCALING); position.setZ(pos.z/POSITION_SCALING);
             QQuaternion orientation;
             float *values = new float[9];
@@ -1421,7 +1421,7 @@ std::vector<Model::Helix> &Handler::readScaffoldFreeRpoly2(rpoly &rpoly) {
         std::cout << "Number of helices: " << helices.size() << "\nConnections: " << connections.size() << "\n";
         std::cout << "Nicking lens: " << nicking_min_length << " " << nicking_max_length << "\n";
         for (auto &conn : connections) {
-            std::cout << "Connection: " << conn.fromHelixName << " " << conn.fromName << " " << conn.toHelixName << " " << conn.toName << " " << conn.toType << " " << conn.fromType << "\n";
+            //std::cout << "Connection: " << conn.fromHelixName << " " << conn.fromName << " " << conn.toHelixName << " " << conn.toName << " " << conn.toType << " " << conn.fromType << "\n";
         }
         for (auto &ps : paintStrands) {
             std::cout << "Paintstrands: " << ps.first << " " << ps.second << "\n";
@@ -1782,10 +1782,10 @@ std::vector<Model::Helix> &Handler::readScaffoldFreeRpoly2(rpoly &rpoly) {
         for (unsigned int i = 0; i < strands.size(); ++i) {
             s = &strands[i];
             if (s->bases_.size() < MIN_NICK_VERTEX_DISTANCE + 1) {
-                std::cout << "Strand id: " << s->id_ << " is too short with length " << s->bases_.size() << std::endl << std::flush;
+                //std::cout << "Strand id: " << s->id_ << " is too short with length " << s->bases_.size() << std::endl << std::flush;
                 unsigned int forwstrandid = s->bases_[s->bases_.size()-1]->strand_backward_->strandId_;
                 unsigned int prevstrandid = s->bases_[0]->strand_forward_->strandId_;
-                std::cout << "forwstrandid: " << forwstrandid << " prevstrandid: " << prevstrandid << std::endl << std::flush;
+                //std::cout << "forwstrandid: " << forwstrandid << " prevstrandid: " << prevstrandid << std::endl << std::flush;
                 Model::Strand* prevstrand = nullptr;
                 Model::Strand* forwstrand = nullptr;
                 for (unsigned int ss = 0; ss < strands.size(); ++ss) {

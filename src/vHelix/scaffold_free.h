@@ -126,7 +126,7 @@ public:
     int find_trail();
     bool write_trails();
     int main();
-    int relax(const QVector<QVariant> args);
+    int relax(const QVector<QVariant> args,bool &hasresult);
     int create_strands();
     void generate_sequences(std::string &s);
     int create_random_sequences();

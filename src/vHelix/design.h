@@ -17,6 +17,8 @@
 #include <QVariant>
 #include <QVector>
 #include <include/json/single_include/nlohmann/json.hpp>
+//#include <boost/thread.hpp>
+#include <thread>
 #include "relaxation.h"
 #include "physxrelaxation.h"
 #include "definitions.h"
@@ -46,6 +48,9 @@ public:
     int readPLY();
     int readOBJ();
 
+    void get_edgelist(std::vector<std::vector<int>> &v);
+    void get_coordinates(std::vector<std::vector<double>> &v);
+
     int createEmbedding();
     std::string getoutstream();
     bool writeEmbedding();
@@ -57,7 +62,7 @@ public:
         outstream << "ERROR: Desing method not specified\n";
         return 0;
     }
-    virtual int relax(const QVector<QVariant> args) { // Overloaded in subclasses, e.g. Atrail
+    virtual int relax(const QVector<QVariant> args,bool &hasresult) { // Overloaded in subclasses, e.g. Atrail
         outstream << "ERROR: Desing method not specified\n";
         return 0;
     }

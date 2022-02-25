@@ -24,6 +24,7 @@
 #include <QFile>
 #include <QTextStream>
 #include <QObject>
+#include <QThread>
 
 
 int main(int argc, char *argv[])
@@ -38,15 +39,38 @@ int main(int argc, char *argv[])
     a.setStyleSheet(stream.readAll());
 
     MainWindow w;
-    vHelix vh;
+    vHelix *vh = new vHelix;
+    QThread t1;
+    vh->moveToThread(&t1);
+    //w.moveToThread(&t1);
+    
     // connect signals and slots between the main window and most of the program logic
+    /*
     QObject::connect(&w, &MainWindow::sendMesh_,
                      &vh, &vHelix::readMesh_);
     QObject::connect(&vh, &vHelix::sendToConsole_,
                      &w, &MainWindow::vHelixToWindow_);
     QObject::connect(&w, &MainWindow::action_,
                      &vh, &vHelix::action_);
-    
+    */
+    qRegisterMetaType<QVector<QVariant> >("QVector<QVariant>");
+    QObject::connect(vh, &vHelix::sendToConsole_,
+                     &w, &MainWindow::vHelixToWindow_);
+    std::cout << "Connected console\n";
+    QObject::connect(&w, &MainWindow::action_,
+                     vh, &vHelix::action_);
+    std::cout << "Connected action\n";
+    QObject::connect(&w, &MainWindow::sendMesh_,
+                     vh, &vHelix::readMesh_);
+    std::cout << "Connected mesh\n";
+
+    //
+    t1.start();
+    //t2.start();
     w.show();
-    return a.exec();
+    int ret=  a.exec();
+    t1.exit();
+    delete vh;
+    //t1.quit();
+    return ret;
 }

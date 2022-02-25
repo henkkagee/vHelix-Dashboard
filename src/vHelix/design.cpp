@@ -92,7 +92,78 @@ int Design::readOBJ() {
     myfile.close();
     return 1;
 }
-
+void Design::get_edgelist(std::vector<std::vector<int>> &ret) {
+    //std::vector<std::vector<int>> ret;
+    std::vector<bool> check_double(number_vertices*number_vertices,false);
+    //graph = Graph(number_vertices);
+    int nodes_per_face;
+    int start_node;
+    int end_node;
+    int aux;
+    int max;
+    int min;
+    size_t edge_ind = 0;
+    std::cout << "Number_vertices: " << number_vertices << "\n";
+    std::cout << "Number_faces: " << number_faces << "\n";
+    for (unsigned int i = 0; i < number_faces; i++) {
+        nodes_per_face = faces[i].size();
+        start_node = faces[i][0] + 1;
+        aux = start_node;
+        end_node = faces[i][1] + 1;
+        max = std::max(start_node,end_node);
+        min = std::min(start_node,end_node);
+        if (check_double[min + (max-1)*(max-2)/2] == false) {
+            //add_edge(start_node-1,end_node-1,edge_ind,graph);
+            std::vector<int> e({start_node-1,end_node-1});
+            ret.push_back(e);
+            edge_ind++;
+            check_double[min + (max-1)*(max-2)/2] = true;
+        }
+        for (int j = 2; j < nodes_per_face; j++) {
+            start_node = end_node;
+            end_node = faces[i][j] + 1;
+            max = std::max(start_node, end_node);
+            min = std::min(start_node, end_node);
+            if (check_double[min + (max-1)*(max-2)/2] == false)
+            {
+                std::vector<int> e({start_node-1,end_node-1});
+                ret.push_back(e);
+                //add_edge(start_node-1,end_node-1,edge_ind,graph);
+                edge_ind++;
+                check_double[min + (max-1)*(max-2)/2] = true;
+            }
+        }
+        start_node = end_node;
+        end_node = aux;
+        max = std::max(start_node, end_node);
+        min = std::min(start_node, end_node);
+        if (check_double[min + (max-1)*(max-2)/2] == false)
+        {
+            std::vector<int> e({start_node-1,end_node-1});
+            ret.push_back(e);
+            edge_ind++;
+            check_double[min + (max-1)*(max-2)/2] = true;
+        }
+    }
+    for (unsigned int i = 0; i < number_edges; i++) {
+        start_node = non_face_edges[i][0];
+        end_node = non_face_edges[i][1];
+        std::vector<int> e({start_node,end_node});
+        ret.push_back(e);
+        edge_ind++;
+    }
+    std::cout << "returning edge list. Length: " << ret.size() << "\n";
+    //return ret;
+}
+void Design::get_coordinates(std::vector<std::vector<double>> &ret) {
+    //std::vector<std::vector<double>> ret;
+    ret.reserve(vertices.size());
+    for (auto c : vertices) {
+        ret.push_back({c.x,c.y,c.z});
+    }
+    std::cout << "returned coordinates\n";
+    //return ret;
+}
 int Design::createEmbedding() {
     std::cerr << "Number of vertices: " << number_vertices<< std::endl;
     std::vector<std::vector<neighbours> > face_neigh_list(number_vertices);  // neighbours list according to order of face descriptions
@@ -244,6 +315,7 @@ bool Design::writeEmbedding() {
 }
 
 std::string Design::getoutstream() {
+    std::cout << "returning outstream\n";
     std::string ret = outstream.str();
     outstream.str( std::string() );
     outstream.clear();

@@ -20,6 +20,7 @@
 #include <list>
 #include "relaxation.h"
 #include "definitions.h"
+#include <thread>
 //#include "scaffold_routing_rectification/physics.h"
 
 
@@ -680,9 +681,10 @@ public:
     template<typename StoreBestFunctorT, typename RunningFunctorT>
     void simulated_annealing(int kmax, float emax, unsigned int minbasecount, int baserange,
             StoreBestFunctorT store_best_functor, RunningFunctorT running_functor); // not used
+    inline void optim_wrapper(SceneDescription &best_scene, bool &hasresult);
 
     int scaffold_main(std::vector<coordinates> &vertices, std::vector<unsigned int> &nodetrail);
-    int scaffold_main2(std::vector<coordinates> &vertices, std::vector<unsigned int> &nodetrail, rpoly &rpoly);
+    int scaffold_main2(std::vector<coordinates> &vertices, std::vector<unsigned int> &nodetrail, rpoly &rpoly, bool &hasresult);
     int scaffold_free_main(std::vector<coordinates> &vertices, std::vector<std::vector<unsigned int>> &nodetrail);
     int scaffold_free_main2(std::vector<coordinates> &vertices, std::vector<std::vector<unsigned int>> &nodetrail, rpoly &rpoly);
 

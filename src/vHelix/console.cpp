@@ -40,5 +40,11 @@ void Console::write_(std::string str)
     }
     setPalette(p);*/
     insertPlainText(str.c_str());
+    QTextCursor c = textCursor();
+    c.movePosition(QTextCursor::End);
+    setTextCursor(c);
+    //QScrollBar *sb = verticalScrollBar();
+    //sb->setValue(sb->maximum());
     show();
+    std::cout << "Wrote to console: string size: " << str.size() << "\n";
 }

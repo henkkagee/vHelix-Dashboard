@@ -1408,7 +1408,7 @@ int Atrail::main() {
 
 }
 
-int Atrail::relax(const QVector<QVariant> args) {
+int Atrail::relax(const QVector<QVariant> args,bool &hasresult) {
     for (unsigned int i = 0; i < number_vertices; i++) {
         std::cerr << vertices[i].x << " " << vertices[i].y << " " << vertices[i].z<< std::endl;
     }
@@ -1445,15 +1445,7 @@ int Atrail::relax(const QVector<QVariant> args) {
     boolArgs[2] = settings["visual_debugger"];
     const int iterations = settings["iterations"];
 
-    std::cout << "dblArgs:\n";
-    for (int i = 0; i < 9; i++) {
-        std::cout << dblArgs[i] << ", ";
-    }
 
-    std::cout << "boolArgs:\n";
-    for (int i = 0; i < 3; i++) {
-        std::cout << boolArgs[i] << ", ";
-    }
     PhysXRelax::physics::settings_type physics_settings;
     PhysXRelax::scene::settings_type scene_settings;
     PhysXRelax::Helix::settings_type helix_settings;
@@ -1466,7 +1458,14 @@ int Atrail::relax(const QVector<QVariant> args) {
 
     //outstream << relaxation->getoutstream().c_str();
     std::cerr << "Running scaffold_main(). Argument sizes: " << vertices.size() << ", " << input_path.size()<< std::endl;
-    relaxation.scaffold_main2(vertices,input_path,rpoly_code);
+
+    //std::thread(&PhysXRelaxation::scaffold_main2,&relaxation,std::ref(vertices),std::ref(input_path),std::ref(rpoly_code),hasresult);
+
+    if (relaxation.scaffold_main2(vertices,input_path,rpoly_code,hasresult) != 1) {
+        std::cout << "Returning at atrail 1465\n";
+        outstream << relaxation.getoutstream().c_str();
+        return 0;
+    }
     if (write_intermediates) {
         std::string output_file(name.c_str());
         output_file.append(".rpoly");

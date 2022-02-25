@@ -56,6 +56,7 @@ vHelix::~vHelix()
         delete plydata_;
     }
     delete design;
+    finished_();
     std::cerr << "Python finalized"<< std::endl;
     Py_Finalize();
 }
@@ -63,8 +64,9 @@ vHelix::~vHelix()
 // Read meshfile and copy it to the workspace directory. Because Bscor-modules
 // use relative paths (therefore making it impossible to directly use files on potentially other
 // drives) it is easier to copy the file.
-void vHelix::readMesh_(std::string mesh)
+void vHelix::readMesh_(QString qmesh)
 {
+    std::string mesh = qmesh.toStdString();
     meshdir_ = mesh;
     for (unsigned int i = 0; i < meshdir_.length(); i++) {
         if (meshdir_[i] == '/') {
@@ -219,36 +221,51 @@ void vHelix::openPLY() {
     plydata_->facenr = facenr;
 }
 
+void vHelix::open3d() {
+    
+    std::stringstream sstr;
+    std::string dir("../workspace/");
+    sstr << dir << mesh_;
+    std::string name(sstr.str());
+    name.resize(name.size() - 4);
+    Design des(sstr.str(),name);
+    des.read3Dobject();
+}
+
 const vHelixFunc::plyData vHelix::getPlyData()
 {
     return *plydata_;
 }
 
 // Receive commands and data from MainWindow. QVariant is a convenient template data type for this.
-void vHelix::action_(std::string cmd, QVector<QVariant> arg)
+void vHelix::action_(QString qcmd, QVector<QVariant> arg)
 {
+    std::string cmd = qcmd.toStdString();
     if (cmd.find("Atrail") != std::string::npos) {
         if (mesh_ == "") {
-            sendToConsole_(std::string("No mesh loaded.\n"));
+            sendToConsole_(QString("No mesh loaded.\n"));
         }
         std::stringstream msg;
         msg << "Running Atrail routing on " << mesh_ << "..." << std::endl;
-        std::string str = msg.str();
-        sendToConsole_(str);
+        sendToConsole_(QString(msg.str().c_str()));
+        vHelix *tmp = this;
+        QFutureWatcher<void> watcher;
+        //QFuture<void> f = QtConcurrent::run(tmp,&vHelix::atrail_,arg); //run in different thread to keep main window responsive
         atrail_(arg);
+        
     }
     else if (cmd.find("Scaffold free") != std::string::npos) {
         if (mesh_ == "") {
-            sendToConsole_(std::string("No mesh loaded.\n"));
+            sendToConsole_(QString("No mesh loaded.\n"));
         }
         std::stringstream msg;
         msg << "Running scaffold-free design on " << mesh_ << "..." << std::endl;
         std::string str = msg.str();
-        sendToConsole_(str);
-        scaffold_free_(arg);
+        sendToConsole_(QString(str.c_str()));
+        QtConcurrent::run(this,&vHelix::scaffold_free_,arg);
     }
     else if (cmd.find("Spanning tree") != std::string::npos) {
-        sendToConsole_("Spanning tree routing is not yet implemented");
+        sendToConsole_(QString("Spanning tree routing is not yet implemented"));
     }
     else if (cmd.find("setselection") != std::string::npos) {
         std::vector<std::string> strvec;
@@ -279,8 +296,8 @@ void vHelix::action_(std::string cmd, QVector<QVariant> arg)
         std::stringstream msg;
         msg << "Running PhysX strand relaxation on " << mesh_ << std::endl << std::endl;
         std::string str = msg.str();
-        sendToConsole_(str);
-        physX_relaxation_(arg);
+        sendToConsole_(QString(str.c_str()));
+        //physX_relaxation_(arg);
     }
     else if (cmd.find("export") != std::string::npos) {
         std::stringstream msg;
@@ -300,7 +317,7 @@ void vHelix::action_(std::string cmd, QVector<QVariant> arg)
         }
         
         std::string ret = retsstr.str();
-        sendToConsole_(ret);
+        sendToConsole_(QString(ret.c_str()));
     }
     else if (cmd.find("oxdna_view") != std::string::npos) {
         unsigned char top = 255; unsigned char conf = 255;
@@ -334,7 +351,7 @@ void vHelix::action_(std::string cmd, QVector<QVariant> arg)
                 "topology=" << fileSelection_.at(top);*/
         std::string browser(path.str());
         browser.insert(0, "file:///");
-        sendToConsole_(browser);
+        sendToConsole_(QString(browser.c_str()));
 
         int result = 0;
         TCHAR app[MAX_PATH] = {0};
@@ -354,8 +371,8 @@ void vHelix::atrail_(const QVector<QVariant> &args) {
     }
     std::cerr << "In atrail_ function\n";
     if (fileSelection_.size() != 1 ||
-            fileSelection_.at(0).find(".ply") == std::string::npos) {
-        sendToConsole_("POPUP_ERRSelect a single valid .ply mesh file!\nPOPUP_END");
+            (fileSelection_.at(0).find(".ply") == std::string::npos && fileSelection_.at(0).find(".obj") == std::string::npos)) {
+        sendToConsole_(QString("POPUP_ERRSelect a single valid .ply mesh file!\nPOPUP_END"));
         return;
     }
     std::stringstream sstr;
@@ -368,10 +385,21 @@ void vHelix::atrail_(const QVector<QVariant> &args) {
     std::cerr << name.c_str() << "\n" << sstr.str().c_str() << "\n";
     design = new Atrail(sstr.str(),name);
     std::cerr << "Created atrail object\n";
-    design->main();
-    sendToConsole_(design->getoutstream());
-    design->relax(QVector<QVariant>({args[0]}));
-    sendToConsole_(design->getoutstream());
+    int ret = design->main();
+    sendToConsole_(design->getoutstream().c_str());
+    if (ret != 1) {
+        return;
+    }
+    //std::thread relaxthread(design->relax,QVector<QVariant>({args[0]}));
+    //ret = design->relax(QVector<QVariant>({args[0]}));
+    bool hasresult = false;
+    //std::thread relaxthread(&Atrail::relax,design,std::ref(QVector<QVariant>({args[0]})),std::ref(hasresult));
+    //relaxthread.join();
+    ret = design->relax(QVector<QVariant>({args[0]}),hasresult);
+    sendToConsole_(design->getoutstream().c_str());
+    if (ret != 1) {
+        return;
+    }
     //design->model_.readRpoly(rpoly.c_str(),args[1].toInt(),args[2].toInt());
     design->model_.readRpoly2(design->getRpoly(),args[1].toInt(),args[2].toInt());
     if (args[3].toBool()) {
@@ -385,8 +413,61 @@ void vHelix::atrail_(const QVector<QVariant> &args) {
         design->generate_sequences(seq);
     }
     design->writeOxView();
-    sendToConsole_(design->getoutstream());
+    sendToConsole_(design->getoutstream().c_str());
 }
+
+/*void vHelix::atrail_(const QVector<QVariant> &args) {
+    if (design != nullptr) {
+        delete design;
+    }
+    std::cerr << "In atrail_ function\n";
+    if (fileSelection_.size() != 1 ||
+            (fileSelection_.at(0).find(".ply") == std::string::npos && fileSelection_.at(0).find(".obj") == std::string::npos)) {
+        sendToConsole_("POPUP_ERRSelect a single valid .ply mesh file!\nPOPUP_END");
+        return;
+    }
+    std::stringstream sstr;
+    std::string dir("../workspace/");
+    sstr << dir << mesh_;
+    std::string name(sstr.str());
+    name.resize(name.size() - 4);
+    std::string rpoly(name);
+    rpoly.append(".rpoly");
+    std::cerr << name.c_str() << "\n" << sstr.str().c_str() << "\n";
+    Atrail des(sstr.str(),name);
+    std::cerr << "Created atrail object\n";
+    int ret = des.main();
+    sendToConsole_(des.getoutstream());
+    if (ret != 1) {
+        return;
+    }
+    //std::thread relaxthread(design->relax,QVector<QVariant>({args[0]}));
+    //ret = design->relax(QVector<QVariant>({args[0]}));
+    bool hasresult = false;
+    QVector<QVariant> qarg({args[0]});
+
+    std::thread relaxthread(&Atrail::relax,&des,qarg.begin(),std::ref(hasresult));
+    relaxthread.join();
+    //ret = design->relax(QVector<QVariant>({args[0]}),hasresult);
+    sendToConsole_(des.getoutstream());
+    if (!hasresult) {
+        return;
+    }
+    //design->model_.readRpoly(rpoly.c_str(),args[1].toInt(),args[2].toInt());
+    des.model_.readRpoly2(design->getRpoly(),args[1].toInt(),args[2].toInt());
+    if (args[3].toBool()) {
+        sendToConsole_("Autofilling strand gaps\n");
+        des.model_.autofillStrandGaps();
+    }
+    std::string seq = args[4].toString().toStdString();
+    std::cout << "Length of sequenceVHELIX: " << seq.length() << "\n"; 
+    if (seq.length() > 0) {
+        
+        des.generate_sequences(seq);
+    }
+    des.writeOxView();
+    sendToConsole_(des.getoutstream());
+}*/
 
 void vHelix::scaffold_free_(const QVector<QVariant> &args) {
     std::cerr << "In scaffold_free_ function\n";
@@ -407,9 +488,10 @@ void vHelix::scaffold_free_(const QVector<QVariant> &args) {
     //Atrail atrail(sstr.str(),name);
     std::cerr << "Created scaffoldfree object\n";
     design->main();
-    sendToConsole_(design->getoutstream());
-    design->relax(QVector<QVariant>({args[0]}));
-    sendToConsole_(design->getoutstream());
+    sendToConsole_(design->getoutstream().c_str());
+    bool hasresult = false;
+    int ret = design->relax(QVector<QVariant>({args[0]}),hasresult);
+    sendToConsole_(design->getoutstream().c_str());
     std::cout << "Reading rpoly\n";
     //design->model_.readScaffoldFreeRpoly(rpoly.c_str());
     design->model_.readScaffoldFreeRpoly2(design->getRpoly());
@@ -419,7 +501,7 @@ void vHelix::scaffold_free_(const QVector<QVariant> &args) {
     }
     design->generate_sequences(args[2].toString().toStdString());
     design->writeOxView();
-    sendToConsole_(design->getoutstream());
+    sendToConsole_(design->getoutstream().c_str());
 }
 /*
 void vHelix::atrail_()
@@ -782,29 +864,50 @@ void vHelix::convert_(const std::string& format)
 // estimate base use for structure based on relaxation scaling value (/2 = scaffold strand length)
 std::pair<int,int> vHelix::estimate_base_use_(const QVector<QVariant> &args)
 {
+    std::cout << "In estimate_base_use_\n";
+    std::stringstream sstr;
+    std::string dir("../workspace/");
+    sstr << dir << mesh_;
+    std::string name(sstr.str());
+    name.resize(name.size() - 4);
+    Design des(sstr.str(),name);
+    des.read3Dobject();
+
     double scaling = args[1].toDouble();
     std::string type = args[0].toString().toStdString();
-    openPLY();
-
+    //design = new Design();
+    std::vector<std::vector<double>> vertices;
+    des.get_coordinates(vertices);
+    size_t vertexnr = vertices.size();
+    std::cout  << vertices.size() << "\n";
+    std::vector<std::vector<int>> elist;
+    des.get_edgelist(elist);
+    
+    std::cout << elist.size() << "\n";
     double totalLength = 0.0;
-    for (auto edge : plydata_->edgelist) {
-        totalLength = totalLength + std::sqrt(std::pow(plydata_->x[edge[0]] - plydata_->x[edge[1]], 2) +
-                std::pow(plydata_->y[edge[0]] - plydata_->y[edge[1]], 2) +
-                std::pow(plydata_->z[edge[0]] - plydata_->z[edge[1]], 2) );
+    for (auto &edge : elist) {
+        //totalLength = totalLength + std::sqrt(std::pow(plydata_->x[edge[0]] - plydata_->x[edge[1]], 2) +
+        //        std::pow(plydata_->y[edge[0]] - plydata_->y[edge[1]], 2) +
+        //        std::pow(plydata_->z[edge[0]] - plydata_->z[edge[1]], 2) );
+        totalLength = totalLength + std::sqrt(std::pow(vertices[edge[0]][0] - vertices[edge[1]][0], 2) +
+                std::pow(vertices[edge[0]][1] - vertices[edge[1]][1], 2) +
+                std::pow(vertices[edge[0]][2] - vertices[edge[1]][2], 2) );
     }
+    std::cout << "Calculated totalLength:" << totalLength << "\n";
+    std::cout << "Type:" << type << "\n";
     int estimated_use = -1;
     if (type.find("Atrail")) {
         std::cout << "Estimating according to Atrail\n";
-        estimated_use = (int)((totalLength * scaling * 2.80) - plydata_->vertexnr * 18);
+        estimated_use = (int)((totalLength * scaling * 2.80) - vertexnr * 18);
     }
     else if (type.find("Spanning tree")) { // Spanning
-        estimated_use = (int)((totalLength * scaling * 4) - plydata_->vertexnr * 18);
+        estimated_use = (int)((totalLength * scaling * 4) - vertexnr * 18);
     }
     else if (type.find("Scaffold free")) {
-        estimated_use = estimated_use = (int)((totalLength * scaling * 2) - plydata_->vertexnr * 18);
-        return std::make_pair(estimated_use/2, plydata_->vertexnr*4);
+        estimated_use = estimated_use = (int)((totalLength * scaling * 2) - vertexnr * 18);
+        return std::make_pair(estimated_use/2, vertexnr*4);
     }
-    return std::make_pair(estimated_use/2, plydata_->vertexnr*4);
+    return std::make_pair(estimated_use/2, vertexnr*4);
 }
 
 /*void vHelix::physX_relaxation_(const QVector<QVariant> args)
@@ -855,7 +958,7 @@ std::pair<int,int> vHelix::estimate_base_use_(const QVector<QVariant> &args)
     }
     const int iterations = args[12].toInt();
     relaxation::relax_main(input, output, dblArgs, iterations, boolArgs, *this);
-}*/
+}
 void vHelix::physX_relaxation_(const QVector<QVariant> args)
 {
     std::stringstream sstr;
@@ -867,4 +970,4 @@ void vHelix::physX_relaxation_(const QVector<QVariant> args)
     std::cerr << "Running relaxation to " << output.c_str()<< std::endl;
     design->relax(args);
     sendToConsole_(design->getoutstream());
-}
+}*/

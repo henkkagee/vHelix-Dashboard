@@ -76,7 +76,7 @@ private:
 
 // Qt slots and signals shouldn't pass arguments as references
 public slots:
-    void vHelixToWindow_(std::string msg);
+    void vHelixToWindow_(QString msg);
 
     // UI slots
     void on_actionExit_triggered();
@@ -87,13 +87,13 @@ public slots:
     //void on_actionPhysX_triggered();
 
 signals:
-    void sendMesh_(std::string str);
+    void sendMesh_(QString str);
     // action_ sends UI input to the main program logic in class vHelix.
     // argument str determines the command name to be interpreted by action_
     // member function in the vHelix-class, args contains the arguments
     // in a QList<QVariant> which can store several different types in a single
     // list.
-    void action_(std::string str, QVector<QVariant> args);
+    void action_(QString str, QVector<QVariant> args);
 
 private slots:
     void on_actionExport_selection_triggered();

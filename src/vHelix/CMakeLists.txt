@@ -45,7 +45,7 @@ message("-- Done linking directories")
 # turn off json library tets
 set(JSON_BuildTests OFF CACHE INTERNAL "")
 
-find_package(Qt5 COMPONENTS Core Gui Widgets REQUIRED 3DCore 3DExtras 3Drender 3DInput)
+find_package(Qt5 COMPONENTS Core Gui Widgets REQUIRED 3DCore 3DExtras 3Drender 3DInput Concurrent)
 
 add_executable(vHelix
     # main files
@@ -156,7 +156,7 @@ set_property(TARGET vHelix PROPERTY
              MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Release>:Release>")
 
 target_link_libraries(vHelix PRIVATE Qt5::Widgets Qt5::3DCore Qt5::3DExtras
-    Qt5::3DRender Qt5::3DInput
+    Qt5::3DRender Qt5::3DInput Qt5::Concurrent
     ${LIBRARIES}
     nlohmann_json::nlohmann_json
     #lemon

@@ -47,19 +47,28 @@ void MainWindow::printToConsole_(std::string str)
 
 
 // slot for receiving strings from the vHelix-class
-void MainWindow::vHelixToWindow_(std::string msg)
+void MainWindow::vHelixToWindow_(QString qmsg)
 {
-    std::cout << msg;
+    std::string msg = qmsg.toStdString();
+    std::cout << "Mainwindow receiving...\n";
+    //std::cout << msg;
     size_t pos = msg.find("POPUP_ERR");
     if (pos != std::string::npos) {
-        size_t pos2 = msg.find("POPUP_END",pos);
-        std::string popup = msg.substr(pos+9,pos2-9);
-        msg.erase(pos, pos+9);
-        msg.erase(pos2-9, pos2);
+        std::cout << "Found popup at " << pos << "\n";
+        size_t pos2 = msg.find("POPUP_END");
+        if (pos2 == std::string::npos) {
+            std::cout << "POPUP_END not found\n";
+        }
+        std::cout << "POPUP_END found at " << pos2 << "\n"; 
+        std::string popup = msg.substr(pos+9,pos2-pos);
+
         QMessageBox::warning(
             this,
             tr("Error"),
             tr(popup.c_str()) );
+        std::cout << "successfully created popup\n";
+        msg = msg.erase(pos, 9);
+        msg = msg.erase(pos2-9, 9);
     }
     /*else if (msg.find("relaxmenu") != std::string::npos) {
         if (dialog_) {
@@ -84,7 +93,7 @@ void MainWindow::on_actionOpen_triggered()
     std::ostringstream sstr;
     sstr << "Mesh File '" << str << "' opened" << std::endl << std::endl;
     if (!str.empty()) {
-        sendMesh_(str);
+        sendMesh_(str.c_str());
         printToConsole_(sstr.str());
     }
     else {

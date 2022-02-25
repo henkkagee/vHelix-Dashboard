@@ -1133,7 +1133,7 @@ int Scaffold_free::main() {
     return 1;
 }
 
-int Scaffold_free::relax(const QVector<QVariant> args) {
+int Scaffold_free::relax(const QVector<QVariant> args,bool &hasresult) {
     for (unsigned int i = 0; i < number_vertices; i++) {
         std::cerr << vertices[i].x << " " << vertices[i].y << " " << vertices[i].z<< std::endl;
     }

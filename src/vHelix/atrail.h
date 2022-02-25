@@ -106,7 +106,7 @@ public:
 
     int main();
 
-    int relax(const QVector<QVariant> args);
+    int relax(const QVector<QVariant> args,bool &hasresult);
 
     void generate_sequences(std::string &seq);
 
