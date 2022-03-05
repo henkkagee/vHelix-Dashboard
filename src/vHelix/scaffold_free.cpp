@@ -1134,6 +1134,7 @@ int Scaffold_free::main() {
 }
 
 int Scaffold_free::relax(const QVector<QVariant> args,bool &hasresult) {
+    double timeout = 10;
     for (unsigned int i = 0; i < number_vertices; i++) {
         std::cerr << vertices[i].x << " " << vertices[i].y << " " << vertices[i].z<< std::endl;
     }
@@ -1202,7 +1203,7 @@ int Scaffold_free::relax(const QVector<QVariant> args,bool &hasresult) {
     PhysXRelax::Helix::settings_type helix_settings;
     PhysXRelax::parse_settings(dblArgs,boolArgs,physics_settings,scene_settings,helix_settings);
     //PhysXRelaxation = new PhysXRelaxation(name,physics_settings,scene_settings,helix_settings, iterations);
-    PhysXRelaxation relaxation(name,physics_settings,scene_settings,helix_settings, iterations);
+    PhysXRelaxation relaxation(name,physics_settings,scene_settings,helix_settings, iterations, timeout);
     std::cerr << "Created relaxation object\n";
     std::vector<std::vector<unsigned int>> input_paths;
     for (auto it = nodetrail.begin(); it != nodetrail.end(); it++) {
@@ -1349,7 +1350,7 @@ int Scaffold_free::create_sequences() {
     PyObject *pName = PyUnicode_FromString("multi_strand_generator");
     PyObject *pModule = PyImport_Import(pName);
     if (pModule == NULL) {
-        std::cout << "--- Something went wrong when importing rpoly_oxDNA.py ---\n";
+        std::cout << "--- Something went wrong when importing multi_strand_generator.py ---\n";
         PyErr_PrintEx(1);
         Py_DECREF(pName);
         return 0;

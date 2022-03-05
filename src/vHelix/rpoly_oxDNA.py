@@ -137,6 +137,7 @@ def parse_options():
 
 # Python/C++ API can conveniently call a function from a module but not run the module as a whole. if __main__: -> def main():
 def main(argv):
+	print("Hello from python")
 	if len(argv) < 1:
 		print_usage()
 	# arguments not passed through sys.argv

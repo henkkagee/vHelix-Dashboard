@@ -1,0 +1,72 @@
+body {
+    padding: 0;
+    margin: 0;
+    overflow: hidden;
+}
+canvas {
+    position: absolute;
+    height: 100%;
+    z-index: 1;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: contain;
+}
+.selectBox {
+    border: 1px solid #55aaff;
+    background-color: rgba(75, 160, 255, 0.15);
+    position: fixed;
+    z-index: 1;
+}
+
+#hoverInfo {
+    background-color: #ffffffa4;
+	position: absolute;
+	text-align: center;
+	z-index: 100;
+	display:block;
+}
+
+#container {
+    position: relative;
+}
+#colorbarCanvas{
+    position: fixed;
+    pointer-events: none;
+    z-index: 2;
+    width: 450px;
+    height: 150px;
+    bottom: 0;
+    right: 200px;
+}
+
+#menu {
+    position: absolute;
+    z-index: 2;
+    width: 100%;
+    opacity: 0.95;
+    background: white;
+}
+
+#baseList {
+    width: auto;
+    max-width: 350px;
+    overflow-y: auto;
+    font-size: 12px;
+}
+
+.toggleGroup_w2 {
+    width: 175px !important;
+}
+
+.toggleGroup_w1 {
+    width: 90px !important;
+}
+
+.tight {
+    padding-bottom: 0 !important;
+}
+
+.window {
+    z-index: 999;
+    max-height: 90%;
+}

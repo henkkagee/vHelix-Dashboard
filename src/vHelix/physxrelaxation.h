@@ -4,7 +4,6 @@
 #define _USE_MATH_DEFINES
 #define NOMINMAX
 
-#include <QDebug>
 #include <PxPhysicsAPI.h>
 #include <cassert>
 #include <initializer_list>
@@ -18,9 +17,10 @@
 #include <math.h>
 #include <set>
 #include <list>
+
 #include "relaxation.h"
 #include "definitions.h"
-#include <thread>
+
 //#include "scaffold_routing_rectification/physics.h"
 
 
@@ -669,7 +669,7 @@ class PhysXRelaxation : public Relaxation
 
 
 public:
-    PhysXRelaxation(std::string &name,physics::settings_type &physics_settings, scene::settings_type &scene_settings, Helix::settings_type &helix_settings, const int &iterations);
+    PhysXRelaxation(std::string &name,physics::settings_type &physics_settings, scene::settings_type &scene_settings, Helix::settings_type &helix_settings, const int &iterations, double timeout);
     int main();
     template<typename RunningFunctorT>
     SceneDescription simulated_rectification(RunningFunctorT running_functor) ; //not used
@@ -693,6 +693,7 @@ protected:
     physics phys;
     bool running;
     int iterations;
+    double timeout;
 };
 }
 #endif // PHYSXRELAXATION_H

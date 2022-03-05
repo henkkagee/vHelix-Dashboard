@@ -77,7 +77,7 @@ private:
 // Qt slots and signals shouldn't pass arguments as references
 public slots:
     void vHelixToWindow_(QString msg);
-
+    void updateFS_();
     // UI slots
     void on_actionExit_triggered();
     void on_actionOpen_triggered();

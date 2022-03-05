@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.5)
 
-project(vHelix LANGUAGES CXX)
+project(DNAforge LANGUAGES CXX)
 
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
@@ -47,7 +47,7 @@ set(JSON_BuildTests OFF CACHE INTERNAL "")
 
 find_package(Qt5 COMPONENTS Core Gui Widgets REQUIRED 3DCore 3DExtras 3Drender 3DInput Concurrent)
 
-add_executable(vHelix
+add_executable(DNAforge
     # main files
     main.cpp
     mainwindow.cpp
@@ -134,7 +134,7 @@ add_executable(vHelix
     happly-master/happly.h
 
     #Obj-Loader
-    OBJ-Loader-master/Source/OBJ_Loader.h
+    #OBJ-Loader-master/Source/OBJ_Loader.h
 )
 
 
@@ -152,10 +152,10 @@ foreach(CompilerFlag ${CompilerFlags})
   string(REPLACE "/MD" "/MT" ${CompilerFlag} "${${CompilerFlag}}")
 endforeach()
 
-set_property(TARGET vHelix PROPERTY
+set_property(TARGET DNAforge PROPERTY
              MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Release>:Release>")
 
-target_link_libraries(vHelix PRIVATE Qt5::Widgets Qt5::3DCore Qt5::3DExtras
+target_link_libraries(DNAforge PRIVATE Qt5::Widgets Qt5::3DCore Qt5::3DExtras
     Qt5::3DRender Qt5::3DInput Qt5::Concurrent
     ${LIBRARIES}
     nlohmann_json::nlohmann_json

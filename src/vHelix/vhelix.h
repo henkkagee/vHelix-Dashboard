@@ -25,6 +25,18 @@
 #include "scaffold_free.h"
 #include <QtConcurrent>
 
+#pragma push_macro("slots")
+#undef slots
+#define MS_NO_COREDLL
+#ifdef _DEBUG
+    #undef _DEBUG
+    #include "Python.h"
+    #define _DEBUG
+#else
+    #include "Python.h"
+#endif
+#pragma pop_macro("slots")
+
 namespace vHelixFunc {
     std::string ExePath();
     bool compareEdges(std::vector<int> i, std::vector<int> j);
@@ -88,7 +100,7 @@ public slots:
 signals:
     void sendToConsole_(QString msg);
     void sendBaseEstimate_(QString msg);
-    void finished_();
+    void update_();
 };
 
 

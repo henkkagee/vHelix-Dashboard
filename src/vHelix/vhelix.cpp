@@ -8,18 +8,8 @@
 #include "vhelix.h"
 
 
-// Python.h includes "slots" as well, resulting in a conflict. This fixes the issue.
-#pragma push_macro("slots")
-#undef slots
-#define MS_NO_COREDLL
-#ifdef _DEBUG
-    #undef _DEBUG
-    #include "Python.h"
-    #define _DEBUG
-#else
-    #include "Python.h"
-#endif
-#pragma pop_macro("slots")
+
+
 
 std::string vHelixFunc::ExePath() {
     char buffer[MAX_PATH];
@@ -56,7 +46,6 @@ vHelix::~vHelix()
         delete plydata_;
     }
     delete design;
-    finished_();
     std::cerr << "Python finalized"<< std::endl;
     Py_Finalize();
 }
@@ -88,9 +77,14 @@ void vHelix::readMesh_(QString qmesh)
     std::stringstream workspace_file;
     workspace_file << workspace_dir_ << "\\" << mesh_;
     std::string temp(workspace_file.str());
+    std::cout << "Trying to copy from " << meshdir_ << " to " << temp << "\n";
     if (QFile::copy(meshdir_.c_str(), temp.c_str())) {
         // success
     }
+    else {
+        sendToConsole_("Copying mesh to workspace failed\n");
+    }
+    update_();
 }
 
 void vHelix::setSelection(std::vector<std::string> vec)
@@ -262,7 +256,8 @@ void vHelix::action_(QString qcmd, QVector<QVariant> arg)
         msg << "Running scaffold-free design on " << mesh_ << "..." << std::endl;
         std::string str = msg.str();
         sendToConsole_(QString(str.c_str()));
-        QtConcurrent::run(this,&vHelix::scaffold_free_,arg);
+        scaffold_free_(arg);
+        //QtConcurrent::run(this,&vHelix::scaffold_free_,arg);
     }
     else if (cmd.find("Spanning tree") != std::string::npos) {
         sendToConsole_(QString("Spanning tree routing is not yet implemented"));
@@ -292,7 +287,7 @@ void vHelix::action_(QString qcmd, QVector<QVariant> arg)
         }
         setSelection(strvec);
     }
-    else if (cmd.find("PhysX") != std::string::npos) {
+    else if (cmd.find("PhysX") != std::string::npos) { // not used
         std::stringstream msg;
         msg << "Running PhysX strand relaxation on " << mesh_ << std::endl << std::endl;
         std::string str = msg.str();
@@ -337,14 +332,14 @@ void vHelix::action_(QString qcmd, QVector<QVariant> arg)
         #ifdef __linux__
                 // Linux default browser
                 std::stringstream path;
-                path << "open " << vHelixFunc::ExePath() << "/../vHelix/oxdnaviewer/index.html";
+                path << "open " << vHelixFunc::ExePath() << "/oxdnaviewer/index.html";
                 std::string browser(path.str());
                 system("open " + browser.c_str());
         #elif _WIN32
         #include <Windows.h>
         #include <shellapi.h>
         std::stringstream path;
-        path << vHelixFunc::ExePath() << "/../vHelix/oxdnaviewer/index.html";
+        path << vHelixFunc::ExePath() << "/oxdnaviewer/index.html";
         std::string index_html = path.str();
         /*path << "?" <<
                 "configuration=" << fileSelection_.at(conf) << "&" <<
@@ -363,6 +358,7 @@ void vHelix::action_(QString qcmd, QVector<QVariant> arg)
         //ShellExecute(0, 0, browser.c_str(), 0, 0, SW_SHOW);
         #endif
     }
+    update_();
 }
 
 void vHelix::atrail_(const QVector<QVariant> &args) {
@@ -395,6 +391,7 @@ void vHelix::atrail_(const QVector<QVariant> &args) {
     bool hasresult = false;
     //std::thread relaxthread(&Atrail::relax,design,std::ref(QVector<QVariant>({args[0]})),std::ref(hasresult));
     //relaxthread.join();
+    sendToConsole_("Running PhysX relaxation. This may take a while, or even freeze\n");
     ret = design->relax(QVector<QVariant>({args[0]}),hasresult);
     sendToConsole_(design->getoutstream().c_str());
     if (ret != 1) {
@@ -652,7 +649,7 @@ void vHelix::export_(const QVector<QVariant> &args)
 
     if (funcStr == "rpoly_oxDNA") {
         std::string file = fileSelection_[0];
-        if (!file.find(".rpoly")) {
+        if (file.find(".rpoly") == std::string::npos) {
             sendToConsole_("Only .rpoly files supported for OxDNA conversion!\n");
             return;
         }
@@ -666,22 +663,20 @@ void vHelix::export_(const QVector<QVariant> &args)
         }
         std::string filename = seglist.back();
 
-        sendToConsole_("Converting .PLY to .oxDNA...\n");
+        sendToConsole_("Converting .rpoly to .oxDNA...\n");
         //Py_Initialize();
-
+        std::cout << filename << "\n";
         std::cerr << "In the event handler\n";
 
-        PyObject *pName = NULL;
-        pName = PyUnicode_FromString("rpoly_oxDNA");
+        PyObject *pName = PyUnicode_FromString("rpoly_oxDNA");
 
-        std::cerr << "Before module import: " <<
-                    "\n pName:" << Py_REFCNT(pName) << "\n";
+        //std::cerr << "Before module import: " << "\n pName:" << Py_REFCNT(pName) << "\n";
 
-        PyObject *pModule = NULL;
-        pModule = PyImport_Import(pName);
-        std::cerr << "After module import: "
+        PyObject *pModule = PyImport_Import(pName);
+        std::cout << "Module imported\n";
+        /*std::cerr << "After module import: "
                     "\n pModule:" << Py_REFCNT(pModule) <<
-                    "\n pName:" << Py_REFCNT(pName) << "\n";
+                    "\n pName:" << Py_REFCNT(pName) << "\n";*/
         if (pModule == NULL) {
             sendToConsole_("--- Something went wrong when importing rpoly_oxDNA.py ---\n");
             PyErr_PrintEx(1);

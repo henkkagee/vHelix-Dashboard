@@ -1,13 +1,14 @@
 {
     "physX": {
-        "attach_fixed": false,
+        "attach_fixed": true,
         "density": 10.0,
-        "discretize_lengths": false,
-        "dynamic_friction": 0.5,
+        "discretize_lengths": true,
+        "dynamic_friction": 0.0,
         "fixed_spring_stiffness": 1000.0,
+        "iterations": 1,
         "restitution": 1.0,
         "rigid_body_sleep_threshold": 0.001,
-        "spring_damping": 100.0,
+        "spring_damping": 99.0,
         "spring_stiffness": 100.0,
         "static_friction": 0.5,
         "visual_debugger": false

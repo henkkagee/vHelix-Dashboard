@@ -39,6 +39,13 @@ void DirView::onItemClick()
     */
 }
 
+void DirView::update_() {
+    std::cout << "DirView updating\n";
+    model->setRootPath("");
+    model->setRootPath("/../workspace");
+    show();
+}
+
 const QFileSystemModel* DirView::getModel()
 {
     return model;

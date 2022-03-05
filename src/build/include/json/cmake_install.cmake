@@ -1,8 +1,8 @@
-# Install script for directory: C:/Users/emilh/Documents/Tyot/vHelix-Dashboard/src/vHelix/include/json
+# Install script for directory: C:/Users/emilh/Documents/Tyot/DNAforge/src/vHelix/include/json
 
 # Set the install prefix
 if(NOT DEFINED CMAKE_INSTALL_PREFIX)
-  set(CMAKE_INSTALL_PREFIX "C:/Program Files (x86)/vHelix")
+  set(CMAKE_INSTALL_PREFIX "C:/Program Files (x86)/DNAforge")
 endif()
 string(REGEX REPLACE "/$" "" CMAKE_INSTALL_PREFIX "${CMAKE_INSTALL_PREFIX}")
 

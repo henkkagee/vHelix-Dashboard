@@ -139,6 +139,7 @@ def parse_options():
 def main(argv):
 	if len(argv) < 1:
 		print_usage()
+	
 	# arguments not passed through sys.argv
 	#opts = parse_options()
 	opts = Options()

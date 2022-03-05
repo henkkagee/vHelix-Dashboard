@@ -1,8 +1,8 @@
-# Install script for directory: C:/Users/emilh/Documents/Tyot/vHelix-Dashboard/src/vHelix
+# Install script for directory: C:/Users/emilh/Documents/Tyot/DNAforge/src/vHelix
 
 # Set the install prefix
 if(NOT DEFINED CMAKE_INSTALL_PREFIX)
-  set(CMAKE_INSTALL_PREFIX "C:/Program Files (x86)/vHelix")
+  set(CMAKE_INSTALL_PREFIX "C:/Program Files (x86)/DNAforge")
 endif()
 string(REGEX REPLACE "/$" "" CMAKE_INSTALL_PREFIX "${CMAKE_INSTALL_PREFIX}")
 
@@ -34,7 +34,7 @@ endif()
 
 if(NOT CMAKE_INSTALL_LOCAL_ONLY)
   # Include the install script for each subdirectory.
-  include("C:/Users/emilh/Documents/Tyot/vHelix-Dashboard/src/build/include/json/cmake_install.cmake")
+  include("C:/Users/emilh/Documents/Tyot/DNAforge/src/build/include/json/cmake_install.cmake")
 
 endif()
 
@@ -46,5 +46,5 @@ endif()
 
 string(REPLACE ";" "\n" CMAKE_INSTALL_MANIFEST_CONTENT
        "${CMAKE_INSTALL_MANIFEST_FILES}")
-file(WRITE "C:/Users/emilh/Documents/Tyot/vHelix-Dashboard/src/build/${CMAKE_INSTALL_MANIFEST}"
+file(WRITE "C:/Users/emilh/Documents/Tyot/DNAforge/src/build/${CMAKE_INSTALL_MANIFEST}"
      "${CMAKE_INSTALL_MANIFEST_CONTENT}")

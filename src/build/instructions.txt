@@ -1,20 +1,18 @@
 Workflow/pipeline for generating a sequence and model from a .ply or .obj model:
 
-1) Import a .ply or .obj file from File->Import
+1) Import a .ply or .obj file from File->Import, or copy it to the workspace folder in the file explorer
 
-2) Click on the .ply file you imported in the workspace window (lower left pane) to select it, and route it from Route->Atrail
+2) Click on the .ply/.obj file you imported in the workspace window (lower left pane) to select it
 
-3) If the routing is successful, the last line that appeard in the console pane should verify that you got a valid A-trail in the meshes
+3) With the file selected, select a design method from the Design menu. Here you can specify some options for running the design. You can also estimate the base usage/scaffold strand length. Click ok to run the design with the selected options
 
-4) With the same .ply still selected, click Relaxation->PhysX. Here, you can estimate scaffold strand base usage based on the scaling value. Once you have scaled the model appropriately, you can run the relaxation. It may take a while, and in some cases with very short edges (small scaling value) it may run forever. The relaxation is ready when the console pane updates and an .rpoly file appears in the workspace.
+4) If the design is successful, you should see it in the console (upper left panel) and an .oxview file should appear in the workspace
 
-5) The .rpoly file can be converted to oxDNA file format from Export->Export selection to oxDNA, or double clicked to generate and view the full model in the 3D graphics pane on the right. This can take a while depending on your hardware.
+5) To view the model in the graphics panel, double click the .oxview file. For a better experience and edit features, use OxView (https://github.com/sulcgroup/oxdna-viewer).
 
-6) If you want to view the model in oxDNA format, there is a shortcut to a local oxDNAviewer from oxDNA->Open oxDNA viewer. You can drag and drop .conf and .top files or an .oxview file directly in the oxDNAviewer window to load them. However, it is recommended to use the most recent version online instead: https://github.com/sulcgroup/oxdna-viewer
+6) Once the 3D model appears on the right (3D performance not yet optimized), you can export the strands as a .csv file from Export->Export strand sequences. You can also do this with OxView
 
-7) Once the 3D model appears on the right (3D performance not yet optimized), you can do the following actions: add a sequence to the scaffold strand from Edit->Add sequence, automatically fill strand gaps, and export the strands as a .csv file from Export->Export strand sequences.
+7) You can rotate the model using the right mouse button and translate the camera using the left mouse button. Use shift+arrow keys or the scroll wheel for zooming.
 
-8) You can rotate the model using the right mouse button and translate the camera using the left mouse button. Use shift+arrow keys or the scroll wheel for zooming.
-
-9) To export the generated model, click File->Save current model to save it in .oxview format usable in oxView
+8) You can modify some settings from Help -> settings
 

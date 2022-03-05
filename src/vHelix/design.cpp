@@ -326,4 +326,6 @@ int Design::writeOxView() {
     std::string file(name);
     file.append(".oxview");
     model_.writeOxView(file.c_str());
+    outstream << "\nWrote current helices, strands, connections and bases to " << file << std::endl;
+    return 1;
 }

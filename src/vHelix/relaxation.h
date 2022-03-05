@@ -10,6 +10,7 @@
 #include <vector>
 #include "definitions.h"
 #include <QDebug>
+//#include <future>
 
 namespace Debug {
         void printf(const char *file, const char *function, size_t line, const char *expr, ...);

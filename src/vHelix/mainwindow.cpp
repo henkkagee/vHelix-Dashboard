@@ -26,8 +26,8 @@ MainWindow::MainWindow(QWidget *parent)
     console_ = ui_->plainTextEdit;
     dirview_ = ui_->treeView;
     graphicsview_ = ui_ ->widget;
-    setWindowTitle("vHelix Dashboard");
-    printToConsole_("vHelix Dashboard, Copyright 2021, Henrik Granö\nThis program comes with ABSOLUTELY NO WARRANTY.\nThis is free software, and you are welcome to redistribute it\nunder certain conditions; see licensing and warranty details under the \"help\"-tab.\n\nReady!\nSee readme or Help-section for instructions.\n\n");
+    setWindowTitle("DNAforge");
+    printToConsole_("DNAforge, Copyright 2022, Emil Hiitola\nThis program comes with ABSOLUTELY NO WARRANTY.\nThis is free software, and you are welcome to redistribute it\nunder certain conditions; see licensing and warranty details under the \"help\"-tab.\n\nReady!\nSee readme or Help-section for instructions.\n\n");
 }
 
 MainWindow::~MainWindow()
@@ -45,6 +45,10 @@ void MainWindow::printToConsole_(std::string str)
     console_->write_(str);
 }
 
+void MainWindow::updateFS_() {
+    dirview_->update_();
+}
+
 
 // slot for receiving strings from the vHelix-class
 void MainWindow::vHelixToWindow_(QString qmsg)
@@ -60,7 +64,7 @@ void MainWindow::vHelixToWindow_(QString qmsg)
             std::cout << "POPUP_END not found\n";
         }
         std::cout << "POPUP_END found at " << pos2 << "\n"; 
-        std::string popup = msg.substr(pos+9,pos2-pos);
+        std::string popup = msg.substr(pos+9,pos2-pos - 9);
 
         QMessageBox::warning(
             this,

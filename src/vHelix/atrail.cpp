@@ -851,7 +851,7 @@ bool Atrail::Atrail_search()
     {
         outstream << "INFO: The graph has no branch nodes\n";
     }else{
-        outstream << "INFO: Branch nodes \n";
+        //outstream << "INFO: Branch nodes \n";
         for( std::vector<unsigned int>::iterator it = bn.begin(); it != bn.end(); ++it)
         {
             sstr<<*it<<" ";
@@ -859,7 +859,7 @@ bool Atrail::Atrail_search()
         sstr<<std::endl;
     }
     std::string tempStr(sstr.str());
-    outstream << tempStr;
+    //outstream << tempStr;
     std::cerr << "line 817"<< std::endl;
     std::map<Vertex, std::vector<Vertex> > bn_new_nodes_map;
     std::vector<parity> parity_vec1;
@@ -970,8 +970,8 @@ bool Atrail::Atrail_search()
         }
         new_trail.push_back(new_trail.front());
         std::cout<<"INFO: ";
-        std::string ret = print_walk(new_trail, "Trail (after local fixing): ");
-        outstream << ret;
+        //std::string ret = print_walk(new_trail, "Trail (after local fixing): ");
+        //outstream << ret;
 
         // Get the trail as an edge list.
         trail_edgelist.clear();
@@ -1026,17 +1026,17 @@ bool Atrail::Atrail_search()
                 it = old;
             }
         }
-        std::cout<<"INFO: "; ret = print_walk(trail_edgelist, "Trail (as edge list): ");
-        outstream << ret;
-        std::cout<<"INFO: "; ret = print_walk(new_trail, "Trail (as node list): ");
-        outstream <<ret;
+        //std::cout<<"INFO: "; ret = print_walk(trail_edgelist, "Trail (as edge list): ");
+        //outstream << ret;
+        //std::cout<<"INFO: "; ret = print_walk(new_trail, "Trail (as node list): ");
+        //outstream <<ret;
     }
     nodetrail = new_trail;
 
     if (write_intermediates) {
         write_trail();
     }
-    std::cout<<"---------------------------------------"<<std::endl;
+    //std::cout<<"---------------------------------------"<<std::endl;
     
     return has_Atrail;
 
@@ -1409,6 +1409,7 @@ int Atrail::main() {
 }
 
 int Atrail::relax(const QVector<QVariant> args,bool &hasresult) {
+    double timeout = 10;
     for (unsigned int i = 0; i < number_vertices; i++) {
         std::cerr << vertices[i].x << " " << vertices[i].y << " " << vertices[i].z<< std::endl;
     }
@@ -1450,7 +1451,7 @@ int Atrail::relax(const QVector<QVariant> args,bool &hasresult) {
     PhysXRelax::scene::settings_type scene_settings;
     PhysXRelax::Helix::settings_type helix_settings;
     PhysXRelax::parse_settings(dblArgs,boolArgs,physics_settings,scene_settings,helix_settings);
-    PhysXRelaxation relaxation(name,physics_settings,scene_settings,helix_settings, iterations);
+    PhysXRelaxation relaxation(name,physics_settings,scene_settings,helix_settings, iterations,timeout);
     std::cerr << "Created relaxation object\n";
     std::vector<unsigned int> input_path;
 
@@ -1578,4 +1579,5 @@ void Atrail::generate_sequences(std::string &seq)
         }
         s++;
     }
+    outstream << "Sequence applied successfully\n";
 }

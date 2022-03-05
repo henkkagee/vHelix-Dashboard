@@ -39,10 +39,9 @@ void Console::write_(std::string str)
         p.setColor(QPalette::Text, Qt::white);
     }
     setPalette(p);*/
+    moveCursor(QTextCursor::End);
     insertPlainText(str.c_str());
-    QTextCursor c = textCursor();
-    c.movePosition(QTextCursor::End);
-    setTextCursor(c);
+    moveCursor(QTextCursor::End);
     //QScrollBar *sb = verticalScrollBar();
     //sb->setValue(sb->maximum());
     show();

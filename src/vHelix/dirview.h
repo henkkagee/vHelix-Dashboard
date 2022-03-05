@@ -23,6 +23,7 @@ public:
     ~DirView();
     void onItemClick();
     const QFileSystemModel* getModel();
+    void update_();
 
 private:
     QFileSystemModel *model;

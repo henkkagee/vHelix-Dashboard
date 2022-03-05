@@ -26,6 +26,18 @@
 #include <QObject>
 #include <QThread>
 
+#pragma push_macro("slots")
+#undef slots
+#define MS_NO_COREDLL
+#ifdef _DEBUG
+    #undef _DEBUG
+    #include "Python.h"
+    #define _DEBUG
+#else
+    #include "Python.h"
+#endif
+#pragma pop_macro("slots")
+
 
 int main(int argc, char *argv[])
 {
@@ -63,14 +75,17 @@ int main(int argc, char *argv[])
     QObject::connect(&w, &MainWindow::sendMesh_,
                      vh, &vHelix::readMesh_);
     std::cout << "Connected mesh\n";
+    QObject::connect(vh, &vHelix::update_,
+                    &w, &MainWindow::updateFS_);
 
-    //
     t1.start();
+    //Py_Initialize();
     //t2.start();
     w.show();
     int ret=  a.exec();
     t1.exit();
     delete vh;
+    //Py_Finalize();
     //t1.quit();
     return ret;
 }

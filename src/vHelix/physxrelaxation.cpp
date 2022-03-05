@@ -1049,14 +1049,26 @@ void PhysXRelaxation::simulated_annealing(int kmax, float emax, unsigned int min
 template<typename StoreBestFunctorT, typename RunningFunctorT>
 void PhysXRelaxation::gradient_descent(int minbasecount, StoreBestFunctorT store_best_functor, RunningFunctorT running_functor, const int &iterations) {
     scene::HelixContainer & helices(mesh.getHelices());
-
+    PhysXRelax::physics::real_type min, max, average, total;
+    std::cout << "Starting first iteration\n";
+    auto start = std::chrono::high_resolution_clock::now();
+    auto timer = start;
     while (!mesh.isSleeping() && running_functor()) {
         phys.scene->simulate(1.0f / 60.0f);
         phys.scene->fetchResults(true);
+        timer=std::chrono::high_resolution_clock::now();
+        std::chrono::duration<double> diff = timer - start;
+        if (diff.count() > timeout) {
+            outstream << "WARNING: Optimizer did not finish. Adjusting the scaling value may help. Returning unoptimized model\n";
+            mesh.getTotalSeparationMinMaxAverage(min, max, average, total);
+            store_best_functor(mesh, min, max, average, total);
+            return;
+        }
     }
+    std::cout << "Finished 1 iteration\n";
 
     //physics::real_type separation(mesh.getTotalSeparation());
-    PhysXRelax::physics::real_type min, max, average, total;
+    
     mesh.getTotalSeparationMinMaxAverage(min, max, average, total);
     store_best_functor(mesh, min, max, average, total);
     if (iterations == 1) {
@@ -1070,10 +1082,19 @@ void PhysXRelaxation::gradient_descent(int minbasecount, StoreBestFunctorT store
                 return;
 
             helix.recreateRigidBody(phys, std::max(minbasecount, int(helix.getInitialBaseCount() + (i * 2 - 1))), helix.getInitialTransform());
-
+            auto start = std::chrono::high_resolution_clock::now();
+            auto timer = start;
             while (!mesh.isSleeping() && running_functor()) {
                 phys.scene->simulate(1.0f / 60.0f);
                 phys.scene->fetchResults(true);
+                timer=std::chrono::high_resolution_clock::now();
+                std::chrono::duration<double> diff = timer - start;
+                if (diff.count() > timeout) {
+                    outstream << "WARNING: Optimizer did not finish\n";
+                    mesh.getTotalSeparationMinMaxAverage(min, max, average, total);
+                    store_best_functor(mesh, min, max, average, total);
+                    return;
+                }
             }
 
             //const physics::real_type newseparation(mesh.getTotalSeparation());
@@ -1106,7 +1127,7 @@ SceneDescription PhysXRelaxation::simulated_rectification(RunningFunctorT runnin
     return SceneDescription(mesh);
 }
 
-PhysXRelaxation::PhysXRelaxation(std::string &name,PhysXRelax::physics::settings_type &physics_settings, scene::settings_type &scene_settings, Helix::settings_type &helix_settings,const int &iterations) : Relaxation(name), mesh(scene_settings,helix_settings), phys(physics_settings), running(true), iterations(iterations) {
+PhysXRelaxation::PhysXRelaxation(std::string &name,PhysXRelax::physics::settings_type &physics_settings, scene::settings_type &scene_settings, Helix::settings_type &helix_settings,const int &iterations, double timeout) : Relaxation(name), mesh(scene_settings,helix_settings), phys(physics_settings), running(true), iterations(iterations), timeout(timeout) {
     seed();
 }
 
@@ -1165,6 +1186,8 @@ int PhysXRelaxation::scaffold_main(std::vector<coordinates> &inputvertices, std:
 }
 
 inline void PhysXRelaxation::optim_wrapper(SceneDescription &best_scene, bool &hasresult) {
+
+
     /*physics::real_type initialmin, initialmax, initialaverage, initialtotal, min, max, average, total;
     mesh.getTotalSeparationMinMaxAverage(initialmin, initialmax, initialaverage, initialtotal);
     gradient_descent(7,
@@ -1200,13 +1223,11 @@ int PhysXRelaxation::scaffold_main2(std::vector<coordinates> &inputvertices, std
     std::stringstream testout;
     test_scene.write(testout);
     //std::cerr << testout.str().c_str()<< std::endl;
-    outstream << "Running simulation for scene, outputting to " << output_file << "\"." << std::endl
-        << "Initial: min: " << initialmin << ", max: " << initialmax << ", average: " << initialaverage << ", total: " << initialtotal << " nm" << std::endl
-        << "Connect with NVIDIA PhysX Visual Debugger to " << PVD_HOST << ':' << PVD_PORT << " to visualize the progress. " << std::endl
-        << "Press ^C to stop the relaxation...." << std::endl;
+    outstream << "Initial: min: " << initialmin << ", max: " << initialmax << ", average: " << initialaverage << ", total: " << initialtotal << " nm\n";
 
     //setinterrupthandler<handle_exit>();
     std::cerr << "Running grad descent";
+    
     SceneDescription best_scene;
     gradient_descent(7,
         [&best_scene, &min, &max, &average, &total](scene & mesh, physics::real_type min_, physics::real_type max_, physics::real_type average_, physics::real_type total_) { min = min_; max = max_; average = average_; total = total_; std::stringstream sstr; sstr << "State: min: " << min << ", max: " << max << ", average: " << average << " total: " << total << " nm" << std::endl; std::string str = sstr.str(); best_scene = SceneDescription(mesh); },
@@ -1217,12 +1238,12 @@ int PhysXRelaxation::scaffold_main2(std::vector<coordinates> &inputvertices, std
    //std::thread(&PhysXRelaxation::optim_wrapper,std::ref(*this),std::ref(best_scene),hasresult);
     hasresult = true;
     std::cerr << "run grad descent"<< std::endl;
-    //outstream << "Result: min: " << min << ", max: " << max << ", average: " << average << ", total: " << total << " nm" << std::endl;
+    outstream << "Result: min: " << min << ", max: " << max << ", average: " << average << ", total: " << total << " nm" << std::endl;
 
     if (!best_scene.write_2(rpoly)) {
         outstream << "Failed to write resulting mesh" << std::endl;
     }
-    std::cerr << outstream.str().c_str()<< std::endl;
+    //std::cerr << outstream.str().c_str()<< std::endl;
     return 1;
 }
 
@@ -1253,11 +1274,11 @@ int PhysXRelaxation::scaffold_free_main(std::vector<coordinates> &inputvertices,
     //std::stringstream testout;
     //test_scene.write(testout);
     //std::cerr << testout.str().c_str()<< std::endl;
+    
     outstream << "Running simulation for scene, outputting to " << output_file << "\"." << std::endl
-        << "Initial: min: " << initialmin << ", max: " << initialmax << ", average: " << initialaverage << ", total: " << initialtotal << " nm" << std::endl
-        << "Connect with NVIDIA PhysX Visual Debugger to " << PVD_HOST << ':' << PVD_PORT << " to visualize the progress. " << std::endl
-        << "Press ^C to stop the relaxation...." << std::endl;
-
+    << "Initial: min: " << initialmin << ", max: " << initialmax << ", average: " << initialaverage << ", total: " << initialtotal << " nm" << std::endl
+    << "Connect with NVIDIA PhysX Visual Debugger to " << PVD_HOST << ':' << PVD_PORT << " to visualize the progress. " << std::endl
+    << "Press ^C to stop the relaxation...." << std::endl;
     //setinterrupthandler<handle_exit>();
     std::cerr << "Running grad descent\n";
     SceneDescription best_scene;
@@ -1307,10 +1328,7 @@ int PhysXRelaxation::scaffold_free_main2(std::vector<coordinates> &inputvertices
     //std::stringstream testout;
     //test_scene.write(testout);
     //std::cerr << testout.str().c_str()<< std::endl;
-    outstream << "Running simulation for scene, outputting to " << output_file << "\"." << std::endl
-        << "Initial: min: " << initialmin << ", max: " << initialmax << ", average: " << initialaverage << ", total: " << initialtotal << " nm" << std::endl
-        << "Connect with NVIDIA PhysX Visual Debugger to " << PVD_HOST << ':' << PVD_PORT << " to visualize the progress. " << std::endl
-        << "Press ^C to stop the relaxation...." << std::endl;
+    outstream << "Initial: min: " << initialmin << ", max: " << initialmax << ", average: " << initialaverage << ", total: " << initialtotal << " nm" << std::endl;
 
     //setinterrupthandler<handle_exit>();
     std::cerr << "Running grad descent\n";
@@ -1325,6 +1343,6 @@ int PhysXRelaxation::scaffold_free_main2(std::vector<coordinates> &inputvertices
     if (!best_scene.write_scaffold_free_2(rpoly)) {
         outstream << "Failed to write resulting mesh " << std::endl;
     }
-    std::cerr << outstream.str().c_str()<< std::endl;
+    //std::cerr << outstream.str().c_str()<< std::endl;
     return 1;
 }
