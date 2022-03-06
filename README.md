@@ -1,4 +1,4 @@
-# vHelix Dashboard
+# DNAforge
 
 ![Dashboard view](doc/dashboard.jpg)
 
@@ -48,7 +48,9 @@ Workflow/pipeline for generating a sequence and model from a .ply or .obj model:
 - Click on the .ply/.obj file you imported in the workspace window (lower left pane) to select it, select a design method from the Design menu. Adjust the options in the dialog that pops up. Run the design algorithm by clicking Ok.
 - Keep an eye on the console (upper left) panel, it tells you about the progress and if something goes wrong. If everything goes Ok, you should see a .oxview file appear in the workspace
 - If you want to view the model in oxDNA format, there is a shortcut to a local oxDNAviewer from oxDNA->Open oxDNA viewer. You can drag and drop .conf and .top files or an .oxview file directly in the oxDNAviewer window to load them. However, it is recommended to use the most recent version online instead: https://github.com/sulcgroup/oxdna-viewer
+- To view the model in the graphics panel on the right, double-click the .oxview file appearing in the workspace
 - Once the 3D model appears on the right (3D performance not yet optimized), you can do export the strands as a csv file from Export->Export strand sequences.
+- You can save the .oxview file in a desired location, with a model opened in the graphics panel, from file -> save current model
 - You can rotate the model using the right mouse button and translate the camera using the left mouse button. Use shift+arrow keys or the scroll wheel for zooming.
 - It's a good idea to a) check that all strands are long enough and b) they are connected properly and in the right way, you can easily do this in oxView
 - You can adjust settings from Help->Settings
@@ -56,6 +58,7 @@ Workflow/pipeline for generating a sequence and model from a .ply or .obj model:
 ## Todo
 
 - Proper documentation
+- Saving strands and .oxvidew file without having to open the model in the graphics panel
 - Remove unused code
 - Relaxation that works in Linux & Mac
 - Spanning tree routing

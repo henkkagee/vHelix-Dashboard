@@ -254,7 +254,31 @@ int Design::createEmbedding() {
                 adj_vertices[i].insert(face_neigh_list[i][j].back);
                 adj_vertices[i].insert(face_neigh_list[i][j].forw);
             }
-            std::vector<std::vector<size_t>> adj_vec(number_vertices);
+            std::vector<size_t> adj_vec;
+            adj_vec.assign(adj_vertices[i].begin(),adj_vertices[i].end());
+            std::map<double,std::vector<std::pair<size_t,double>>> latitudes;
+            for (unsigned int j = 0; j < adj_vertices[i].size(); j++) {
+                coordinates direction = vertices[i] - vertices[adj_vec[j]];
+                double phi = atan2(direction.x,direction.y);
+                double theta = acos(direction.z);
+                latitudes[phi].push_back(std::make_pair(adj_vec[j],theta));
+            }
+            std::vector<size_t> sorted_edges;
+            bool desc = false;
+            for (auto &it : latitudes) {
+                //double phi = it.first;
+                std::sort(it.second.begin(),it.second.end(),[desc](const std::pair<size_t,double> a, const std::pair<size_t,double> b) {
+                    if (desc) return a.second > b.second;
+                    else return b.second > a.second;
+                });
+                for (auto edge : it.second) {
+                    sorted_edges.push_back(edge.first);
+                }
+                desc = !desc;
+            }
+            embedding[i] = sorted_edges;
+
+            /*std::vector<std::vector<size_t>> adj_vec(number_vertices);
             for (unsigned int i = 0; i < number_vertices; i++) {
                 adj_vec[i].assign(adj_vertices[i].begin(),adj_vertices[i].end());
             }
@@ -280,7 +304,7 @@ int Design::createEmbedding() {
                     desc = !desc;
                 }
                 embedding[i] = sorted_edges;
-            }
+            }*/
 
         }
     }
