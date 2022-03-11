@@ -1409,7 +1409,6 @@ int Atrail::main() {
 }
 
 int Atrail::relax(const QVector<QVariant> args,bool &hasresult) {
-    double timeout = 10;
     for (unsigned int i = 0; i < number_vertices; i++) {
         std::cerr << vertices[i].x << " " << vertices[i].y << " " << vertices[i].z<< std::endl;
     }
@@ -1445,6 +1444,7 @@ int Atrail::relax(const QVector<QVariant> args,bool &hasresult) {
     boolArgs[1] = settings["attach_fixed"];
     boolArgs[2] = settings["visual_debugger"];
     const int iterations = settings["iterations"];
+    double timeout = settings["timeout"];
 
 
     PhysXRelax::physics::settings_type physics_settings;

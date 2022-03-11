@@ -200,7 +200,7 @@ class SettingsDialog : public QDialog {
                          bool &discretize_lengths, double &density, double &spring_stiffness,
                          double &fixed_spring_stiffness, double &spring_damping, bool &attach_fixed,
                          double &static_friction,double &dynamic_friction,double &restitution,
-                         double &rigid_body_sleep_threshold, bool &visual_debugger, int &iterations);
+                         double &rigid_body_sleep_threshold, bool &visual_debugger, int &iterations, double &timeout);
     private slots:
             void on_SetDefaults_clicked();
 

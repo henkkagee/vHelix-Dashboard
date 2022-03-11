@@ -65,4 +65,3 @@ Workflow/pipeline for generating a sequence and model from a .ply or .obj model:
 - Qt3D performance improvements
 - BUG: Autofill strand gaps with simulated annealing sequence generation in scaffold-free design
 - Quality indicator for the simulated annealing sequence generator
-- Physical relaxation optimizer timeout to settings

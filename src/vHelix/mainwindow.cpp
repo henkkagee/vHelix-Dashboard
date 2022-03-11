@@ -155,10 +155,11 @@ void MainWindow::on_actionSettings_triggered() {
         bool discretize_lengths,attach_fixed, visual_debugger;
         bool write_intermediate_files;
         int iterations;
+        double timeout;
         dialog.getSettings(write_intermediate_files, discretize_lengths, density, spring_stiffness,
                            fixed_spring_stiffness, spring_damping, attach_fixed,
                            static_friction, dynamic_friction, restitution,
-                           rigid_body_sleep_threshold, visual_debugger,iterations);
+                           rigid_body_sleep_threshold, visual_debugger,iterations, timeout);
         nlohmann::json settings = {
             {"write_intermediate_files", write_intermediate_files},
             {"physX",{
@@ -173,7 +174,8 @@ void MainWindow::on_actionSettings_triggered() {
                  {"restitution",restitution},
                  {"rigid_body_sleep_threshold",rigid_body_sleep_threshold},
                  {"visual_debugger",visual_debugger},
-                 {"iterations",iterations}
+                 {"iterations",iterations},
+                 {"timeout",timeout}
              }}
         };
 
@@ -839,6 +841,7 @@ SettingsDialog::SettingsDialog(MainWindow *parent) : QDialog(parent){
         ui_.doubleSpinBox_8->setValue(physxsettings["restitution"]);
         ui_.doubleSpinBox_9->setValue(physxsettings["rigid_body_sleep_threshold"]);
         ui_.visualDebuggerCheckBox->setChecked(physxsettings["visual_debugger"]);
+        ui_.timeoutSpinBox->setValue(physxsettings["timeout"]);
     }
     else {
         parent_->vHelixToWindow_("Could not find settings file, click ok to write\n");
@@ -848,7 +851,7 @@ void SettingsDialog::getSettings(bool &write_intermediate_files,
                  bool &discretize_lengths, double &density, double &spring_stiffness,
                  double &fixed_spring_stiffness, double &spring_damping, bool &attach_fixed,
                  double &static_friction,double &dynamic_friction,double &restitution,
-                 double &rigid_body_sleep_threshold, bool &visual_debugger, int &iterations) {
+                 double &rigid_body_sleep_threshold, bool &visual_debugger, int &iterations, double &timeout) {
     std::cout << "getting settings\n";
 
     write_intermediate_files = ui_.checkBox->isChecked();
@@ -864,6 +867,7 @@ void SettingsDialog::getSettings(bool &write_intermediate_files,
     rigid_body_sleep_threshold = ui_.doubleSpinBox_9->value();
     visual_debugger = ui_.visualDebuggerCheckBox->isChecked();
     iterations = ui_.iterationsSpinBox->value();
+    timeout = ui_.timeoutSpinBox->value();
 
 }
 
@@ -883,7 +887,8 @@ void SettingsDialog::on_SetDefaults_clicked()
             {"restitution",1},
             {"rigid_body_sleep_threshold",0.001},
             {"visual_debugger",false},
-            {"iterations",1}
+            {"iterations",1},
+            {"timeout",10}
         }}
     };
     nlohmann::json physxsettings = settings["physX"];
@@ -899,6 +904,7 @@ void SettingsDialog::on_SetDefaults_clicked()
     ui_.doubleSpinBox_9->setValue(physxsettings["rigid_body_sleep_threshold"]);
     ui_.visualDebuggerCheckBox->setChecked(physxsettings["visual_debugger"]);
     ui_.iterationsSpinBox->setValue(physxsettings["iterations"]);
+    ui_.timeoutSpinBox->setValue(physxsettings["timeout"]);
 }
 
 // Show instructions
