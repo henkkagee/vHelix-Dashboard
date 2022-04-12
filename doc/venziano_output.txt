@@ -1,0 +1,10 @@
+Routing + edge lengths dictionary
+key: edge (direction) as vertex pair, value: interval of scaffold nucleotides as pair
+
+Staple strands: list of lists
+axis 0: strands
+axis 1: locations in scaffold where paired to.
+
+Edge lengths as dictionary
+key: edge as vertex pair
+value: edge length as number
